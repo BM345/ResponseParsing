@@ -298,6 +298,8 @@ class Validator {
         this.inputs = [];
 
         this.rp = new ResponseParser();
+
+        this.controlKeys = ["ShiftLeft", "ShiftRight", "Backspace", "Enter", "Tab", "CapsLock", "MetaLeft", "MetaRight", "AltLeft", "AltRight", "ControlLeft", "ControlRight", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"]
     }
 
     addInput(input, inputType, validationMessageElement) {
@@ -306,7 +308,7 @@ class Validator {
         var that = this;
 
         input.onkeydown = function (e) {
-            if (e.code != "Backspace") {
+            if (that.controlKeys.filter(ck => e.code == ck).length == 0) {
                 var t = input.value + e.key;
                 var parseResult = that.rp.getParseResult(t);
 

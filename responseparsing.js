@@ -293,6 +293,17 @@ class ResponseParser {
     }
 }
 
+function getNewInputValueOnKeyDown(input, e){
+   var length = input.value.length;
+
+     if (input.selectionStart == length && input.selectionEnd == length){
+            return input.value + e.key;
+     }
+     else{
+             return input.value.slice(0, input.selectionStart) + e.key + input.value.slice(input.selectionEnd, length);
+     }
+}
+
 class Validator {
     constructor() {
         this.inputs = [];
@@ -309,7 +320,7 @@ class Validator {
 
         input.onkeydown = function (e) {
             if (that.controlKeys.filter(ck => e.code == ck).length == 0) {
-                var t = input.value + e.key;
+                var t = getNewInputValueOnKeyDown(input, e);
                 var parseResult = that.rp.getParseResult(t);
 
                 console.log(t);

@@ -119,9 +119,7 @@ class ResponseParser {
                     "start": decimalNumber.start,
                     "end": decimalNumber.end,
                     "length": decimalNumber.length,
-                    "numberOfLeadingZeros": decimalNumber.numberOfLeadingZeros,
-                    "minimumNumberOfSignificantFigures": decimalNumber.minimumNumberOfSignificantFigures,
-                    "maximumNumberOfSignificantFigures": decimalNumber.maximumNumberOfSignificantFigures,
+                    "decimalNumber": decimalNumber,
                     "sign": "positive",
                     "signIsExplicit": false
                 };
@@ -137,9 +135,7 @@ class ResponseParser {
                     "start": sign.start,
                     "end": decimalNumber.end,
                     "length": sign.length + decimalNumber.length,
-                    "numberOfLeadingZeros": decimalNumber.numberOfLeadingZeros,
-                    "minimumNumberOfSignificantFigures": decimalNumber.minimumNumberOfSignificantFigures,
-                    "maximumNumberOfSignificantFigures": decimalNumber.maximumNumberOfSignificantFigures,
+                    "decimalNumber": decimalNumber,
                     "sign": s,
                     "signIsExplicit": true
                 };
@@ -171,12 +167,11 @@ class ResponseParser {
                 return {
                     "type": "signedInteger",
                     "text": integer.text,
+                    "simplestForm": integer.simplestForm,
                     "start": integer.start,
                     "end": integer.end,
                     "length": integer.length,
-                    "numberOfLeadingZeros": integer.numberOfLeadingZeros,
-                    "minimumNumberOfSignificantFigures": integer.minimumNumberOfSignificantFigures,
-                    "maximumNumberOfSignificantFigures": integer.maximumNumberOfSignificantFigures,
+                    "integer": integer,
                     "sign": "positive",
                     "signIsExplicit": false
                 };
@@ -189,12 +184,11 @@ class ResponseParser {
                 return {
                     "type": "signedInteger",
                     "text": sign.text + integer.text,
+                    "simplestForm": sign.text + integer.simplestForm,
                     "start": sign.start,
                     "end": integer.end,
                     "length": sign.length + integer.length,
-                    "numberOfLeadingZeros": integer.numberOfLeadingZeros,
-                    "minimumNumberOfSignificantFigures": integer.minimumNumberOfSignificantFigures,
-                    "maximumNumberOfSignificantFigures": integer.maximumNumberOfSignificantFigures,
+                    "integer": integer,
                     "sign": s,
                     "signIsExplicit": true
                 };
@@ -300,6 +294,10 @@ class ResponseParser {
         var t = "";
         var start = marker.position;
 
+        var n = 0; // The number of leading zeros.
+        var m = 0; // The number of significant figures.
+        var p = 0; // A counter for any zeros that may or may not be significant digits.
+
         // Loop over the characters in the string after the current position.
         while (marker.position < inputText.length) {
             // Get the character at the current position.
@@ -309,6 +307,24 @@ class ResponseParser {
                 // This is an unsigned integer, so it can only consist of the digits 0-9 and nothing else.
                 t += c;
                 marker.position += 1;
+
+                if (c == "0" && m == 0) {
+                    // If the character is zero, and no significant digits have been seen so far, then it must be a leading zero.
+                    n++;
+                }
+                else if (c != "0") {
+                    // If the character is not zero, then it must be a significant digit.
+                    // Add any zeros that appeared before the current character (as those must now also be significant digits).
+                    m += p;
+                    // Reset the counter.
+                    p = 0;
+                    // Add one to the s.f. counter for the current digit.
+                    m++;
+                }
+                else if (c == "0" && m > 0) {
+                    // Any zero that is seen after the first significant digit may also be a significant digit, so add to this counter.
+                    p++;
+                }
             }
             else {
                 // If it isn't any of 0-9, then it isn't an integer, so don't look any further.
@@ -317,34 +333,8 @@ class ResponseParser {
         }
 
         var end = marker.position;
-        var n = 0; // The number of leading zeros.
-        var m = 0; // The number of significant figures.
-        var p = 0; // A counter for any zeros that may or may not be significant digits.
 
-        // Loop over the digits to find the number of leading zeros and the number of significant figures.
-        for (var i = 0; i < t.length; i++) {
-            // Get the character at the current position.
-            var c = t.charAt(i);
-
-            if (c == "0" && m == 0) {
-                // If the character is zero, and no significant digits have been seen so far, then it must be a leading zero.
-                n++;
-            }
-            else if (c != "0") {
-                // If the character is not zero, then it must be a significant digit.
-                // Add any zeros that appeared before the current character (as those must now also be significant digits).
-                m += p;
-                // Reset the counter.
-                p = 0;
-                // Add one to the s.f. counter for the current digit.
-                m++;
-
-            }
-            else if (c == "0" && m > 0) {
-                // Any zero that is seen after the first significant digit may also be a significant digit, so add to this counter.
-                p++;
-            }
-        }
+        var withoutLeadingZeros = t.slice(n);
 
         if (t == "") {
             // If no integer was seen, return nothing.
@@ -355,6 +345,7 @@ class ResponseParser {
             return {
                 "type": "integer",
                 "text": t,
+                "simplestForm": withoutLeadingZeros,
                 "start": start,
                 "end": end,
                 "length": t.length,

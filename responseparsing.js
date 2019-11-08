@@ -90,22 +90,22 @@ class ResponseParser {
         var t = "";
         var start = marker.position;
 
-            var integralPart ="";
-              var decimalPart = "";
-            
-            var ts= "";
+        var integralPart = "";
+        var decimalPart = "";
+
+        var ts = "";
         var sign = "positive";
         var signIsExplicit = false;
 
         var d = inputText.charAt(marker.position);
 
         if (d == "+") {
-           ts= "+";
+            ts = "+";
             signIsExplicit = true;
             marker.position++;
         }
         else if (d == "-") {
-           ts= "-";
+            ts = "-";
             sign = "negative";
             signIsExplicit = true;
             marker.position++;
@@ -127,9 +127,9 @@ class ResponseParser {
                 marker.position++;
 
                 if (q == 0) {
-                                  integralPart += c;
-                } else{
-                      decimalPart += c;
+                    integralPart += c;
+                } else {
+                    decimalPart += c;
                     ndp++;
                 }
 
@@ -171,23 +171,23 @@ class ResponseParser {
 
         var end = marker.position;
 
-                                 var subtype = (q == 0)? "integer": "decimalNumber";
-                                 
-                                    var t1 = (integralPart.length == "")?"0": integralPart.slice(nlz);
-                                      var t2 = (decimalPart == ".")? "": decimalPart;
-                                    var simplestForm = ts + t1 + t2;
-                                 
-                                 if (t == "") {
+        var subtype = (q == 0) ? "integer" : "decimalNumber";
+
+        var t1 = (integralPart.length == "") ? "0" : integralPart.slice(nlz);
+        var t2 = (decimalPart == ".") ? "" : decimalPart;
+        var simplestForm = ts + t1 + t2;
+
+        if (ts + t == "") {
             return null;
         }
         else {
             return {
-                "type":  "number",
+                "type": "number",
                 "subtype": subtype,
                 "text": ts + t,
-                     "integralPart": integralPart,
-                     "decimalPart": decimalPart,
-                "simplestForm":   simplestForm,
+                "integralPart": integralPart,
+                "decimalPart": decimalPart,
+                "simplestForm": simplestForm,
                 "start": start,
                 "end": end,
                 "length": end - start,
@@ -309,7 +309,7 @@ class Validator {
                     return;
                 }
 
-                if (inputType == "integer" && (parseResult.type != "number" && parseResult.subtype == "integer")) {
+                if (inputType == "integer" && (parseResult.type != "number" || parseResult.subtype != "integer")) {
                     e.preventDefault();
                 }
 
@@ -317,7 +317,7 @@ class Validator {
                     e.preventDefault();
                 }
 
-                if (inputType == "fraction" && parseResult.type != "fraction") {
+                if (inputType == "fraction" && ( parseResult.type != "fraction" &&  parseResult.type != "number")) {
                     e.preventDefault();
                 }
             }

@@ -12,17 +12,25 @@ class Marker {
     }
 }
 
+// Handles the process of scanning through a string to see what types of mathematical expression are in it.
+// At the moment, this could just be done using regular expressions.
+// However, regular expressions couldn't be used for more complicated mathematical expressions, which is why this design pattern is used.
+// This design pattern can also return lots of other interesting information about what the user types, such as number of significant figures.
 class ResponseParser {
 
+    // The top-level parse function (for now). When given a string, it will try to see if the string is an integer, a decimal, or just a sign.
     getParseResult(inputText) {
+        // Normally done with one marker, but use three for now.
         var m1 = new Marker();
         var m2 = new Marker();
         var m3 = new Marker();
 
+        // Check to see if there is an integer, a decimal, or just a sign.
         var signedInteger = this.parseSignedInteger(inputText, m1);
         var signedDecimalNumber = this.parseSignedDecimalNumber(inputText, m2);
         var sign = this.parseSign(inputText, m3);
 
+        // If there is any of those things, return it (as long as there isn't anything else in the string).
         if (signedInteger !== null && m1.position == inputText.length) {
             return signedInteger;
         }
@@ -32,13 +40,18 @@ class ResponseParser {
         else if (sign !== null && m3.position == inputText.length) {
             return sign;
         }
-        else {
-            return null;
-        }
+
+        // If nothing is found, return nothing.
+        return null;
     }
 
+    // Determine if there is a signed decimal number at the current position.
     parseSignedDecimalNumber(inputText, marker) {
+        // First determine if there is a sign.
+        // Positive decimals often have implicit signs, in which case this will return null.
         var sign = this.parseSign(inputText, marker);
+
+        // Then determine if there is a decimal.
         var decimalNumber = this.parseDecimalNumber(inputText, marker);
 
         if (decimalNumber === null) {
@@ -50,6 +63,8 @@ class ResponseParser {
         }
         else {
             if (sign === null) {
+                // If there is a decimal but no sign, then the sign was implicit, and the decimal is positive.
+
                 return {
                     "type": "signedDecimalNumber",
                     "text": decimalNumber.text,
@@ -64,8 +79,10 @@ class ResponseParser {
                 };
             }
             else {
+                // Otherwise use the sign determine whether the decimal is positive or negative.
                 var s = (sign.name == "plus") ? "positive" : "negative";
 
+                // Combine the details of the sign and the decimal.
                 return {
                     "type": "signedDecimalNumber",
                     "text": sign.text + decimalNumber.text,
@@ -82,11 +99,18 @@ class ResponseParser {
         }
     }
 
+    // Determine if there is a signed integer at the current position.
     parseSignedInteger(inputText, marker) {
+        // First determine if there is a sign.
+        // Positive integers often have implicit signs, in which case this will return null.
         var sign = this.parseSign(inputText, marker);
+
+        // Then determine if there is an integer.
         var integer = this.parseInteger(inputText, marker);
 
         if (integer === null) {
+            // If there's no integer, return null.
+
             if (sign !== null) {
                 marker.position -= sign.length;
             }
@@ -95,6 +119,7 @@ class ResponseParser {
         }
         else {
             if (sign === null) {
+                // If there is an integer but no sign, then the sign was implicit, and the integer is positive.
                 return {
                     "type": "signedInteger",
                     "text": integer.text,
@@ -109,8 +134,10 @@ class ResponseParser {
                 };
             }
             else {
+                // Otherwise use the sign determine whether the integer is positive or negative.
                 var s = (sign.name == "plus") ? "positive" : "negative";
 
+                // Combine the details of the sign and the integer.
                 return {
                     "type": "signedInteger",
                     "text": sign.text + integer.text,
@@ -127,10 +154,13 @@ class ResponseParser {
         }
     }
 
+    // Determine if there is a positive / negative sign at the current position.
     parseSign(inputText, marker) {
+        // Get the character at the current position.
         var c = inputText.charAt(marker.position);
 
         if (c == "+") {
+            // If the sign is a plus, return details about this.
             marker.position += 1;
 
             return {
@@ -143,6 +173,7 @@ class ResponseParser {
             }
         }
         else if (c == "-") {
+            // If the sign is a minus, return details about this.
             marker.position += 1;
 
             return {
@@ -155,8 +186,9 @@ class ResponseParser {
             }
         }
 
+        // Otherwise return nothing.
         return null;
-   }
+    }
 
     // Determine if there is a decimal number at the current position.
     parseDecimalNumber(inputText, marker) {
@@ -231,7 +263,7 @@ class ResponseParser {
                 marker.position += 1;
             }
             else {
-                // If it isn't any of those characters, then it isn't an integer, so don't look any further.
+                // If it isn't any of 0-9, then it isn't an integer, so don't look any further.
                 break;
             }
         }
@@ -392,7 +424,7 @@ class Validator {
                     return;
                 }
 
-                  // If the user is supposed to type an integer, but they haven't typed either an integer or just a sign, then prevent them from entering this character.
+                // If the user is supposed to type an integer, but they haven't typed either an integer or just a sign, then prevent them from entering this character.
                 if (inputType == "integer" && (parseResult.type != "signedInteger" && parseResult.type != "sign")) {
                     e.preventDefault();
                 }

@@ -80,16 +80,20 @@ class ResponseParser {
         var t4 = (whiteSpace2 === null) ? "" : whiteSpace2.text;
         var t5 = (denominator === null) ? "" : denominator.text;
 
+        var t6 = numerator.simplestForm;
+        var t7 = "/";
+        var t8 = (denominator === null) ? "" : denominator.simplestForm;
+
         return {
             "type": "fraction",
             "text": t1 + t2 + t3 + t4 + t5,
+            "simplestForm": t6 + t7 + t8,
             "start": start,
             "end": end,
             "length": end - start,
             "isComplete": isComplete,
             "numerator": numerator,
-            "denominator": denominator,
-            "simplestForm": t1 + t3 + t5
+            "denominator": denominator
         }
     }
 

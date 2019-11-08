@@ -154,10 +154,9 @@ class ResponseParser {
                 "length": 1,
             }
         }
-        else {
-            return null;
-        }
-    }
+
+        return null;
+   }
 
     // Determine if there is a decimal number at the current position.
     parseDecimalNumber(inputText, marker) {
@@ -327,52 +326,84 @@ class ResponseParser {
     }
 }
 
-function getNewInputValueOnKeyDown(input, e) {
-    var length = input.value.length;
-
-    if (input.selectionStart == length && input.selectionEnd == length) {
-        return input.value + e.key;
-    }
-    else {
-        return input.value.slice(0, input.selectionStart) + e.key + input.value.slice(input.selectionEnd, length);
-    }
-}
-
+// Handles the actual on-page events and the validation messages.
 class Validator {
     constructor() {
         this.inputs = [];
 
+        // Create an instance of ResponseParser.
         this.rp = new ResponseParser();
 
-        this.controlKeys = ["ShiftLeft", "ShiftRight", "Backspace", "Enter", "Tab", "CapsLock", "MetaLeft", "MetaRight", "AltLeft", "AltRight", "ControlLeft", "ControlRight", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"]
+        // None of these keys can add a character into a single-line text input, so we don't need to check any of them on the keydown event.
+        this.controlKeys = [
+            "ShiftLeft",
+            "ShiftRight",
+            "Backspace",
+            "Enter",
+            "Tab",
+            "CapsLock",
+            "MetaLeft",
+            "MetaRight",
+            "AltLeft",
+            "AltRight",
+            "ControlLeft",
+            "ControlRight",
+            "ArrowLeft",
+            "ArrowRight",
+            "ArrowUp",
+            "ArrowDown",
+            "Escape"];
     }
 
+    // Gets what the new value of a text input would be if a keydown event were allowed to proceed.
+    getNewInputValueOnKeyDown(input, e) {
+        var length = input.value.length;
+
+        if (input.selectionStart == length && input.selectionEnd == length) {
+            return input.value + e.key;
+        }
+        else {
+            return input.value.slice(0, input.selectionStart) + e.key + input.value.slice(input.selectionEnd, length);
+        }
+    }
+
+    // Inputs that are to be checked by the validator can be added using this function.
     addInput(input, inputType, validationMessageElement, submitButton) {
         this.inputs.push([input, inputType, validationMessageElement, submitButton]);
 
         var that = this;
 
+        // A check is performed whenever the user tries to type another character into the input.
         input.onkeydown = function (e) {
+            // If the key that's pressed is one of the control keys, ignore the event.
             if (that.controlKeys.filter(ck => e.code == ck).length == 0) {
-                var t = getNewInputValueOnKeyDown(input, e);
+                // Get what the new value of the input will be.
+                var t = that.getNewInputValueOnKeyDown(input, e);
+                // Parse the value to see what it is.
                 var parseResult = that.rp.getParseResult(t);
 
                 console.log(t);
                 console.log(parseResult);
+
+                validationMessageElement.innerText = "";
 
                 if (parseResult === null) {
                     e.preventDefault();
                     return;
                 }
 
+                  // If the user is supposed to type an integer, but they haven't typed either an integer or just a sign, then prevent them from entering this character.
                 if (inputType == "integer" && (parseResult.type != "signedInteger" && parseResult.type != "sign")) {
                     e.preventDefault();
                 }
             }
         }
 
+        // A second check has to be performed on submit.
         submitButton.onmousedown = function (e) {
+            // Get the value of the input.
             var t = input.value;
+            // Parse the value to see what it is.
             var parseResult = that.rp.getParseResult(t);
 
             console.log(t);
@@ -384,10 +415,12 @@ class Validator {
                 return;
             }
 
+            // If the answer is supposed to be an integer, but it's not, then give a validation message.
             if (inputType == "integer" && parseResult.type != "signedInteger") {
                 validationMessageElement.innerText = "Your answer must be a whole number.";
             }
 
+            // If the answer is supposed to be a decimal, but it's not, then give a validation message.
             if (inputType == "decimalNumber" && (parseResult.type != "signedInteger" && parseResult.type != "signedDecimalNumber")) {
                 validationMessageElement.innerText = "Your answer must be a decimal number or a whole number.";
             }

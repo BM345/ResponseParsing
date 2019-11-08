@@ -18,32 +18,20 @@ class Marker {
 // This design pattern can also return lots of other interesting information about what the user types, such as number of significant figures.
 class ResponseParser {
 
-    // The top-level parse function (for now). When given a string, it will try to see if the string is an integer, a decimal, or just a sign.
+    // The top-level parse function (for now).
     getParseResult(inputText) {
-        // Normally done with one marker, but use three for now.
         var m1 = new Marker();
         var m2 = new Marker();
-        var m3 = new Marker();
-        var m4 = new Marker();
 
-        // Check to see if there is an integer, a decimal, or just a sign.
-        var signedInteger = this.parseSignedInteger(inputText, m1);
-        var signedDecimalNumber = this.parseSignedDecimalNumber(inputText, m2);
-        var sign = this.parseSign(inputText, m3);
-        var fraction = this.parseFraction(inputText, m4);
+        var fraction = this.parseFraction(inputText, m1);
+        var number = this.parseNumber(inputText, m2);
 
         // If there is any of those things, return it (as long as there isn't anything else in the string).
-        if (fraction !== null && m4.position == inputText.length) {
+        if (fraction !== null && m1.position == inputText.length) {
             return fraction;
         }
-        else if (signedInteger !== null && m1.position == inputText.length) {
-            return signedInteger;
-        }
-        else if (signedDecimalNumber !== null && m2.position == inputText.length) {
-            return signedDecimalNumber;
-        }
-        else if (sign !== null && m3.position == inputText.length) {
-            return sign;
+        else if (number !== null && m2.position == inputText.length) {
+            return number;
         }
 
         // If nothing is found, return nothing.
@@ -52,7 +40,8 @@ class ResponseParser {
 
     parseFraction(inputText, marker) {
         var start = marker.position;
-        var numerator = this.parseSignedDecimalNumber(inputText, marker);
+
+        var numerator = this.parseNumber(inputText, marker);
 
         if (numerator === null) {
             return null;
@@ -69,7 +58,7 @@ class ResponseParser {
         marker.position += 1;
 
         var whiteSpace2 = this.parseWhiteSpace(inputText, marker);
-        var denominator = this.parseSignedDecimalNumber(inputText, marker);
+        var denominator = this.parseNumber(inputText, marker);
         var end = marker.position;
 
         var isComplete = (denominator === null) ? false : true;
@@ -97,265 +86,118 @@ class ResponseParser {
         }
     }
 
-    // Determine if there is a signed decimal number at the current position.
-    parseSignedDecimalNumber(inputText, marker) {
-        // First determine if there is a sign.
-        // Positive decimals often have implicit signs, in which case this will return null.
-        var sign = this.parseSign(inputText, marker);
-
-        // Then determine if there is a decimal.
-        var decimalNumber = this.parseDecimalNumber(inputText, marker);
-
-        if (decimalNumber === null) {
-            if (sign !== null) {
-                marker.position -= sign.length;
-            }
-
-            return null;
-        }
-        else {
-            if (sign === null) {
-                // If there is a decimal but no sign, then the sign was implicit, and the decimal is positive.
-
-                return {
-                    "type": "signedDecimalNumber",
-                    "text": decimalNumber.text,
-                    "start": decimalNumber.start,
-                    "end": decimalNumber.end,
-                    "length": decimalNumber.length,
-                    "decimalNumber": decimalNumber,
-                    "sign": "positive",
-                    "signIsExplicit": false
-                };
-            }
-            else {
-                // Otherwise use the sign determine whether the decimal is positive or negative.
-                var s = (sign.name == "plus") ? "positive" : "negative";
-
-                // Combine the details of the sign and the decimal.
-                return {
-                    "type": "signedDecimalNumber",
-                    "text": sign.text + decimalNumber.text,
-                    "start": sign.start,
-                    "end": decimalNumber.end,
-                    "length": sign.length + decimalNumber.length,
-                    "decimalNumber": decimalNumber,
-                    "sign": s,
-                    "signIsExplicit": true
-                };
-            }
-        }
-    }
-
-    // Determine if there is a signed integer at the current position.
-    parseSignedInteger(inputText, marker) {
-        // First determine if there is a sign.
-        // Positive integers often have implicit signs, in which case this will return null.
-        var sign = this.parseSign(inputText, marker);
-
-        // Then determine if there is an integer.
-        var integer = this.parseInteger(inputText, marker);
-
-        if (integer === null) {
-            // If there's no integer, return null.
-
-            if (sign !== null) {
-                marker.position -= sign.length;
-            }
-
-            return null;
-        }
-        else {
-            if (sign === null) {
-                // If there is an integer but no sign, then the sign was implicit, and the integer is positive.
-                return {
-                    "type": "signedInteger",
-                    "text": integer.text,
-                    "simplestForm": integer.simplestForm,
-                    "start": integer.start,
-                    "end": integer.end,
-                    "length": integer.length,
-                    "integer": integer,
-                    "sign": "positive",
-                    "signIsExplicit": false
-                };
-            }
-            else {
-                // Otherwise use the sign determine whether the integer is positive or negative.
-                var s = (sign.name == "plus") ? "positive" : "negative";
-
-                // Combine the details of the sign and the integer.
-                return {
-                    "type": "signedInteger",
-                    "text": sign.text + integer.text,
-                    "simplestForm": sign.text + integer.simplestForm,
-                    "start": sign.start,
-                    "end": integer.end,
-                    "length": sign.length + integer.length,
-                    "integer": integer,
-                    "sign": s,
-                    "signIsExplicit": true
-                };
-            }
-        }
-    }
-
-    // Determine if there is a positive / negative sign at the current position.
-    parseSign(inputText, marker) {
-        // Get the character at the current position.
-        var c = inputText.charAt(marker.position);
-
-        if (c == "+") {
-            // If the sign is a plus, return details about this.
-            marker.position += 1;
-
-            return {
-                "type": "sign",
-                "name": "plus",
-                "text": c,
-                "start": marker.position - 1,
-                "end": marker.position,
-                "length": 1,
-            }
-        }
-        else if (c == "-") {
-            // If the sign is a minus, return details about this.
-            marker.position += 1;
-
-            return {
-                "type": "sign",
-                "name": "minus",
-                "text": c,
-                "start": marker.position - 1,
-                "end": marker.position,
-                "length": 1,
-            }
-        }
-
-        // Otherwise return nothing.
-        return null;
-    }
-
-    // Determine if there is a decimal number at the current position.
-    parseDecimalNumber(inputText, marker) {
+    parseNumber(inputText, marker) {
         var t = "";
         var start = marker.position;
 
-        var ndp = 0; // The number of decimal points. Only one is allowed.
+            var integralPart ="";
+              var decimalPart = "";
+            
+            var ts= "";
+        var sign = "positive";
+        var signIsExplicit = false;
 
-        // Loop over the characters in the string after the current position.
+        var d = inputText.charAt(marker.position);
+
+        if (d == "+") {
+           ts= "+";
+            signIsExplicit = true;
+            marker.position++;
+        }
+        else if (d == "-") {
+           ts= "-";
+            sign = "negative";
+            signIsExplicit = true;
+            marker.position++;
+        }
+
+        var nlz = 0; // The number of leading zeros.
+        var ntz = 0; // The number of trailing zeros.
+        var nsf = 0; // The number of significant figures.
+        var ndp = 0; // The number of decimal places.
+
+        var p = 0; // A counter for any zeros that may or may not be significant digits.
+        var q = 0; // A counter for the number of decimal points seen so far.
+
         while (marker.position < inputText.length) {
-            // Get the character at the current position.
             var c = inputText.charAt(marker.position);
 
             if (isAnyOf("0123456789", c)) {
-                // If the current character is any of the digits 0-9, add it to the temporary string.
                 t += c;
-                marker.position += 1;
-            }
-            else if (c == ".") {
-                if (ndp == 0) {
-                    // If the current character is a decimal point, and no decimal points have been seen so far, add it to the temporary string.
-                    t += c;
-                    marker.position += 1;
-                    // Increase the decimal point counter by 1.
+                marker.position++;
+
+                if (q == 0) {
+                                  integralPart += c;
+                } else{
+                      decimalPart += c;
                     ndp++;
                 }
+
+                if (c == "0" && nsf == 0 && q == 0) {
+                    nlz++;
+                }
+                else if (c != "0") {
+                    nsf += p;
+                    p = 0;
+                    nsf++;
+                }
+                else if (c == "0" && nsf > 0) {
+                    p++;
+                }
+            }
+            else if (c == ".") {
+                if (q == 0) {
+                    t += c;
+                    marker.position++;
+
+                    decimalPart += c;
+
+                    q++;
+                }
                 else {
-                    // If the current character is a decimal point, but one decimal point has already been seen, then break out of the loop.
                     break;
                 }
             }
             else {
-                // If the current character is not 0-9 or a decimal point, break out of the loop.
                 break;
             }
         }
 
-        var end = marker.position;
-
-        if (t == "") {
-            // If no decimal was seen, return nothing.
-            return null;
-        }
-        else {
-            // If a decimal was seen, return details about it.
-            return {
-                "type": "decimalNumber",
-                "text": t,
-                "start": start,
-                "end": end,
-                "length": t.length,
-                "numberOfLeadingZeros": null,
-                "minimumNumberOfSignificantFigures": null,
-                "maximumNumberOfSignificantFigures": null
-            };
-        }
-    }
-
-    // Determine if there is an integer at the current position.
-    parseInteger(inputText, marker) {
-        var t = "";
-        var start = marker.position;
-
-        var n = 0; // The number of leading zeros.
-        var m = 0; // The number of significant figures.
-        var p = 0; // A counter for any zeros that may or may not be significant digits.
-
-        // Loop over the characters in the string after the current position.
-        while (marker.position < inputText.length) {
-            // Get the character at the current position.
-            var c = inputText.charAt(marker.position);
-
-            if (isAnyOf("0123456789", c)) {
-                // This is an unsigned integer, so it can only consist of the digits 0-9 and nothing else.
-                t += c;
-                marker.position += 1;
-
-                if (c == "0" && m == 0) {
-                    // If the character is zero, and no significant digits have been seen so far, then it must be a leading zero.
-                    n++;
-                }
-                else if (c != "0") {
-                    // If the character is not zero, then it must be a significant digit.
-                    // Add any zeros that appeared before the current character (as those must now also be significant digits).
-                    m += p;
-                    // Reset the counter.
-                    p = 0;
-                    // Add one to the s.f. counter for the current digit.
-                    m++;
-                }
-                else if (c == "0" && m > 0) {
-                    // Any zero that is seen after the first significant digit may also be a significant digit, so add to this counter.
-                    p++;
-                }
-            }
-            else {
-                // If it isn't any of 0-9, then it isn't an integer, so don't look any further.
-                break;
-            }
+        if (q > 0) {
+            nsf += p;
+            ntz = p;
+            p = 0;
         }
 
         var end = marker.position;
 
-        var withoutLeadingZeros = t.slice(n);
-
-        if (t == "") {
-            // If no integer was seen, return nothing.
+                                 var subtype = (q == 0)? "integer": "decimalNumber";
+                                 
+                                    var t1 = (integralPart.length == "")?"0": integralPart.slice(nlz);
+                                      var t2 = (decimalPart == ".")? "": decimalPart;
+                                    var simplestForm = ts + t1 + t2;
+                                 
+                                 if (t == "") {
             return null;
         }
         else {
-            // If an integer was seen, return details about it.
             return {
-                "type": "integer",
-                "text": t,
-                "simplestForm": withoutLeadingZeros,
+                "type":  "number",
+                "subtype": subtype,
+                "text": ts + t,
+                     "integralPart": integralPart,
+                     "decimalPart": decimalPart,
+                "simplestForm":   simplestForm,
                 "start": start,
                 "end": end,
-                "length": t.length,
-                "numberOfLeadingZeros": n,
-                "minimumNumberOfSignificantFigures": m,
-                "maximumNumberOfSignificantFigures": m + p
+                "length": end - start,
+                "sign": sign,
+                "signIsExplicit": signIsExplicit,
+                "numberOfLeadingZeros": nlz,
+                "numberOfTrailingZeros": ntz,
+                "minimumNumberOfSignificantFigures": nsf,
+                "maximumNumberOfSignificantFigures": nsf,
+                "numberOfDecimalPlaces": ndp
             };
         }
     }
@@ -467,8 +309,15 @@ class Validator {
                     return;
                 }
 
-                // If the user is supposed to type an integer, but they haven't typed either an integer or just a sign, then prevent them from entering this character.
-                if (inputType == "integer" && (parseResult.type != "signedInteger" && parseResult.type != "sign")) {
+                if (inputType == "integer" && (parseResult.type != "number" && parseResult.subtype == "integer")) {
+                    e.preventDefault();
+                }
+
+                if (inputType == "decimalNumber" && parseResult.type != "number") {
+                    e.preventDefault();
+                }
+
+                if (inputType == "fraction" && parseResult.type != "fraction") {
                     e.preventDefault();
                 }
             }
@@ -491,12 +340,12 @@ class Validator {
             }
 
             // If the answer is supposed to be an integer, but it's not, then give a validation message.
-            if (inputType == "integer" && parseResult.type != "signedInteger") {
+            if (inputType == "integer" && (parseResult.type != "number" && parseResult.subtype == "integer")) {
                 validationMessageElement.innerText = "Your answer must be a whole number.";
             }
 
             // If the answer is supposed to be a decimal, but it's not, then give a validation message.
-            if (inputType == "decimalNumber" && (parseResult.type != "signedInteger" && parseResult.type != "signedDecimalNumber")) {
+            if (inputType == "decimalNumber" && parseResult.type != "number") {
                 validationMessageElement.innerText = "Your answer must be a decimal number or a whole number.";
             }
         }

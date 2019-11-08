@@ -6,7 +6,7 @@ function assertEqual(expected, actual) {
     }
 }
 
-if (true) {
+if (false) {
 
     var rp = new ResponseParser();
 

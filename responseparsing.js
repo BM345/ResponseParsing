@@ -24,14 +24,19 @@ class ResponseParser {
         var m1 = new Marker();
         var m2 = new Marker();
         var m3 = new Marker();
+        var m4 = new Marker();
 
         // Check to see if there is an integer, a decimal, or just a sign.
         var signedInteger = this.parseSignedInteger(inputText, m1);
         var signedDecimalNumber = this.parseSignedDecimalNumber(inputText, m2);
         var sign = this.parseSign(inputText, m3);
+        var fraction = this.parseFraction(inputText, m4);
 
         // If there is any of those things, return it (as long as there isn't anything else in the string).
-        if (signedInteger !== null && m1.position == inputText.length) {
+        if (fraction !== null && m4.position == inputText.length) {
+            return fraction;
+        }
+        else if (signedInteger !== null && m1.position == inputText.length) {
             return signedInteger;
         }
         else if (signedDecimalNumber !== null && m2.position == inputText.length) {
@@ -43,6 +48,49 @@ class ResponseParser {
 
         // If nothing is found, return nothing.
         return null;
+    }
+
+    parseFraction(inputText, marker) {
+        var start = marker.position;
+        var numerator = this.parseSignedDecimalNumber(inputText, marker);
+
+        if (numerator === null) {
+            return null;
+        }
+
+        var whiteSpace1 = this.parseWhiteSpace(inputText, marker);
+
+        var c = inputText.charAt(marker.position);
+
+        if (c !== "/") {
+            return null;
+        }
+
+        marker.position += 1;
+
+        var whiteSpace2 = this.parseWhiteSpace(inputText, marker);
+        var denominator = this.parseSignedDecimalNumber(inputText, marker);
+        var end = marker.position;
+
+        var isComplete = (denominator === null) ? false : true;
+
+        var t1 = numerator.text;
+        var t2 = (whiteSpace1 === null) ? "" : whiteSpace1.text;
+        var t3 = "/";
+        var t4 = (whiteSpace2 === null) ? "" : whiteSpace2.text;
+        var t5 = (denominator === null) ? "" : denominator.text;
+
+        return {
+            "type": "fraction",
+            "text": t1 + t2 + t3 + t4 + t5,
+            "start": start,
+            "end": end,
+            "length": end - start,
+            "isComplete": isComplete,
+            "numerator": numerator,
+            "denominator": denominator,
+            "simplestForm": t1 + t3 + t5
+        }
     }
 
     // Determine if there is a signed decimal number at the current position.
@@ -471,6 +519,11 @@ window.addEventListener("load", function () {
     var o2 = document.getElementById("validationMessage2");
     var sb2 = document.getElementById("submitButton2");
 
+    var i3 = document.getElementById("input3");
+    var o3 = document.getElementById("validationMessage3");
+    var sb3 = document.getElementById("submitButton3");
+
     validator.addInput(i1, "integer", o1, sb1);
     validator.addInput(i2, "decimalNumber", o2, sb2);
+    validator.addInput(i3, "fraction", o3, sb3);
 });

@@ -1,9 +1,11 @@
 
+// A useful function to have in any parser - checks if any of the characters in a string are the given character.
 function isAnyOf(characters, character) {
     return (characters.split("").filter(c => c == character).length > 0);
 }
 
-
+// A marker object for keeping track of the position in a string that the parser is looking at.
+// Can also be extended to track line numbers and line positions.
 class Marker {
     constructor() {
         this.position = 0;
@@ -157,30 +159,38 @@ class ResponseParser {
         }
     }
 
+    // Determine if there is a decimal number at the current position.
     parseDecimalNumber(inputText, marker) {
         var t = "";
         var start = marker.position;
 
-        var ndp = 0;
+        var ndp = 0; // The number of decimal points. Only one is allowed.
 
+        // Loop over the characters in the string after the current position.
         while (marker.position < inputText.length) {
+            // Get the character at the current position.
             var c = inputText.substr(marker.position, 1);
 
             if (isAnyOf("0123456789", c)) {
+                // If the current character is any of the digits 0-9, add it to the temporary string.
                 t += c;
                 marker.position += 1;
             }
             else if (c == ".") {
                 if (ndp == 0) {
+                    // If the current character is a decimal point, and no decimal points have been seen so far, add it to the temporary string.
                     t += c;
                     marker.position += 1;
+                    // Increase the decimal point counter by 1.
                     ndp++;
                 }
                 else {
+                    // If the current character is a decimal point, but one decimal point has already been seen, then break out of the loop.
                     break;
                 }
             }
             else {
+                // If the current character is not 0-9 or a decimal point, break out of the loop.
                 break;
             }
         }
@@ -188,9 +198,11 @@ class ResponseParser {
         var end = marker.position;
 
         if (t == "") {
+            // If no decimal was seen, return nothing.
             return null;
         }
         else {
+            // If a decimal was seen, return details about it.
             return {
                 "type": "decimalNumber",
                 "text": t,
@@ -204,48 +216,63 @@ class ResponseParser {
         }
     }
 
+    // Determine if there is an integer at the current position.
     parseInteger(inputText, marker) {
         var t = "";
         var start = marker.position;
 
+        // Loop over the characters in the string after the current position.
         while (marker.position < inputText.length) {
+            // Get the character at the current position.
             var c = inputText.substr(marker.position, 1);
 
             if (isAnyOf("0123456789", c)) {
+                // This is an unsigned integer, so it can only consist of the digits 0-9 and nothing else.
                 t += c;
                 marker.position += 1;
             }
             else {
+                // If it isn't any of those characters, then it isn't an integer, so don't look any further.
                 break;
             }
         }
 
         var end = marker.position;
-        var n = 0;
-        var m = 0;
-        var p = 0;
+        var n = 0; // The number of leading zeros.
+        var m = 0; // The number of significant figures.
+        var p = 0; // A counter for any zeros that may or may not be significant digits.
 
+        // Loop over the digits to find the number of leading zeros and the number of significant figures.
         for (var i = 0; i < t.length; i++) {
+            // Get the character at the current position.
             var c = t.substr(i, 1);
 
             if (c == "0" && m == 0) {
+                // If the character is zero, and no significant digits have been seen so far, then it must be a leading zero.
                 n++;
             }
             else if (c != "0") {
+                // If the character is not zero, then it must be a significant digit.
+                // Add any zeros that appeared before the current character (as those must now also be significant digits).
                 m += p;
+                // Reset the counter.
                 p = 0;
+                // Add one to the s.f. counter for the current digit.
                 m++;
 
             }
             else if (c == "0" && m > 0) {
+                // Any zero that is seen after the first significant digit may also be a significant digit, so add to this counter.
                 p++;
             }
         }
 
         if (t == "") {
+            // If no integer was seen, return nothing.
             return null;
         }
         else {
+            // If an integer was seen, return details about it.
             return {
                 "type": "integer",
                 "text": t,
@@ -259,18 +286,23 @@ class ResponseParser {
         }
     }
 
+    // Determine if there is any white space at the current position.
     parseWhiteSpace(inputText, marker) {
         var t = "";
         var start = marker.position;
 
+        // Look through the string until the end of the string.
         while (marker.position < inputText.length) {
+            // Get the character at the current position.
             var c = inputText.substr(marker.position, 1);
 
             if (isAnyOf(" \t\n", c)) {
+                // If the current character is white space, add it to the buffer variable.
                 t += c;
                 marker.position += 1;
             }
             else {
+                // If it's not white space, break.
                 break;
             }
         }
@@ -278,9 +310,11 @@ class ResponseParser {
         var end = marker.position;
 
         if (t == "") {
+            // If there was no white space, return nothing.
             return null;
         }
         else {
+            // If there was white space, return an object giving the properties of the white space.
             return {
                 "type": "whiteSpace",
                 "text": t,
@@ -293,15 +327,15 @@ class ResponseParser {
     }
 }
 
-function getNewInputValueOnKeyDown(input, e){
-   var length = input.value.length;
+function getNewInputValueOnKeyDown(input, e) {
+    var length = input.value.length;
 
-     if (input.selectionStart == length && input.selectionEnd == length){
-            return input.value + e.key;
-     }
-     else{
-             return input.value.slice(0, input.selectionStart) + e.key + input.value.slice(input.selectionEnd, length);
-     }
+    if (input.selectionStart == length && input.selectionEnd == length) {
+        return input.value + e.key;
+    }
+    else {
+        return input.value.slice(0, input.selectionStart) + e.key + input.value.slice(input.selectionEnd, length);
+    }
 }
 
 class Validator {
@@ -313,8 +347,8 @@ class Validator {
         this.controlKeys = ["ShiftLeft", "ShiftRight", "Backspace", "Enter", "Tab", "CapsLock", "MetaLeft", "MetaRight", "AltLeft", "AltRight", "ControlLeft", "ControlRight", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"]
     }
 
-    addInput(input, inputType, validationMessageElement) {
-        this.inputs.push([input, inputType, validationMessageElement]);
+    addInput(input, inputType, validationMessageElement, submitButton) {
+        this.inputs.push([input, inputType, validationMessageElement, submitButton]);
 
         var that = this;
 
@@ -336,6 +370,28 @@ class Validator {
                 }
             }
         }
+
+        submitButton.onmousedown = function (e) {
+            var t = input.value;
+            var parseResult = that.rp.getParseResult(t);
+
+            console.log(t);
+            console.log(parseResult);
+
+            validationMessageElement.innerText = "";
+
+            if (parseResult === null) {
+                return;
+            }
+
+            if (inputType == "integer" && parseResult.type != "signedInteger") {
+                validationMessageElement.innerText = "Your answer must be a whole number.";
+            }
+
+            if (inputType == "decimalNumber" && (parseResult.type != "signedInteger" && parseResult.type != "signedDecimalNumber")) {
+                validationMessageElement.innerText = "Your answer must be a decimal number or a whole number.";
+            }
+        }
     }
 }
 
@@ -344,10 +400,12 @@ var validator = new Validator();
 window.addEventListener("load", function () {
     var i1 = document.getElementById("input1");
     var o1 = document.getElementById("validationMessage1");
+    var sb1 = document.getElementById("submitButton1");
 
     var i2 = document.getElementById("input2");
-    var o2 = document.getElementById("validationMessage1");
+    var o2 = document.getElementById("validationMessage2");
+    var sb2 = document.getElementById("submitButton2");
 
-    validator.addInput(i1, "integer", o1);
-    validator.addInput(i2, "decimalNumber", o2);
+    validator.addInput(i1, "integer", o1, sb1);
+    validator.addInput(i2, "decimalNumber", o2, sb2);
 });

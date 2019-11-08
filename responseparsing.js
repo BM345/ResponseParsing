@@ -128,7 +128,7 @@ class ResponseParser {
     }
 
     parseSign(inputText, marker) {
-        var c = inputText.substr(marker.position, 1);
+        var c = inputText.charAt(marker.position);
 
         if (c == "+") {
             marker.position += 1;
@@ -169,7 +169,7 @@ class ResponseParser {
         // Loop over the characters in the string after the current position.
         while (marker.position < inputText.length) {
             // Get the character at the current position.
-            var c = inputText.substr(marker.position, 1);
+            var c = inputText.charAt(marker.position);
 
             if (isAnyOf("0123456789", c)) {
                 // If the current character is any of the digits 0-9, add it to the temporary string.
@@ -224,7 +224,7 @@ class ResponseParser {
         // Loop over the characters in the string after the current position.
         while (marker.position < inputText.length) {
             // Get the character at the current position.
-            var c = inputText.substr(marker.position, 1);
+            var c = inputText.charAt(marker.position);
 
             if (isAnyOf("0123456789", c)) {
                 // This is an unsigned integer, so it can only consist of the digits 0-9 and nothing else.
@@ -245,7 +245,7 @@ class ResponseParser {
         // Loop over the digits to find the number of leading zeros and the number of significant figures.
         for (var i = 0; i < t.length; i++) {
             // Get the character at the current position.
-            var c = t.substr(i, 1);
+            var c = t.charAt(i);
 
             if (c == "0" && m == 0) {
                 // If the character is zero, and no significant digits have been seen so far, then it must be a leading zero.
@@ -294,7 +294,7 @@ class ResponseParser {
         // Look through the string until the end of the string.
         while (marker.position < inputText.length) {
             // Get the character at the current position.
-            var c = inputText.substr(marker.position, 1);
+            var c = inputText.charAt(marker.position);
 
             if (isAnyOf(" \t\n", c)) {
                 // If the current character is white space, add it to the buffer variable.

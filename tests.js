@@ -14,7 +14,7 @@ function assertEqualTest(expected, actual, testName) {
         assertEqual(expected, actual);
     }
     catch (e) {
-        console.log("%c" + e.toString(), "color: #ff0000;");
+        console.error(e);
     }
 
     n++;
@@ -205,6 +205,76 @@ if (true) {
     assertEqualTest(3, number.minimumNumberOfSignificantFigures);
     assertEqualTest(3, number.maximumNumberOfSignificantFigures);
     assertEqualTest(3, number.numberOfDecimalPlaces);
+
+    number = rp.parseNumber("0", new Marker());
+
+    assertEqualTest("integer", number.subtype);
+    assertEqualTest("0", number.integralPart);
+    assertEqualTest("", number.decimalPart);
+    assertEqualTest("0", number.simplestForm);
+    assertEqualTest("zero", number.sign);
+    assertEqualTest(false, number.signIsExplicit);
+    assertEqualTest(1, number.numberOfLeadingZeros);
+    assertEqualTest(0, number.numberOfTrailingZeros);
+    assertEqualTest(1, number.minimumNumberOfSignificantFigures);
+    assertEqualTest(1, number.maximumNumberOfSignificantFigures);
+    assertEqualTest(0, number.numberOfDecimalPlaces);
+
+    number = rp.parseNumber("000", new Marker());
+
+    assertEqualTest("integer", number.subtype);
+    assertEqualTest("000", number.integralPart);
+    assertEqualTest("", number.decimalPart);
+    assertEqualTest("0", number.simplestForm);
+    assertEqualTest("zero", number.sign);
+    assertEqualTest(false, number.signIsExplicit);
+    assertEqualTest(3, number.numberOfLeadingZeros);
+    assertEqualTest(0, number.numberOfTrailingZeros);
+    assertEqualTest(1, number.minimumNumberOfSignificantFigures);
+    assertEqualTest(1, number.maximumNumberOfSignificantFigures);
+    assertEqualTest(0, number.numberOfDecimalPlaces);
+
+    number = rp.parseNumber("0.0", new Marker());
+
+    assertEqualTest("decimalNumber", number.subtype);
+    assertEqualTest("0", number.integralPart);
+    assertEqualTest(".0", number.decimalPart);
+    assertEqualTest("0.0", number.simplestForm);
+    assertEqualTest("zero", number.sign);
+    assertEqualTest(false, number.signIsExplicit);
+    assertEqualTest(1, number.numberOfLeadingZeros);
+    assertEqualTest(1, number.numberOfTrailingZeros);
+    assertEqualTest(1, number.minimumNumberOfSignificantFigures);
+    assertEqualTest(1, number.maximumNumberOfSignificantFigures);
+    assertEqualTest(1, number.numberOfDecimalPlaces);
+
+    number = rp.parseNumber("000.0", new Marker());
+
+    assertEqualTest("decimalNumber", number.subtype);
+    assertEqualTest("000", number.integralPart);
+    assertEqualTest(".0", number.decimalPart);
+    assertEqualTest("0.0", number.simplestForm);
+    assertEqualTest("zero", number.sign);
+    assertEqualTest(false, number.signIsExplicit);
+    assertEqualTest(3, number.numberOfLeadingZeros);
+    assertEqualTest(1, number.numberOfTrailingZeros);
+    assertEqualTest(1, number.minimumNumberOfSignificantFigures);
+    assertEqualTest(1, number.maximumNumberOfSignificantFigures);
+    assertEqualTest(1, number.numberOfDecimalPlaces);
+
+    number = rp.parseNumber("000.0000", new Marker());
+
+    assertEqualTest("decimalNumber", number.subtype);
+    assertEqualTest("000", number.integralPart);
+    assertEqualTest(".0000", number.decimalPart);
+    assertEqualTest("0.0000", number.simplestForm);
+    assertEqualTest("zero", number.sign);
+    assertEqualTest(false, number.signIsExplicit);
+    assertEqualTest(3, number.numberOfLeadingZeros);
+    assertEqualTest(4, number.numberOfTrailingZeros);
+    assertEqualTest(1, number.minimumNumberOfSignificantFigures);
+    assertEqualTest(1, number.maximumNumberOfSignificantFigures);
+    assertEqualTest(4, number.numberOfDecimalPlaces);
 
     console.log("Ran", n, "tests.");
 }

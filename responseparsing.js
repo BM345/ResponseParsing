@@ -192,24 +192,39 @@ class ResponseParser {
             }
         }
 
+        var allZero = (nsf == 0) ? true : false; // Whether or not all of the digits given were zero.
+
+        if (allZero) {
+            sign = "zero";
+        }
+
         var minimumNSF = 0;
         var maximumNSF = 0;
 
-        if (q > 0) {
-            // For a decimal number, all of the digits to the end of the decimal part are significant digits, even if they're zeros.
-            minimumNSF = nsf + p;
-            maximumNSF = nsf + p;
+        if (allZero) {
+            // If all of the digits in the given number are zero, can only assume that the final zero is a significant digit.
 
-            // The number of trailing zeros is equal to the counter p.
-            ntz = p;
-            p = 0;
+            minimumNSF = 1;
+            maximumNSF = 1;
+            if (q > 0) {
+                ntz = ndp;
+            }
         }
         else {
-            // For an integer, any zeros at the end of the number may or may not be significant digits, so set the minimum and maximum to be different.
-            minimumNSF = nsf;
-            maximumNSF = nsf + p;
+            // Otherwise at least one non-zero digit has been given.
+            if (q > 0) {
+                // For a decimal number, all of the digits to the end of the decimal part are significant digits, even if they're zeros.
+                minimumNSF = nsf + p;
+                maximumNSF = nsf + p;
 
-            p = 0;
+                // The number of trailing zeros is equal to the counter p.
+                ntz = p;
+            }
+            else {
+                // For an integer, any zeros at the end of the number may or may not be significant digits, so set the minimum and maximum to be different.
+                minimumNSF = nsf;
+                maximumNSF = nsf + p;
+            }
         }
 
         var end = marker.position;
@@ -219,8 +234,21 @@ class ResponseParser {
 
         // Remove any leading zeros for the simplest form of the number.
         // Except if the number is a decimal, in which case there should be one leading zero.
-        var t1 = (integralPart == "") ? "0" : integralPart.slice(nlz);
-        t1 = (t1 == "") ? "0" : t1;
+        var t1 = "";
+
+        if (integralPart == "" && (decimalPart == "" || decimalPart == ".")) {
+            // If essentially nothing has been written, write nothing for the integral part.
+            t1 = "";
+        }
+        else if (integralPart == "") {
+            // If the number is just something like .123, then it should be written 0.123
+            t1 = "0";
+        }
+        else {
+            // Otherwise just remove the leading zeros.
+            t1 = integralPart.slice(nlz);
+            t1 = (t1 == "") ? "0" : t1;
+        }
 
         // If the decimal part consists of just a decimal point and no digits, remove the decimal point for the simplest form.
         var t2 = (decimalPart == ".") ? "" : decimalPart;
@@ -353,8 +381,6 @@ class Validator {
                 console.log(t);
                 console.log(parseResult);
 
-                validationMessageElement.innerText = "";
-
                 if (parseResult === null) {
                     e.preventDefault();
                     return;
@@ -371,7 +397,23 @@ class Validator {
                 if (inputType == "fraction" && (parseResult.type != "fraction" && parseResult.type != "number")) {
                     e.preventDefault();
                 }
+
+                if (parseResult !== null) {
+                    validationMessageElement.innerText = parseResult.simplestForm;
+                }
             }
+        }
+
+        input.onkeyup = function (e) {
+
+            validationMessageElement.innerText = "";
+
+            var parseResult = that.rp.getParseResult(input.value);
+
+            if (parseResult !== null) {
+                validationMessageElement.innerText = parseResult.simplestForm;
+            }
+
         }
 
         // A second check has to be performed on submit.
@@ -386,17 +428,13 @@ class Validator {
 
             validationMessageElement.innerText = "";
 
-            if (parseResult === null) {
-                return;
-            }
-
             // If the answer is supposed to be an integer, but it's not, then give a validation message.
-            if (inputType == "integer" && (parseResult.type != "number" && parseResult.subtype == "integer")) {
+            if (inputType == "integer" && (parseResult === null || (parseResult.type != "number" && parseResult.subtype == "integer"))) {
                 validationMessageElement.innerText = "Your answer must be a whole number.";
             }
 
             // If the answer is supposed to be a decimal, but it's not, then give a validation message.
-            if (inputType == "decimalNumber" && parseResult.type != "number") {
+            if (inputType == "decimalNumber" && (parseResult === null || parseResult.type != "number")) {
                 validationMessageElement.innerText = "Your answer must be a decimal number or a whole number.";
             }
         }

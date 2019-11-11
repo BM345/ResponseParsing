@@ -38,29 +38,38 @@ class ResponseParser {
         return null;
     }
 
+    // Determine if there is a fraction at the current position.
     parseFraction(inputText, marker) {
         var start = marker.position;
 
+        // First see if there is a number for the numerator.
         var numerator = this.parseNumber(inputText, marker);
 
+        // If there is no numerator, there is no fraction, so return nothing.
         if (numerator === null) {
             return null;
         }
 
+        // Check for white space - white space is allowed here.
         var whiteSpace1 = this.parseWhiteSpace(inputText, marker);
 
+        // Get the character at the current position.
         var c = inputText.charAt(marker.position);
 
+        // If the current character isn't a forward slash, then it isn't a fraction.
         if (c !== "/") {
             return null;
         }
 
         marker.position += 1;
 
+        // Check for more white space again.
         var whiteSpace2 = this.parseWhiteSpace(inputText, marker);
+        // Look for a denominator.
         var denominator = this.parseNumber(inputText, marker);
         var end = marker.position;
 
+        // If there was no denominator, then it is a fraction, but not a complete one.
         var isComplete = (denominator === null) ? false : true;
 
         var t1 = numerator.text;
@@ -69,6 +78,7 @@ class ResponseParser {
         var t4 = (whiteSpace2 === null) ? "" : whiteSpace2.text;
         var t5 = (denominator === null) ? "" : denominator.text;
 
+        // The simplest form of the fraction is just the simplest form of the numerator and the denominator with a solidus in between.
         var t6 = numerator.simplestForm;
         var t7 = "/";
         var t8 = (denominator === null) ? "" : denominator.simplestForm;
@@ -86,6 +96,7 @@ class ResponseParser {
         }
     }
 
+    // Determine if there is a number (either an integer or a decimal) at the current position.
     parseNumber(inputText, marker) {
         var t = "";
         var start = marker.position;
@@ -97,8 +108,12 @@ class ResponseParser {
         var sign = "positive";
         var signIsExplicit = false;
 
+        // The number may start with a plus or a minus sign.
+        // Get the character at the current position.
         var d = inputText.charAt(marker.position);
 
+        // Check if the character is either a plus or a minus sign.
+        // If it is, record this, and then move the marker on by 1.
         if (d == "+") {
             ts = "+";
             signIsExplicit = true;
@@ -111,6 +126,7 @@ class ResponseParser {
             marker.position++;
         }
 
+        // Set-up some counter variables - this is often the best way to get information like the number of significant figures that a number has.
         var nlz = 0; // The number of leading zeros.
         var ntz = 0; // The number of trailing zeros.
         var nsf = 0; // The number of significant figures.
@@ -119,13 +135,19 @@ class ResponseParser {
         var p = 0; // A counter for any zeros that may or may not be significant digits.
         var q = 0; // A counter for the number of decimal points seen so far.
 
+        // Loop over the characters in the string.
         while (marker.position < inputText.length) {
+            // Get the character at the current position.
             var c = inputText.charAt(marker.position);
 
             if (isAnyOf("0123456789", c)) {
+                // If the current character is any of 0123456789, then it's a number character, so add it to the substring.
                 t += c;
                 marker.position++;
 
+                // If the decimal point has been seen, add the character to the decimal part.
+                // Otherwise, add the character to the integral part.
+                // Also, each digit seen after the decimal point should increase the decimal places counter.
                 if (q == 0) {
                     integralPart += c;
                 } else {
@@ -134,19 +156,24 @@ class ResponseParser {
                 }
 
                 if (c == "0" && nsf == 0 && q == 0) {
+                    // If the current digit is 0, and no non-zero digits have been seen so far, or the decimal point, then it's a leading zero.
                     nlz++;
                 }
                 else if (c != "0") {
+                    // If the current digit is not a 0, then it's a significant digit, so increase the significant digits counter by 1.
+                    // Also, any zeros that have been seen since the last non-zero significant digit are also significant digits.
                     nsf += p;
                     p = 0;
                     nsf++;
                 }
                 else if (c == "0" && nsf > 0) {
+                    // If the current digit is 0, and 1 or more significant digits have been seen so far, then this zero may be a significant digit, so increase this counter by one.
                     p++;
                 }
             }
             else if (c == ".") {
                 if (q == 0) {
+                    // If the current character is a full-stop, it's a decimal point, so increase the decimal points counter by 1.
                     t += c;
                     marker.position++;
 
@@ -155,10 +182,12 @@ class ResponseParser {
                     q++;
                 }
                 else {
+                    // If a second decimal point is seen, break the loop.
                     break;
                 }
             }
             else {
+                // If the character isn't in 0123456789., then break the loop.
                 break;
             }
         }
@@ -167,13 +196,16 @@ class ResponseParser {
         var maximumNSF = 0;
 
         if (q > 0) {
+            // For a decimal number, all of the digits to the end of the decimal part are significant digits, even if they're zeros.
             minimumNSF = nsf + p;
             maximumNSF = nsf + p;
 
+            // The number of trailing zeros is equal to the counter p.
             ntz = p;
             p = 0;
         }
         else {
+            // For an integer, any zeros at the end of the number may or may not be significant digits, so set the minimum and maximum to be different.
             minimumNSF = nsf;
             maximumNSF = nsf + p;
 
@@ -182,18 +214,24 @@ class ResponseParser {
 
         var end = marker.position;
 
+        // If there was a decimal point, then the number was a decimal.
         var subtype = (q == 0) ? "integer" : "decimalNumber";
 
+        // Remove any leading zeros for the simplest form of the number.
+        // Except if the number is a decimal, in which case there should be one leading zero.
         var t1 = (integralPart == "") ? "0" : integralPart.slice(nlz);
         t1 = (t1 == "") ? "0" : t1;
 
+        // If the decimal part consists of just a decimal point and no digits, remove the decimal point for the simplest form.
         var t2 = (decimalPart == ".") ? "" : decimalPart;
         var simplestForm = ts + t1 + t2;
 
         if (ts + t == "") {
+            // If no number was seen, return nothing.
             return null;
         }
         else {
+            // If a number was seen, return information about it.
             return {
                 "type": "number",
                 "subtype": subtype,

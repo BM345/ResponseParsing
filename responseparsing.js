@@ -163,9 +163,20 @@ class ResponseParser {
             }
         }
 
+        var minimumNSF = 0;
+        var maximumNSF = 0;
+
         if (q > 0) {
-            nsf += p;
+            minimumNSF = nsf + p;
+            maximumNSF = nsf + p;
+
             ntz = p;
+            p = 0;
+        }
+        else {
+            minimumNSF = nsf;
+            maximumNSF = nsf + p;
+
             p = 0;
         }
 
@@ -173,7 +184,9 @@ class ResponseParser {
 
         var subtype = (q == 0) ? "integer" : "decimalNumber";
 
-        var t1 = (integralPart.length == "") ? "0" : integralPart.slice(nlz);
+        var t1 = (integralPart == "") ? "0" : integralPart.slice(nlz);
+        t1 = (t1 == "") ? "0" : t1;
+
         var t2 = (decimalPart == ".") ? "" : decimalPart;
         var simplestForm = ts + t1 + t2;
 
@@ -195,8 +208,8 @@ class ResponseParser {
                 "signIsExplicit": signIsExplicit,
                 "numberOfLeadingZeros": nlz,
                 "numberOfTrailingZeros": ntz,
-                "minimumNumberOfSignificantFigures": nsf,
-                "maximumNumberOfSignificantFigures": nsf,
+                "minimumNumberOfSignificantFigures": minimumNSF,
+                "maximumNumberOfSignificantFigures": maximumNSF,
                 "numberOfDecimalPlaces": ndp
             };
         }
@@ -317,7 +330,7 @@ class Validator {
                     e.preventDefault();
                 }
 
-                if (inputType == "fraction" && ( parseResult.type != "fraction" &&  parseResult.type != "number")) {
+                if (inputType == "fraction" && (parseResult.type != "fraction" && parseResult.type != "number")) {
                     e.preventDefault();
                 }
             }
@@ -351,23 +364,3 @@ class Validator {
         }
     }
 }
-
-var validator = new Validator();
-
-window.addEventListener("load", function () {
-    var i1 = document.getElementById("input1");
-    var o1 = document.getElementById("validationMessage1");
-    var sb1 = document.getElementById("submitButton1");
-
-    var i2 = document.getElementById("input2");
-    var o2 = document.getElementById("validationMessage2");
-    var sb2 = document.getElementById("submitButton2");
-
-    var i3 = document.getElementById("input3");
-    var o3 = document.getElementById("validationMessage3");
-    var sb3 = document.getElementById("submitButton3");
-
-    validator.addInput(i1, "integer", o1, sb1);
-    validator.addInput(i2, "decimalNumber", o2, sb2);
-    validator.addInput(i3, "fraction", o3, sb3);
-});

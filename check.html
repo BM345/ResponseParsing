@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <link href="style.css" type="text/css" rel="stylesheet" />
+
+    <script type="text/javascript" src="responseparsing.js"></script>
+
+  <script type="text/javascript">
+
+  var rp = new ResponseParser();
+
+    window.addEventListener("load", function(){
+
+          var input = document.getElementById("input1");
+          var output = document.getElementById("output1");
+
+           input.onkeyup = function(e){
+
+               output.innerText = JSON.stringify( rp.getParseResult(input.value.toString()), null, 4);
+
+           }
+
+    });
+  
+  </script>
+
+    <script type="text/javascript" src="tests.js"></script>
+
+</head>
+
+<body>
+
+    <div class="mainbox">
+       <input type="text" id="input1" />
+              <pre><code id="output1"></code></pre>
+    </div>
+
+</body>
+
+</html>

@@ -6,6 +6,31 @@
     <link href="style.css" type="text/css" rel="stylesheet" />
 
     <script type="text/javascript" src="responseparsing.js"></script>
+
+    <script type="text/javascript">
+
+        var validator = new Validator();
+
+        window.addEventListener("load", function () {
+            var i1 = document.getElementById("input1");
+            var o1 = document.getElementById("validationMessage1");
+            var sb1 = document.getElementById("submitButton1");
+
+            var i2 = document.getElementById("input2");
+            var o2 = document.getElementById("validationMessage2");
+            var sb2 = document.getElementById("submitButton2");
+
+            var i3 = document.getElementById("input3");
+            var o3 = document.getElementById("validationMessage3");
+            var sb3 = document.getElementById("submitButton3");
+
+            validator.addInput(i1, "integer", o1, sb1);
+            validator.addInput(i2, "decimalNumber", o2, sb2);
+            validator.addInput(i3, "fraction", o3, sb3);
+        });
+
+    </script>
+
     <script type="text/javascript" src="tests.js"></script>
 
 </head>

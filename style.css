@@ -50,6 +50,21 @@ input[type="text"]:focus {
     border: 1px solid hsla(220, 80%, 60%);
 }
 
+.mainbox input[type="text"] {
+    width: 500px;
+    display: block;
+    margin: 20px auto;
+    text-align: center;
+}
+
+.mainbox pre {
+    font-size: 17px;
+    background-color: #FAFAFA;
+    padding: 30px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 2px;
+}
+
 button {
     border: 1px solid hsla(220, 80%, 40%);
     background-color: hsla(220, 80%, 40%);
@@ -60,7 +75,7 @@ button {
     outline: none;
 }
 
-.example {
+.example, .mainbox {
     background-color: #FFFFFF;
     padding: 50px;
     margin: 50px;

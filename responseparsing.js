@@ -22,9 +22,11 @@ class ResponseParser {
     getParseResult(inputText) {
         var m1 = new Marker();
         var m2 = new Marker();
+        var m3 = new Marker();
 
         var fraction = this.parseFraction(inputText, m1);
         var number = this.parseNumber(inputText, m2);
+        var squareRoot = this.parseSquareRoot(inputText, m3);
 
         // If there is any of those things, return it (as long as there isn't anything else in the string).
         if (fraction !== null && m1.position == inputText.length) {
@@ -33,9 +35,76 @@ class ResponseParser {
         else if (number !== null && m2.position == inputText.length) {
             return number;
         }
+        else if (squareRoot !== null && m3.position == inputText.length) {
+            return squareRoot;
+        }
 
         // If nothing is found, return nothing.
         return null;
+    }
+
+    anyAt(words, inputText, marker) {
+        for (var i = 0; i < words.length; i++) {
+            var w = words[i];
+
+            if (inputText.substring(marker.position, marker.position + w.length) == w) {
+                return w;
+            }
+        }
+
+        return false;
+    }
+
+    parseSquareRoot(inputText, marker) {
+        var start = marker.position;
+
+        var functionNames = ["sqrt", "squareroot", "root"];
+
+        var name = this.anyAt(functionNames, inputText, marker);
+
+        if (name === false) {
+            return null;
+        }
+
+        marker.position += name.length;
+
+        var ws1 = this.parseWhiteSpace(inputText, marker);
+
+        if (inputText.charAt(marker.position) != "(") {
+            return null;
+        }
+
+        marker.position += 1;
+
+        var ws2 = this.parseWhiteSpace(inputText, marker);
+        var number = this.parseNumber(inputText, marker);
+        var ws3 = this.parseWhiteSpace(inputText, marker);
+
+        if (inputText.charAt(marker.position) != ")") {
+            return null;
+        }
+
+        marker.position += 1;
+
+        var end = marker.position;
+
+        var t1 = name;
+        var t2 = (ws1 !== null) ? ws1.text : "";
+        var t3 = "(";
+        var t4 = (ws2 !== null) ? ws2.text : "";
+        var t5 = number.text;
+        var t6 = (ws3 !== null) ? ws3.text : "";
+        var t7 = ")";
+
+        return {
+            "type": "squareRoot",
+            "text": t1 + t2 + t3 + t4 + t5 + t6 + t7,
+            "simplestForm": "sqrt" + t3 + number.simplestForm + t7,
+            "start": start,
+            "end": end,
+            "length": end - start,
+            "number": number
+        }
     }
 
     // Determine if there is a fraction at the current position.

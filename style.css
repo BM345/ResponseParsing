@@ -59,10 +59,10 @@ input[type="text"]:focus {
 
 .mainbox pre {
     font-size: 17px;
-    background-color: #FAFAFA;
     padding: 30px;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 2px;
+    margin: 20px auto;
+    width: 1000px;
+    color: inherit;
 }
 
 button {

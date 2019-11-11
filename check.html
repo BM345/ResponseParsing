@@ -7,24 +7,22 @@
 
     <script type="text/javascript" src="responseparsing.js"></script>
 
-  <script type="text/javascript">
+    <script type="text/javascript">
 
-  var rp = new ResponseParser();
+        var rp = new ResponseParser();
 
-    window.addEventListener("load", function(){
+        window.addEventListener("load", function () {
 
-          var input = document.getElementById("input1");
-          var output = document.getElementById("output1");
+            var input = document.getElementById("input1");
+            var output = document.getElementById("output1");
 
-           input.onkeyup = function(e){
+            input.onkeyup = function (e) {
+                output.innerText = JSON.stringify(rp.getParseResult(input.value.toString()), null, 4);
+            }
 
-               output.innerText = JSON.stringify( rp.getParseResult(input.value.toString()), null, 4);
+        });
 
-           }
-
-    });
-  
-  </script>
+    </script>
 
     <script type="text/javascript" src="tests.js"></script>
 
@@ -33,8 +31,8 @@
 <body>
 
     <div class="mainbox">
-       <input type="text" id="input1" />
-              <pre><code id="output1"></code></pre>
+        <input type="text" id="input1" />
+        <pre><code id="output1"></code></pre>
     </div>
 
 </body>

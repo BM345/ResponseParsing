@@ -192,7 +192,7 @@ class ResponseParser {
             }
         }
 
-        var allZero = (nsf == 0) ? true : false; // Whether or not all of the digits given were zero.
+        var allZero = (nsf == 0 && t.length > 0) ? true : false; // Whether or not all of the digits given were zero.
 
         if (allZero) {
             sign = "zero";
@@ -252,7 +252,7 @@ class ResponseParser {
 
         // If the decimal part consists of just a decimal point and no digits, remove the decimal point for the simplest form.
         var t2 = (decimalPart == ".") ? "" : decimalPart;
-        var simplestForm = ts + t1 + t2;
+        var simplestForm = (allZero) ? t1 + t2 : ts + t1 + t2;
 
         if (ts + t == "") {
             // If no number was seen, return nothing.

@@ -43,6 +43,7 @@ class ResponseParser {
         return null;
     }
 
+    // A useful function for checking if any of a set of words appears at the given position in a string.
     anyAt(words, inputText, marker) {
         for (var i = 0; i < words.length; i++) {
             var w = words[i];
@@ -55,31 +56,42 @@ class ResponseParser {
         return false;
     }
 
+    // Determine if there is a square root at the current position.
     parseSquareRoot(inputText, marker) {
         var start = marker.position;
 
+        // We want to allow several possible ways of allowing inputting square roots, so that the student doesn't have to remember a particular syntax in order to write a square root.
         var functionNames = ["sqrt", "squareroot", "root"];
 
+        // See if any of the allowed function names are at the current position.
         var name = this.anyAt(functionNames, inputText, marker);
 
+        // If not, then there is no square root here, so return nothing.
         if (name === false) {
             return null;
         }
 
+        // If there is, then move the marker along by the length of the name.
         marker.position += name.length;
 
+        // Allow optional white space here.
         var ws1 = this.parseWhiteSpace(inputText, marker);
 
+        // In this linear syntax, square roots must have brackets to show what the square root applies to.
         if (inputText.charAt(marker.position) != "(") {
             return null;
         }
 
         marker.position += 1;
 
+        // Allow optional white space here.
         var ws2 = this.parseWhiteSpace(inputText, marker);
+        // Only numbers are allowed within square roots at the moment.
         var number = this.parseNumber(inputText, marker);
+        // Allow optional white space here.
         var ws3 = this.parseWhiteSpace(inputText, marker);
 
+        // Expect closing bracket.
         if (inputText.charAt(marker.position) != ")") {
             return null;
         }
@@ -96,6 +108,7 @@ class ResponseParser {
         var t6 = (ws3 !== null) ? ws3.text : "";
         var t7 = ")";
 
+        // Return details about the square root.
         return {
             "type": "squareRoot",
             "text": t1 + t2 + t3 + t4 + t5 + t6 + t7,

@@ -100,6 +100,7 @@ class ResponseParser {
             "type": "squareRoot",
             "text": t1 + t2 + t3 + t4 + t5 + t6 + t7,
             "simplestForm": "sqrt" + t3 + number.simplestForm + t7,
+            "latex": "\\sqrt{" + number.simplestForm + "}",
             "start": start,
             "end": end,
             "length": end - start,
@@ -156,6 +157,7 @@ class ResponseParser {
             "type": "fraction",
             "text": t1 + t2 + t3 + t4 + t5,
             "simplestForm": t6 + t7 + t8,
+            "latex": "\\frac{" + t6 + "}{" + t8 + "}",
             "start": start,
             "end": end,
             "length": end - start,
@@ -336,6 +338,7 @@ class ResponseParser {
                 "integralPart": integralPart,
                 "decimalPart": decimalPart,
                 "simplestForm": simplestForm,
+                "latex": simplestForm,
                 "start": start,
                 "end": end,
                 "length": end - start,
@@ -382,6 +385,7 @@ class ResponseParser {
             return {
                 "type": "whiteSpace",
                 "text": t,
+                "latex": t,
                 "start": start,
                 "end": end,
                 "length": t.length,
@@ -433,8 +437,8 @@ class Validator {
     }
 
     // Inputs that are to be checked by the validator can be added using this function.
-    addInput(input, inputType, validationMessageElement, submitButton) {
-        this.inputs.push([input, inputType, validationMessageElement, submitButton]);
+    addInput(input, inputType, katexOutput, validationMessageElement, submitButton) {
+        this.inputs.push([input, inputType, katexOutput, validationMessageElement, submitButton]);
 
         var that = this;
 
@@ -468,7 +472,10 @@ class Validator {
                 }
 
                 if (parseResult !== null) {
-                    validationMessageElement.innerText = parseResult.simplestForm;
+                    katex.render(parseResult.latex, katexOutput);
+                }
+                else {
+                    katex.render("", katexOutput);
                 }
             }
         }
@@ -480,7 +487,10 @@ class Validator {
             var parseResult = that.rp.getParseResult(input.value);
 
             if (parseResult !== null) {
-                validationMessageElement.innerText = parseResult.simplestForm;
+                katex.render(parseResult.latex, katexOutput);
+            }
+            else {
+                katex.render("", katexOutput);
             }
 
         }

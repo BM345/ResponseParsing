@@ -27,6 +27,12 @@ p {
     margin: 1em 0em;
 }
 
+.katexOutput {
+    font-size: 20px;
+    color: inherit;
+    margin: 1em 0em;
+}
+
 .validationMessage {
     font-size: 17px;
     color: hsla(350, 80%, 60%);

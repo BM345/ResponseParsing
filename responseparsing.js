@@ -12,11 +12,22 @@ class Marker {
     }
 }
 
+class ParserSettings {
+    constructor() {
+        this.removeLeadingZerosFromSimplifiedForms = false;
+        this.addLeadingZeroToDecimalsForSimplifiedForms = true;
+    }
+}
+
 // Handles the process of scanning through a string to see what types of mathematical expression are in it.
 // At the moment, this could just be done using regular expressions.
 // However, regular expressions couldn't be used for more complicated mathematical expressions, which is why this design pattern is used.
 // This design pattern can also return lots of other interesting information about what the user types, such as number of significant figures.
 class ResponseParser {
+
+    constructor() {
+        this.settings = new ParserSettings();
+    }
 
     // The top-level parse function (for now).
     getParseResult(inputText) {
@@ -114,6 +125,7 @@ class ResponseParser {
             "text": t1 + t2 + t3 + t4 + t5 + t6 + t7,
             "simplestForm": "sqrt" + t3 + number.simplestForm + t7,
             "latex": "\\sqrt{" + number.simplestForm + "}",
+            "asciiMath": "sqrt(" + number.simplestForm + ")",
             "start": start,
             "end": end,
             "length": end - start,
@@ -171,6 +183,7 @@ class ResponseParser {
             "text": t1 + t2 + t3 + t4 + t5,
             "simplestForm": t6 + t7 + t8,
             "latex": "\\frac{" + t6 + "}{" + t8 + "}",
+            "asciiMath": "frac " + t6 + " " + t8,
             "start": start,
             "end": end,
             "length": end - start,
@@ -326,12 +339,24 @@ class ResponseParser {
         }
         else if (integralPart == "") {
             // If the number is just something like .123, then it should be written 0.123
-            t1 = "0";
+            if (this.settings.addLeadingZeroToDecimalsForSimplifiedForms) {
+                t1 = "0";
+            }
+            else {
+                t1 = "";
+            }
         }
         else {
             // Otherwise just remove the leading zeros.
-            t1 = integralPart.slice(nlz);
-            t1 = (t1 == "") ? "0" : t1;
+            if (this.settings.removeLeadingZerosFromSimplifiedForms) {
+                t1 = integralPart.slice(nlz);
+                if (this.settings.addLeadingZeroToDecimalsForSimplifiedForms) {
+                    t1 = (t1 == "") ? "0" : t1;
+                }
+            }
+            else {
+                t1 = integralPart;
+            }
         }
 
         // If the decimal part consists of just a decimal point and no digits, remove the decimal point for the simplest form.
@@ -352,6 +377,7 @@ class ResponseParser {
                 "decimalPart": decimalPart,
                 "simplestForm": simplestForm,
                 "latex": simplestForm,
+                "asciiMath": simplestForm,
                 "start": start,
                 "end": end,
                 "length": end - start,
@@ -399,7 +425,8 @@ class ResponseParser {
                 "type": "whiteSpace",
                 "text": t,
                 "latex": t,
-                "start": start,
+                "asciiMath": t,
+  "start": start,
                 "end": end,
                 "length": t.length,
                 "compressedWhiteSpace": " "

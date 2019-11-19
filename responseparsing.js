@@ -34,10 +34,12 @@ class ResponseParser {
         var m1 = new Marker();
         var m2 = new Marker();
         var m3 = new Marker();
+        var m4 = new Marker();
 
         var fraction = this.parseFraction(inputText, m1);
         var number = this.parseNumber(inputText, m2);
         var squareRoot = this.parseSquareRoot(inputText, m3);
+        var mixedFraction = this.parseMixedFraction(inputText, m4);
 
         // If there is any of those things, return it (as long as there isn't anything else in the string).
         if (fraction !== null && m1.position == inputText.length) {
@@ -48,6 +50,9 @@ class ResponseParser {
         }
         else if (squareRoot !== null && m3.position == inputText.length) {
             return squareRoot;
+        }
+        else if (mixedFraction !== null && m4.position == inputText.length) {
+            return mixedFraction;
         }
 
         // If nothing is found, return nothing.
@@ -130,6 +135,34 @@ class ResponseParser {
             "end": end,
             "length": end - start,
             "number": number
+        }
+    }
+
+    parseMixedFraction(inputText, marker) {
+        var start = marker.position;
+
+        var wholePart = this.parseNumber(inputText, marker);
+        if (wholePart === null) { return null; }
+
+        var whiteSpace = this.parseWhiteSpace(inputText, marker);
+        if (whiteSpace === null) { return null; }
+
+        var fractionPart = this.parseFraction(inputText, marker);
+        if (fractionPart === null) { return null; }
+
+        var end = marker.position;
+
+        return {
+            "type": "mixedFraction",
+            "text": wholePart.text + whiteSpace.text + fractionPart.text,
+            "simplestForm": wholePart.simplestForm + " " + fractionPart.simplestForm,
+            "latex": wholePart.latex + " " + fractionPart.latex,
+            "asciiMath": wholePart.asciiMath + " " + fractionPart.asciiMath,
+            "start": start,
+            "end": end,
+            "length": end - start,
+            "wholePart": wholePart,
+            "fractionPart": fractionPart
         }
     }
 
@@ -426,7 +459,7 @@ class ResponseParser {
                 "text": t,
                 "latex": t,
                 "asciiMath": t,
-  "start": start,
+                "start": start,
                 "end": end,
                 "length": t.length,
                 "compressedWhiteSpace": " "

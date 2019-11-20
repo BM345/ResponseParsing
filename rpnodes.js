@@ -100,3 +100,38 @@ class RPRadicalNode extends RPNode {
         return [this.radicand];
     }
 }
+
+class RPIdentifierNode extends RPNode {
+    constructor() {
+        super();
+
+        this.type = "identifier";
+    }
+}
+
+class RPOperatorNode extends RPNode {
+    constructor() {
+        super();
+
+        this.type = "operator";
+    }
+}
+
+class RPBinomialOperationNode extends RPNode {
+    constructor() {
+        super();
+
+        this.type = "binomialOperation";
+
+        this.operand1 = null;
+        this.operand2 = null;
+    }
+}
+
+class RPAdditionNode extends RPBinomialOperationNode {
+    constructor() {
+        super();
+
+        this.subtype = "addition";
+    }
+}

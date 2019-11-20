@@ -76,6 +76,54 @@ class ResponseParser {
         return false;
     }
 
+    parseBinomialOperator(inputText, marker) {
+        var start = marker.position;
+
+        var c = inputText.charAt(marker.position);
+
+        if (!isAnyOf("+-*/^", c)) {
+            return;
+        }
+
+        marker.position++;
+
+        var end = marker.position;
+
+        var node = new RPOperatorNode();
+
+        node.text = c;
+        node.latex = (c == "*") ? "\\times" : c;
+        node.asciiMath = c;
+        node.start = start;
+        node.end = end;
+
+        return node;
+    }
+
+    parseIdentifier(inputText, marker) {
+        var start = marker.position;
+
+        var c = inputText.charAt(marker.position);
+
+        if (!isAnyOf("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", c)) {
+            return;
+        }
+
+        marker.position++;
+
+        var end = marker.position;
+
+        var node = new RPIdentifierNode();
+
+        node.text = c;
+        node.latex = c;
+        node.asciiMath = c;
+        node.start = start;
+        node.end = end;
+
+        return node;
+    }
+
     // Determine if there is a square root at the current position.
     parseSquareRoot(inputText, marker) {
         var start = marker.position;

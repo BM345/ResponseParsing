@@ -72,16 +72,16 @@ class ResponseParser {
 
         while (marker.position < inputText.length) {
 
-            var node = this.parseMixedFraction(inputText, marker.copy());
+            var node = this.parseBinomialOperator(inputText, marker.copy()); ;
 
+            if (node === null) { node = this.parseMixedFraction(inputText, marker.copy())}
             if (node === null) { node = this.parseFraction(inputText, marker.copy()); }
             if (node === null) { node = this.parseSquareRoot(inputText, marker.copy()); }
             if (node === null) { node = this.parseNumber(inputText, marker.copy()); }
-            if (node === null) { node = this.parseBinomialOperator(inputText, marker.copy()); }
             if (node === null) { node = this.parseIdentifier(inputText, marker.copy()); }
             if (node === null) { break; }
 
-            if (node.type == "binomialOperator") {
+            if (node.type == "operator") {
 
                 for (var i = operatorStack.length - 1; i >= 0; i--) {
                     if (operatorStack[i].precedence >= node.precedence) {
@@ -95,11 +95,14 @@ class ResponseParser {
                         }
                     }
                 }
+                
                 operatorStack.push(node);
             }
             else {
                 operandStack.push(node);
             }
+
+            marker.position += node.length;
         }
 
         for (var i = operatorStack.length - 1; i >= 0; i--) {
@@ -113,6 +116,9 @@ class ResponseParser {
                 operandStack.push(additionNode);
             }
         }
+
+        console.log(operandStack);
+        console.log(operatorStack);
 
         if (operandStack.length == 1) {
             return operandStack[0];
@@ -128,7 +134,7 @@ class ResponseParser {
         var c = inputText.charAt(marker.position);
 
         if (!isAnyOf("+-*/^", c)) {
-            return;
+            return null;
         }
 
         marker.position++;
@@ -152,7 +158,7 @@ class ResponseParser {
         var c = inputText.charAt(marker.position);
 
         if (!isAnyOf("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", c)) {
-            return;
+            return null;
         }
 
         marker.position++;

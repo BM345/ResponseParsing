@@ -139,3 +139,27 @@ class RPAdditionNode extends RPBinomialOperationNode {
         this.subtype = "addition";
     }
 }
+
+class RPSubtractionNode extends RPBinomialOperationNode {
+    constructor() {
+        super();
+
+        this.subtype = "subtraction";
+    }
+}
+
+class RPMultiplicationNode extends RPBinomialOperationNode {
+    constructor() {
+        super();
+
+        this.subtype = "multiplication";
+    }
+}
+
+class RPDivisionNode extends RPBinomialOperationNode {
+    constructor() {
+        super();
+
+        this.subtype = "division";
+    }
+}

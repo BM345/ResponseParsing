@@ -72,9 +72,9 @@ class ResponseParser {
 
         while (marker.position < inputText.length) {
 
-            var node = this.parseBinomialOperator(inputText, marker.copy()); ;
+            var node = this.parseBinomialOperator(inputText, marker.copy());;
 
-            if (node === null) { node = this.parseMixedFraction(inputText, marker.copy())}
+            if (node === null) { node = this.parseMixedFraction(inputText, marker.copy()) }
             if (node === null) { node = this.parseFraction(inputText, marker.copy()); }
             if (node === null) { node = this.parseSquareRoot(inputText, marker.copy()); }
             if (node === null) { node = this.parseNumber(inputText, marker.copy()); }
@@ -93,9 +93,33 @@ class ResponseParser {
 
                             operandStack.push(additionNode);
                         }
+                        if (operandStack.length >= 2 && operatorStack[i].text == "-") {
+                            var subtractionNode = new RPSubtractionNode();
+
+                            subtractionNode.operand2 = operandStack.pop();
+                            subtractionNode.operand1 = operandStack.pop();
+
+                            operandStack.push(subtractionNode);
+                        }
+                        if (operandStack.length >= 2 && operatorStack[i].text == "*") {
+                            var multiplicationNode = new RPMultiplicationNode();
+
+                            multiplicationNode.operand2 = operandStack.pop();
+                            multiplicationNode.operand1 = operandStack.pop();
+
+                            operandStack.push(multiplicationNode);
+                        }
+                        if (operandStack.length >= 2 && operatorStack[i].text == "/") {
+                            var divisionNode = new RPDivisionNode();
+
+                            divisionNode.operand2 = operandStack.pop();
+                            divisionNode.operand1 = operandStack.pop();
+
+                            operandStack.push(divisionNode);
+                        }
                     }
                 }
-                
+
                 operatorStack.push(node);
             }
             else {
@@ -114,6 +138,30 @@ class ResponseParser {
                 additionNode.operand1 = operandStack.pop();
 
                 operandStack.push(additionNode);
+            }
+            if (operandStack.length >= 2 && operatorStack[i].text == "-") {
+                var subtractionNode = new RPSubtractionNode();
+
+                subtractionNode.operand2 = operandStack.pop();
+                subtractionNode.operand1 = operandStack.pop();
+
+                operandStack.push(subtractionNode);
+            }
+            if (operandStack.length >= 2 && operatorStack[i].text == "*") {
+                var multiplicationNode = new RPMultiplicationNode();
+
+                multiplicationNode.operand2 = operandStack.pop();
+                multiplicationNode.operand1 = operandStack.pop();
+
+                operandStack.push(multiplicationNode);
+            }
+            if (operandStack.length >= 2 && operatorStack[i].text == "/") {
+                var divisionNode = new RPDivisionNode();
+
+                divisionNode.operand2 = operandStack.pop();
+                divisionNode.operand1 = operandStack.pop();
+
+                operandStack.push(divisionNode);
             }
         }
 

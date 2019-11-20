@@ -124,18 +124,18 @@ class ResponseParser {
         var t6 = (ws3 !== null) ? ws3.text : "";
         var t7 = ")";
 
-        // Return details about the square root.
-        return {
-            "type": "squareRoot",
-            "text": t1 + t2 + t3 + t4 + t5 + t6 + t7,
-            "simplestForm": "sqrt" + t3 + number.simplestForm + t7,
-            "latex": "\\sqrt{" + number.simplestForm + "}",
-            "asciiMath": "sqrt(" + number.simplestForm + ")",
-            "start": start,
-            "end": end,
-            "length": end - start,
-            "number": number
-        }
+        var node = new RPRadicalNode();
+
+        node.text = t1 + t2 + t3 + t4 + t5 + t6 + t7;
+        node.latex = "\\sqrt{" + number.simplestForm + "}";
+        node.asciiMath = "sqrt(" + number.simplestForm + ")";
+        node.start = start;
+        node.end = end;
+        node.radix = 2;
+        node.radixIsImplicit = true;
+        node.radicand = number;
+
+        return node;
     }
 
     parseMixedFraction(inputText, marker) {
@@ -152,18 +152,17 @@ class ResponseParser {
 
         var end = marker.position;
 
-        return {
-            "type": "mixedFraction",
-            "text": wholePart.text + whiteSpace.text + fractionPart.text,
-            "simplestForm": wholePart.simplestForm + " " + fractionPart.simplestForm,
-            "latex": wholePart.latex + " " + fractionPart.latex,
-            "asciiMath": wholePart.asciiMath + " " + fractionPart.asciiMath,
-            "start": start,
-            "end": end,
-            "length": end - start,
-            "wholePart": wholePart,
-            "fractionPart": fractionPart
-        }
+        var node = new RPMixedFractionNode();
+
+        node.text = wholePart.text + whiteSpace.text + fractionPart.text;
+        node.latex = wholePart.latex + " " + fractionPart.latex;
+        node.asciiMath = wholePart.asciiMath + " " + fractionPart.asciiMath;
+        node.start = start;
+        node.end = end;
+        node.wholePart = wholePart;
+        node.fractionPart = fractionPart;
+
+        return node;
     }
 
     // Determine if there is a fraction at the current position.
@@ -211,19 +210,18 @@ class ResponseParser {
         var t7 = "/";
         var t8 = (denominator === null) ? "" : denominator.simplestForm;
 
-        return {
-            "type": "fraction",
-            "text": t1 + t2 + t3 + t4 + t5,
-            "simplestForm": t6 + t7 + t8,
-            "latex": "\\frac{" + t6 + "}{" + t8 + "}",
-            "asciiMath": "frac " + t6 + " " + t8,
-            "start": start,
-            "end": end,
-            "length": end - start,
-            "isComplete": isComplete,
-            "numerator": numerator,
-            "denominator": denominator
-        }
+        var node = new RPFractionNode();
+
+        node.text = t1 + t2 + t3 + t4 + t5;
+        node.latex = "\\frac{" + t6 + "}{" + t8 + "}";
+        node.asciiMath = "frac " + t6 + " " + t8;
+        node.start = start;
+        node.end = end;
+        node.isComplete = isComplete;
+        node.numerator = numerator;
+        node.denominator = denominator;
+
+        return node;
     }
 
     // Determine if there is a number (either an integer or a decimal) at the current position.
@@ -402,26 +400,25 @@ class ResponseParser {
         }
         else {
             // If a number was seen, return information about it.
-            return {
-                "type": "number",
-                "subtype": subtype,
-                "text": ts + t,
-                "integralPart": integralPart,
-                "decimalPart": decimalPart,
-                "simplestForm": simplestForm,
-                "latex": simplestForm,
-                "asciiMath": simplestForm,
-                "start": start,
-                "end": end,
-                "length": end - start,
-                "sign": sign,
-                "signIsExplicit": signIsExplicit,
-                "numberOfLeadingZeros": nlz,
-                "numberOfTrailingZeros": ntz,
-                "minimumNumberOfSignificantFigures": minimumNSF,
-                "maximumNumberOfSignificantFigures": maximumNSF,
-                "numberOfDecimalPlaces": ndp
-            };
+            var node = new RPNumberNode();
+
+            node.subtype = subtype;
+            node.text = ts + t;
+            node.integralPart = integralPart;
+            node.decimalPart = decimalPart;
+            node.latex = simplestForm;
+            node.asciiMath = simplestForm;
+            node.start = start;
+            node.end = end;
+            node.sign = sign;
+            node.signIsExplicit = signIsExplicit;
+            node.numberOfLeadingZeros = nlz;
+            node.numberOfTrailingZeros = ntz;
+            node.minimumNumberOfSignificantFigures = minimumNSF;
+            node.maximumNumberOfSignificantFigures = maximumNSF;
+            node.numberOfDecimalPlaces = ndp;
+
+            return node;
         }
     }
 

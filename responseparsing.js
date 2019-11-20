@@ -10,6 +10,14 @@ class Marker {
     constructor() {
         this.position = 0;
     }
+
+    copy() {
+        var marker = new Marker();
+
+        marker.position = this.position;
+
+        return marker;
+    }
 }
 
 class ParserSettings {
@@ -32,31 +40,12 @@ class ResponseParser {
     // The top-level parse function (for now).
     getParseResult(inputText) {
         var m1 = new Marker();
-        var m2 = new Marker();
-        var m3 = new Marker();
-        var m4 = new Marker();
 
-        var fraction = this.parseFraction(inputText, m1);
-        var number = this.parseNumber(inputText, m2);
-        var squareRoot = this.parseSquareRoot(inputText, m3);
-        var mixedFraction = this.parseMixedFraction(inputText, m4);
+        var expression = this.parseExpression(inputText, m1);
 
-        // If there is any of those things, return it (as long as there isn't anything else in the string).
-        if (fraction !== null && m1.position == inputText.length) {
-            fraction.setDepth();
-            return fraction;
-        }
-        else if (number !== null && m2.position == inputText.length) {
-            number.setDepth();
-            return number;
-        }
-        else if (squareRoot !== null && m3.position == inputText.length) {
-            squareRoot.setDepth();
-            return squareRoot;
-        }
-        else if (mixedFraction !== null && m4.position == inputText.length) {
-            mixedFraction.setDepth();
-            return mixedFraction;
+        if (expression !== null && m1.position == inputText.length) {
+            expression.setDepth();
+            return expression;
         }
 
         // If nothing is found, return nothing.
@@ -74,6 +63,63 @@ class ResponseParser {
         }
 
         return false;
+    }
+
+    parseExpression(inputText, marker) {
+
+        var operandStack = [];
+        var operatorStack = [];
+
+        while (marker.position < inputText.length) {
+
+            var node = this.parseMixedFraction(inputText, marker.copy());
+
+            if (node === null) { node = this.parseFraction(inputText, marker.copy()); }
+            if (node === null) { node = this.parseSquareRoot(inputText, marker.copy()); }
+            if (node === null) { node = this.parseNumber(inputText, marker.copy()); }
+            if (node === null) { node = this.parseBinomialOperator(inputText, marker.copy()); }
+            if (node === null) { node = this.parseIdentifier(inputText, marker.copy()); }
+            if (node === null) { break; }
+
+            if (node.type == "binomialOperator") {
+
+                for (var i = operatorStack.length - 1; i >= 0; i--) {
+                    if (operatorStack[i].precedence >= node.precedence) {
+                        if (operandStack.length >= 2 && operatorStack[i].text == "+") {
+                            var additionNode = new RPAdditionNode();
+
+                            additionNode.operand2 = operandStack.pop();
+                            additionNode.operand1 = operandStack.pop();
+
+                            operandStack.push(additionNode);
+                        }
+                    }
+                }
+                operatorStack.push(node);
+            }
+            else {
+                operandStack.push(node);
+            }
+        }
+
+        for (var i = operatorStack.length - 1; i >= 0; i--) {
+
+            if (operandStack.length >= 2 && operatorStack[i].text == "+") {
+                var additionNode = new RPAdditionNode();
+
+                additionNode.operand2 = operandStack.pop();
+                additionNode.operand1 = operandStack.pop();
+
+                operandStack.push(additionNode);
+            }
+        }
+
+        if (operandStack.length == 1) {
+            return operandStack[0];
+        }
+        else {
+            return null;
+        }
     }
 
     parseBinomialOperator(inputText, marker) {

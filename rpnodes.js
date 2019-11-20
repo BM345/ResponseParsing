@@ -115,6 +115,10 @@ class RPOperatorNode extends RPNode {
 
         this.type = "operator";
     }
+
+    get precedence() {
+        return "+-*/^".indexOf(this.text);
+    }
 }
 
 class RPBinomialOperationNode extends RPNode {

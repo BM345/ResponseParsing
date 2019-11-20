@@ -43,15 +43,19 @@ class ResponseParser {
 
         // If there is any of those things, return it (as long as there isn't anything else in the string).
         if (fraction !== null && m1.position == inputText.length) {
+            fraction.setDepth();
             return fraction;
         }
         else if (number !== null && m2.position == inputText.length) {
+            number.setDepth();
             return number;
         }
         else if (squareRoot !== null && m3.position == inputText.length) {
+            squareRoot.setDepth();
             return squareRoot;
         }
         else if (mixedFraction !== null && m4.position == inputText.length) {
+            mixedFraction.setDepth();
             return mixedFraction;
         }
 
@@ -127,8 +131,8 @@ class ResponseParser {
         var node = new RPRadicalNode();
 
         node.text = t1 + t2 + t3 + t4 + t5 + t6 + t7;
-        node.latex = "\\sqrt{" + number.simplestForm + "}";
-        node.asciiMath = "sqrt(" + number.simplestForm + ")";
+        node.latex = "\\sqrt{" + number.latex + "}";
+        node.asciiMath = "sqrt(" + number.asciiMath + ")";
         node.start = start;
         node.end = end;
         node.radix = 2;
@@ -213,8 +217,8 @@ class ResponseParser {
         var node = new RPFractionNode();
 
         node.text = t1 + t2 + t3 + t4 + t5;
-        node.latex = "\\frac{" + t6 + "}{" + t8 + "}";
-        node.asciiMath = "frac " + t6 + " " + t8;
+        node.latex = "\\frac{" + numerator.latex + "}{" + denominator.latex + "}";
+        node.asciiMath = "frac " + numerator.asciiMath + " " + denominator.asciiMath;
         node.start = start;
         node.end = end;
         node.isComplete = isComplete;

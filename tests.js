@@ -29,7 +29,6 @@ if (true) {
     assertEqualTest("integer", number.subtype);
     assertEqualTest("123", number.integralPart);
     assertEqualTest("", number.decimalPart);
-    assertEqualTest("123", number.simplestForm);
     assertEqualTest("positive", number.sign);
     assertEqualTest(false, number.signIsExplicit);
     assertEqualTest(0, number.numberOfLeadingZeros);
@@ -43,7 +42,6 @@ if (true) {
     assertEqualTest("integer", number.subtype);
     assertEqualTest("123", number.integralPart);
     assertEqualTest("", number.decimalPart);
-    assertEqualTest("+123", number.simplestForm);
     assertEqualTest("positive", number.sign);
     assertEqualTest(true, number.signIsExplicit);
     assertEqualTest(0, number.numberOfLeadingZeros);
@@ -57,7 +55,6 @@ if (true) {
     assertEqualTest("integer", number.subtype);
     assertEqualTest("123", number.integralPart);
     assertEqualTest("", number.decimalPart);
-    assertEqualTest("-123", number.simplestForm);
     assertEqualTest("negative", number.sign);
     assertEqualTest(true, number.signIsExplicit);
     assertEqualTest(0, number.numberOfLeadingZeros);
@@ -71,7 +68,6 @@ if (true) {
     assertEqualTest("integer", number.subtype);
     assertEqualTest("00123", number.integralPart);
     assertEqualTest("", number.decimalPart);
-    assertEqualTest("-123", number.simplestForm);
     assertEqualTest("negative", number.sign);
     assertEqualTest(true, number.signIsExplicit);
     assertEqualTest(2, number.numberOfLeadingZeros);
@@ -85,7 +81,6 @@ if (true) {
     assertEqualTest("integer", number.subtype);
     assertEqualTest("0012300", number.integralPart);
     assertEqualTest("", number.decimalPart);
-    assertEqualTest("-12300", number.simplestForm);
     assertEqualTest("negative", number.sign);
     assertEqualTest(true, number.signIsExplicit);
     assertEqualTest(2, number.numberOfLeadingZeros);
@@ -99,7 +94,6 @@ if (true) {
     assertEqualTest("integer", number.subtype);
     assertEqualTest("0012300456", number.integralPart);
     assertEqualTest("", number.decimalPart);
-    assertEqualTest("-12300456", number.simplestForm);
     assertEqualTest("negative", number.sign);
     assertEqualTest(true, number.signIsExplicit);
     assertEqualTest(2, number.numberOfLeadingZeros);
@@ -113,7 +107,6 @@ if (true) {
     assertEqualTest("decimalNumber", number.subtype);
     assertEqualTest("12", number.integralPart);
     assertEqualTest(".345", number.decimalPart);
-    assertEqualTest("12.345", number.simplestForm);
     assertEqualTest("positive", number.sign);
     assertEqualTest(false, number.signIsExplicit);
     assertEqualTest(0, number.numberOfLeadingZeros);
@@ -127,7 +120,6 @@ if (true) {
     assertEqualTest("decimalNumber", number.subtype);
     assertEqualTest("0", number.integralPart);
     assertEqualTest(".123", number.decimalPart);
-    assertEqualTest("0.123", number.simplestForm);
     assertEqualTest("positive", number.sign);
     assertEqualTest(false, number.signIsExplicit);
     assertEqualTest(1, number.numberOfLeadingZeros);
@@ -141,7 +133,6 @@ if (true) {
     assertEqualTest("decimalNumber", number.subtype);
     assertEqualTest("", number.integralPart);
     assertEqualTest(".123", number.decimalPart);
-    assertEqualTest("0.123", number.simplestForm);
     assertEqualTest("positive", number.sign);
     assertEqualTest(false, number.signIsExplicit);
     assertEqualTest(0, number.numberOfLeadingZeros);
@@ -155,7 +146,6 @@ if (true) {
     assertEqualTest("decimalNumber", number.subtype);
     assertEqualTest("", number.integralPart);
     assertEqualTest(".12300", number.decimalPart);
-    assertEqualTest("-0.12300", number.simplestForm);
     assertEqualTest("negative", number.sign);
     assertEqualTest(true, number.signIsExplicit);
     assertEqualTest(0, number.numberOfLeadingZeros);
@@ -169,7 +159,6 @@ if (true) {
     assertEqualTest("decimalNumber", number.subtype);
     assertEqualTest("", number.integralPart);
     assertEqualTest(".0012300456", number.decimalPart);
-    assertEqualTest("-0.0012300456", number.simplestForm);
     assertEqualTest("negative", number.sign);
     assertEqualTest(true, number.signIsExplicit);
     assertEqualTest(0, number.numberOfLeadingZeros);
@@ -183,7 +172,6 @@ if (true) {
     assertEqualTest("decimalNumber", number.subtype);
     assertEqualTest("123", number.integralPart);
     assertEqualTest(".", number.decimalPart);
-    assertEqualTest("123", number.simplestForm);
     assertEqualTest("positive", number.sign);
     assertEqualTest(false, number.signIsExplicit);
     assertEqualTest(0, number.numberOfLeadingZeros);
@@ -197,7 +185,6 @@ if (true) {
     assertEqualTest("decimalNumber", number.subtype);
     assertEqualTest("000", number.integralPart);
     assertEqualTest(".123", number.decimalPart);
-    assertEqualTest("0.123", number.simplestForm);
     assertEqualTest("positive", number.sign);
     assertEqualTest(false, number.signIsExplicit);
     assertEqualTest(3, number.numberOfLeadingZeros);
@@ -211,7 +198,6 @@ if (true) {
     assertEqualTest("integer", number.subtype);
     assertEqualTest("0", number.integralPart);
     assertEqualTest("", number.decimalPart);
-    assertEqualTest("0", number.simplestForm);
     assertEqualTest("zero", number.sign);
     assertEqualTest(false, number.signIsExplicit);
     assertEqualTest(1, number.numberOfLeadingZeros);
@@ -225,7 +211,6 @@ if (true) {
     assertEqualTest("integer", number.subtype);
     assertEqualTest("000", number.integralPart);
     assertEqualTest("", number.decimalPart);
-    assertEqualTest("0", number.simplestForm);
     assertEqualTest("zero", number.sign);
     assertEqualTest(false, number.signIsExplicit);
     assertEqualTest(3, number.numberOfLeadingZeros);
@@ -239,7 +224,6 @@ if (true) {
     assertEqualTest("decimalNumber", number.subtype);
     assertEqualTest("0", number.integralPart);
     assertEqualTest(".0", number.decimalPart);
-    assertEqualTest("0.0", number.simplestForm);
     assertEqualTest("zero", number.sign);
     assertEqualTest(false, number.signIsExplicit);
     assertEqualTest(1, number.numberOfLeadingZeros);
@@ -253,7 +237,6 @@ if (true) {
     assertEqualTest("decimalNumber", number.subtype);
     assertEqualTest("000", number.integralPart);
     assertEqualTest(".0", number.decimalPart);
-    assertEqualTest("0.0", number.simplestForm);
     assertEqualTest("zero", number.sign);
     assertEqualTest(false, number.signIsExplicit);
     assertEqualTest(3, number.numberOfLeadingZeros);
@@ -267,7 +250,6 @@ if (true) {
     assertEqualTest("decimalNumber", number.subtype);
     assertEqualTest("000", number.integralPart);
     assertEqualTest(".0000", number.decimalPart);
-    assertEqualTest("0.0000", number.simplestForm);
     assertEqualTest("zero", number.sign);
     assertEqualTest(false, number.signIsExplicit);
     assertEqualTest(3, number.numberOfLeadingZeros);

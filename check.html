@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
 
-    <script type="text/javascript" src="responseparsing.js"></script>
+    <script type="text/javascript" src="rp.js"></script>
 
     <script type="text/javascript">
 
@@ -23,7 +23,17 @@
             input.onkeyup = function (e) {
                 var parseResult = rp.getParseResult(input.value.toString());
 
-                output.innerText = JSON.stringify(parseResult, null, 4);
+                var cache = [];
+                output.innerText = JSON.stringify(parseResult, function (key, value) {
+                    if (typeof value === "object" && value !== null) {
+                        if (cache.indexOf(value) !== -1) {
+                            return;
+                        }
+                        cache.push(value);
+                    }
+                    return value;
+                }, 4);
+                cache = null;
 
                 if (parseResult !== null) {
                     katex.render(parseResult.latex, katexOutput);

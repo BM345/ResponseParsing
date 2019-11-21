@@ -163,3 +163,11 @@ class RPDivisionNode extends RPBinomialOperationNode {
         this.subtype = "division";
     }
 }
+
+class RPExponentiationNode extends RPBinomialOperationNode {
+    constructor() {
+        super();
+
+        this.subtype = "exponentiation";
+    }
+}

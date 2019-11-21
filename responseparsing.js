@@ -66,7 +66,6 @@ class ResponseParser {
     }
 
     parseExpression(inputText, marker) {
-
         var operandStack = [];
         var operatorStack = [];
 
@@ -79,48 +78,15 @@ class ResponseParser {
             if (node === null) { node = this.parseSquareRoot(inputText, marker.copy()); }
             if (node === null) { node = this.parseNumber(inputText, marker.copy()); }
             if (node === null) { node = this.parseIdentifier(inputText, marker.copy()); }
+            if (node === null) { node = this.parseWhiteSpace(inputText, marker.copy()); }
             if (node === null) { break; }
 
             if (node.type == "operator") {
-
-                for (var i = operatorStack.length - 1; i >= 0; i--) {
-                    if (operatorStack[i].precedence >= node.precedence) {
-                        if (operandStack.length >= 2 && operatorStack[i].text == "+") {
-                            var additionNode = new RPAdditionNode();
-
-                            additionNode.operand2 = operandStack.pop();
-                            additionNode.operand1 = operandStack.pop();
-
-                            operandStack.push(additionNode);
-                        }
-                        if (operandStack.length >= 2 && operatorStack[i].text == "-") {
-                            var subtractionNode = new RPSubtractionNode();
-
-                            subtractionNode.operand2 = operandStack.pop();
-                            subtractionNode.operand1 = operandStack.pop();
-
-                            operandStack.push(subtractionNode);
-                        }
-                        if (operandStack.length >= 2 && operatorStack[i].text == "*") {
-                            var multiplicationNode = new RPMultiplicationNode();
-
-                            multiplicationNode.operand2 = operandStack.pop();
-                            multiplicationNode.operand1 = operandStack.pop();
-
-                            operandStack.push(multiplicationNode);
-                        }
-                        if (operandStack.length >= 2 && operatorStack[i].text == "/") {
-                            var divisionNode = new RPDivisionNode();
-
-                            divisionNode.operand2 = operandStack.pop();
-                            divisionNode.operand1 = operandStack.pop();
-
-                            operandStack.push(divisionNode);
-                        }
-                    }
-                }
+                this._applyOperators(operandStack, operatorStack, node);
 
                 operatorStack.push(node);
+            }
+            else if (node.type == "whiteSpace") {
             }
             else {
                 operandStack.push(node);
@@ -129,50 +95,49 @@ class ResponseParser {
             marker.position += node.length;
         }
 
-        for (var i = operatorStack.length - 1; i >= 0; i--) {
-
-            if (operandStack.length >= 2 && operatorStack[i].text == "+") {
-                var additionNode = new RPAdditionNode();
-
-                additionNode.operand2 = operandStack.pop();
-                additionNode.operand1 = operandStack.pop();
-
-                operandStack.push(additionNode);
-            }
-            if (operandStack.length >= 2 && operatorStack[i].text == "-") {
-                var subtractionNode = new RPSubtractionNode();
-
-                subtractionNode.operand2 = operandStack.pop();
-                subtractionNode.operand1 = operandStack.pop();
-
-                operandStack.push(subtractionNode);
-            }
-            if (operandStack.length >= 2 && operatorStack[i].text == "*") {
-                var multiplicationNode = new RPMultiplicationNode();
-
-                multiplicationNode.operand2 = operandStack.pop();
-                multiplicationNode.operand1 = operandStack.pop();
-
-                operandStack.push(multiplicationNode);
-            }
-            if (operandStack.length >= 2 && operatorStack[i].text == "/") {
-                var divisionNode = new RPDivisionNode();
-
-                divisionNode.operand2 = operandStack.pop();
-                divisionNode.operand1 = operandStack.pop();
-
-                operandStack.push(divisionNode);
-            }
-        }
-
-        console.log(operandStack);
-        console.log(operatorStack);
+        this._applyOperators(operandStack, operatorStack, null);
 
         if (operandStack.length == 1) {
             return operandStack[0];
         }
-        else {
-            return null;
+
+        return null;
+    }
+
+    _applyOperators(operandStack, operatorStack, nextOperator) {
+        for (var i = operatorStack.length - 1; i >= 0; i--) {
+            if (nextOperator === null || operatorStack[i].precedence > nextOperator.precedence) {
+                if (operandStack.length >= 2) {
+                    var operator = operatorStack.pop();
+
+                    var node;
+
+                    if (operator.text == "+") { node = new RPAdditionNode(); }
+                    if (operator.text == "-") { node = new RPSubtractionNode(); }
+                    if (operator.text == "*") { node = new RPMultiplicationNode(); }
+                    if (operator.text == "/") { node = new RPDivisionNode(); }
+                    if (operator.text == "^") { node = new RPExponentiationNode(); }
+
+                    node.operand2 = operandStack.pop();
+                    node.operand1 = operandStack.pop();
+
+                    node.text = node.operand1.text + operator.text + node.operand2.text;
+
+                    if (operator.text == "^") {
+                        node.latex = node.operand1.latex + operator.latex + "{" + node.operand2.latex + "}";
+                    }
+                    else {
+                        node.latex = node.operand1.latex + operator.latex + node.operand2.latex;
+                    }
+
+                    node.asciiMath = node.operand1.asciiMath + operator.asciiMath + node.operand2.asciiMath;
+
+                    operandStack.push(node);
+                }
+            }
+            else {
+                break;
+            }
         }
     }
 

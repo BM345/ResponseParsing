@@ -35,6 +35,10 @@ class RPNode {
             n.setDepth(depth + 1);
         });
     }
+
+    get title() {
+        return "";
+    }
 }
 
 class RPNumberNode extends RPNode {
@@ -53,6 +57,10 @@ class RPNumberNode extends RPNode {
         this.maximumNumberOfSignificantFigures = 0;
         this.numberOfDecimalPlaces = 0;
     }
+
+    get title() {
+        return (this.subtype == "integer") ? "Integer" : "Decimal Number";
+    }
 }
 
 class RPFractionNode extends RPNode {
@@ -68,6 +76,10 @@ class RPFractionNode extends RPNode {
     get subnodes() {
         return [this.numerator, this.denominator];
     }
+
+    get title() {
+        return "Fraction";
+    }
 }
 
 class RPMixedFractionNode extends RPNode {
@@ -82,6 +94,10 @@ class RPMixedFractionNode extends RPNode {
 
     get subnodes() {
         return [this.wholePart, this.fractionPart];
+    }
+
+    get title() {
+        return "Mixed Fraction";
     }
 }
 
@@ -99,6 +115,10 @@ class RPRadicalNode extends RPNode {
     get subnodes() {
         return [this.radicand];
     }
+
+    get title() {
+        return (this.radix == 2) ? "Square Root" : "Radical";
+    }
 }
 
 class RPIdentifierNode extends RPNode {
@@ -106,6 +126,10 @@ class RPIdentifierNode extends RPNode {
         super();
 
         this.type = "identifier";
+    }
+
+    get title() {
+        return "Identifier";
     }
 }
 
@@ -119,6 +143,10 @@ class RPOperatorNode extends RPNode {
 
     get precedence() {
         return "+-*/^".indexOf(this.text);
+    }
+
+    get title() {
+        return "Operator";
     }
 }
 
@@ -135,6 +163,10 @@ class RPBinomialOperationNode extends RPNode {
     get subnodes() {
         return [this.operand1, this.operand2];
     }
+
+    get title() {
+        return "Binomial Operation";
+    }
 }
 
 class RPAdditionNode extends RPBinomialOperationNode {
@@ -142,6 +174,10 @@ class RPAdditionNode extends RPBinomialOperationNode {
         super();
 
         this.subtype = "addition";
+    }
+
+    get title() {
+        return "Addition";
     }
 }
 
@@ -151,6 +187,10 @@ class RPSubtractionNode extends RPBinomialOperationNode {
 
         this.subtype = "subtraction";
     }
+
+    get title() {
+        return "Subtraction";
+    }
 }
 
 class RPMultiplicationNode extends RPBinomialOperationNode {
@@ -158,6 +198,10 @@ class RPMultiplicationNode extends RPBinomialOperationNode {
         super();
 
         this.subtype = "multiplication";
+    }
+
+    get title() {
+        return (this.isImplicit) ? "Multiplication (Implicit)" : "Multiplication";
     }
 }
 
@@ -167,6 +211,10 @@ class RPDivisionNode extends RPBinomialOperationNode {
 
         this.subtype = "division";
     }
+
+    get title() {
+        return "Division";
+    }
 }
 
 class RPExponentiationNode extends RPBinomialOperationNode {
@@ -174,5 +222,9 @@ class RPExponentiationNode extends RPBinomialOperationNode {
         super();
 
         this.subtype = "exponentiation";
+    }
+
+    get title() {
+        return "Exponentiation";
     }
 }

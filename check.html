@@ -35,33 +35,48 @@
 
             setSubnodePositions(node) {
                 var m = node.subnodes.length;
-                var a1 = 30;
-                var a2 = 150;
+                var a1 = 45;
+                var a2 = 135;
                 var da = (a2 - a1) / (m - 1);
                 var a = a1;
                 var u1 = v2(-1, 0);
 
                 node.subnodes.forEach(n => {
-                    n.position = node.position.add(u1.rotate(-a).times(500));
+                    n.position = node.position.add(u1.rotate(-a).times(600));
                     this.setSubnodePositions(n);
                     a += da;
                 });
             }
 
             drawNode(graphics, node) {
-                var size = graphics.measureText(node.type, "Didot", 100);
-                var w1 = size.width / 2 + 100;
-                var h1 = 100 / 2 + 50;
+                var fs1 = 90;
+                var fs2 = 70;
+                var fn1 = "Didot";
+                var fn2 = "Courier New";
+
+                var size1 = graphics.measureText(node.title, fn1, fs1);
+                var size2 = graphics.measureText(node.asciiMath, fn2, fs2);
+
+                var w1 = size1.width / 2 + 100;
+                var h1 = fs1 / 2 + fs2 / 2 + 70;
+
                 var e1 = node.position.translate(-w1, -h1);
                 var e2 = node.position.translate(w1, -h1);
                 var e3 = node.position.translate(w1, h1);
                 var e4 = node.position.translate(-w1, h1);
 
                 if (node.supernode != null) {
-                    graphics.drawLine(node.supernode.position, node.position, "#404040");
+                    var e5 = node.supernode.position.translate(0, h1);
+                    var e6 = node.position.translate(0, -h1);
+                    graphics.drawLine(e5, e6, "#404040");
                 }
+
+                var e7 = node.position.translate(0, -fs2 / 2 - 20);
+                var e8 = node.position.translate(0, fs2 / 2 + 20);
+
                 graphics.drawPath([e1, e2, e3, e4, e1], "white", "#404040");
-                graphics.drawText(node.type, node.position, "middlecentre", 0, "Didot", 100, "#202020");
+                graphics.drawText(node.title, e7, "middlecentre", 0, fn1, fs1, "#202020");
+                graphics.drawText(node.asciiMath, e8, "middlecentre", 0, fn2, fs2, "#A0A0A0");
 
                 node.subnodes.forEach(n => this.drawNode(graphics, n));
             }
@@ -127,7 +142,7 @@
         <input type="text" id="input1" />
         <div class="katexOutput" id="katexOutput1" style="text-align: center;"></div>
         <canvas id="nodeTreeCanvas" style="width: 1000px; height: 500px; display: block; margin: 20px auto;"></canvas>
-        <pre><code id="output1"></code></pre>
+        <pre style="display: none;"><code id="output1"></code></pre>
     </div>
 
 </body>

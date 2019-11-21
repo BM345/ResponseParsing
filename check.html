@@ -22,13 +22,19 @@
                 super(canvasId);
 
                 this.nodeTree = null;
+
+                this.canvasSizingWidth = "fixed";
+                this.canvasSizingHeight = "fixed";
+
+                this.fixedWidth = 1500;
+                this.fixedHeight = 700;
             }
 
             setNodeTree(nodeTree) {
                 this.nodeTree = nodeTree;
 
                 if (this.nodeTree !== null) {
-                    this.nodeTree.position = v2(2000, 400);
+                    this.nodeTree.position = v2(this.width / 2, this.height / 5);
                     this.setSubnodePositions(this.nodeTree);
                 }
             }
@@ -57,7 +63,7 @@
                 var size1 = graphics.measureText(node.title, fn1, fs1);
                 var size2 = graphics.measureText(node.asciiMath, fn2, fs2);
 
-                var w1 = size1.width / 2 + 100;
+                var w1 = Math.max(size1.width, size2.width) / 2 + 100;
                 var h1 = fs1 / 2 + fs2 / 2 + 70;
 
                 var e1 = node.position.translate(-w1, -h1);
@@ -68,13 +74,13 @@
                 if (node.supernode != null) {
                     var e5 = node.supernode.position.translate(0, h1);
                     var e6 = node.position.translate(0, -h1);
-                    graphics.drawLine(e5, e6, "#404040");
+                    graphics.drawLine(e5, e6, "hsl(220, 80%, 50%)", 2);
                 }
 
                 var e7 = node.position.translate(0, -fs2 / 2 - 20);
                 var e8 = node.position.translate(0, fs2 / 2 + 20);
 
-                graphics.drawPath([e1, e2, e3, e4, e1], "white", "#404040");
+                graphics.drawPath([e1, e2, e3, e4, e1], "hsl(220, 80%, 97%)", "hsl(220, 80%, 60%)", 2);
                 graphics.drawText(node.title, e7, "middlecentre", 0, fn1, fs1, "#202020");
                 graphics.drawText(node.asciiMath, e8, "middlecentre", 0, fn2, fs2, "#A0A0A0");
 
@@ -84,7 +90,7 @@
             draw() {
                 var graphics = new GraphicsContext(this.context);
 
-                graphics.clear(4000, 2000);
+                graphics.clear(this.fixedWidth * this.resolutionFactor, this.fixedHeight * this.resolutionFactor);
 
                 if (this.nodeTree !== null) {
                     this.drawNode(graphics, this.nodeTree);
@@ -141,7 +147,7 @@
     <div class="mainbox">
         <input type="text" id="input1" />
         <div class="katexOutput" id="katexOutput1" style="text-align: center;"></div>
-        <canvas id="nodeTreeCanvas" style="width: 1000px; height: 500px; display: block; margin: 20px auto;"></canvas>
+        <canvas id="nodeTreeCanvas" style="width: 1500px; height: 700px; display: block; margin: 20px auto;"></canvas>
         <pre style="display: none;"><code id="output1"></code></pre>
     </div>
 

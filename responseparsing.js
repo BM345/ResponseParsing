@@ -68,6 +68,7 @@ class ResponseParser {
     parseExpression(inputText, marker) {
         var operandStack = [];
         var operatorStack = [];
+        var lastNode;
 
         while (marker.position < inputText.length) {
 
@@ -89,10 +90,23 @@ class ResponseParser {
             else if (node.type == "whiteSpace") {
             }
             else {
+                if (lastNode !== undefined && lastNode.type != "operator") {
+                    var implicitTimes = new RPOperatorNode();
+
+                    implicitTimes.text = "*";
+                    implicitTimes.isImplicit = true;
+
+                    operatorStack.push(implicitTimes);
+                }
+
                 operandStack.push(node);
             }
 
             marker.position += node.length;
+
+            if (node.type != "whiteSpace") {
+                lastNode = node;
+            }
         }
 
         this._applyOperators(operandStack, operatorStack, null);
@@ -106,7 +120,7 @@ class ResponseParser {
 
     _applyOperators(operandStack, operatorStack, nextOperator) {
         for (var i = operatorStack.length - 1; i >= 0; i--) {
-            if (nextOperator === null || operatorStack[i].precedence > nextOperator.precedence) {
+            if (nextOperator === null || operatorStack[i].precedence >= nextOperator.precedence) {
                 if (operandStack.length >= 2) {
                     var operator = operatorStack.pop();
 
@@ -121,16 +135,28 @@ class ResponseParser {
                     node.operand2 = operandStack.pop();
                     node.operand1 = operandStack.pop();
 
-                    node.text = node.operand1.text + operator.text + node.operand2.text;
-
                     if (operator.text == "^") {
+                        node.text = node.operand1.text + operator.text + node.operand2.text;
                         node.latex = node.operand1.latex + operator.latex + "{" + node.operand2.latex + "}";
+                        node.asciiMath = node.operand1.asciiMath + operator.asciiMath + node.operand2.asciiMath;
+                    }
+                    else if (operator.text == "*") {
+                        if (operator.isImplicit) {
+                            node.text = node.operand1.text + node.operand2.text;
+                            node.latex = node.operand1.latex + node.operand2.latex;
+                            node.asciiMath = node.operand1.asciiMath + node.operand2.asciiMath;
+                        }
+                        else {
+                            node.text = node.operand1.text + operator.text + node.operand2.text;
+                            node.latex = node.operand1.latex + " " + operator.latex + " " + node.operand2.latex;
+                            node.asciiMath = node.operand1.asciiMath + operator.asciiMath + node.operand2.asciiMath;
+                        }
                     }
                     else {
+                        node.text = node.operand1.text + operator.text + node.operand2.text;
                         node.latex = node.operand1.latex + operator.latex + node.operand2.latex;
+                        node.asciiMath = node.operand1.asciiMath + operator.asciiMath + node.operand2.asciiMath;
                     }
-
-                    node.asciiMath = node.operand1.asciiMath + operator.asciiMath + node.operand2.asciiMath;
 
                     operandStack.push(node);
                 }

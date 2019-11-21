@@ -8,10 +8,76 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
 
+    <script type="text/javascript" src="http://www.physicsformulae.com/2dgraphicsjs/maths.js"></script>
+    <script type="text/javascript" src="http://www.physicsformulae.com/2dgraphicsjs/graphics.js"></script>
+    <script type="text/javascript" src="http://www.physicsformulae.com/2dgraphicsjs/application.js"></script>
+
     <script type="text/javascript" src="rpnodes.js"></script>
     <script type="text/javascript" src="responseparsing.js"></script>
 
     <script type="text/javascript">
+
+        class App extends Application {
+            constructor(canvasId) {
+                super(canvasId);
+
+                this.nodeTree = null;
+            }
+
+            setNodeTree(nodeTree) {
+                this.nodeTree = nodeTree;
+
+                if (this.nodeTree !== null) {
+                    this.nodeTree.position = v2(2000, 400);
+                    this.setSubnodePositions(this.nodeTree);
+                }
+            }
+
+            setSubnodePositions(node) {
+                var m = node.subnodes.length;
+                var a1 = 30;
+                var a2 = 150;
+                var da = (a2 - a1) / (m - 1);
+                var a = a1;
+                var u1 = v2(-1, 0);
+
+                node.subnodes.forEach(n => {
+                    n.position = node.position.add(u1.rotate(-a).times(500));
+                    this.setSubnodePositions(n);
+                    a += da;
+                });
+            }
+
+            drawNode(graphics, node) {
+                var size = graphics.measureText(node.type, "Didot", 100);
+                var w1 = size.width / 2 + 100;
+                var h1 = 100 / 2 + 50;
+                var e1 = node.position.translate(-w1, -h1);
+                var e2 = node.position.translate(w1, -h1);
+                var e3 = node.position.translate(w1, h1);
+                var e4 = node.position.translate(-w1, h1);
+
+                if (node.supernode != null) {
+                    graphics.drawLine(node.supernode.position, node.position, "#404040");
+                }
+                graphics.drawPath([e1, e2, e3, e4, e1], "white", "#404040");
+                graphics.drawText(node.type, node.position, "middlecentre", 0, "Didot", 100, "#202020");
+
+                node.subnodes.forEach(n => this.drawNode(graphics, n));
+            }
+
+            draw() {
+                var graphics = new GraphicsContext(this.context);
+
+                graphics.clear(4000, 2000);
+
+                if (this.nodeTree !== null) {
+                    this.drawNode(graphics, this.nodeTree);
+                }
+            }
+        }
+
+        var app = new App("nodeTreeCanvas");
 
         var rp = new ResponseParser();
 
@@ -23,6 +89,8 @@
 
             input.onkeyup = function (e) {
                 var parseResult = rp.getParseResult(input.value.toString());
+
+                app.setNodeTree(parseResult);
 
                 var cache = [];
                 output.innerText = JSON.stringify(parseResult, function (key, value) {
@@ -58,6 +126,7 @@
     <div class="mainbox">
         <input type="text" id="input1" />
         <div class="katexOutput" id="katexOutput1" style="text-align: center;"></div>
+        <canvas id="nodeTreeCanvas" style="width: 1000px; height: 500px; display: block; margin: 20px auto;"></canvas>
         <pre><code id="output1"></code></pre>
     </div>
 

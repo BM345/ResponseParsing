@@ -114,6 +114,7 @@ class RPOperatorNode extends RPNode {
         super();
 
         this.type = "operator";
+        this.isImplicit = false;
     }
 
     get precedence() {
@@ -129,6 +130,10 @@ class RPBinomialOperationNode extends RPNode {
 
         this.operand1 = null;
         this.operand2 = null;
+    }
+
+    get subnodes() {
+        return [this.operand1, this.operand2];
     }
 }
 

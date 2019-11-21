@@ -21,6 +21,9 @@
             "number": 220,
             "binomialOperation": 350,
             "identifier": 90,
+            "radical": 280,
+            "fraction": 15,
+            "mixedFraction": 30
         }
 
         class App extends Application {
@@ -32,8 +35,11 @@
                 this.canvasSizingWidth = "fixed";
                 this.canvasSizingHeight = "fixed";
 
-                this.fixedWidth = 1500;
-                this.fixedHeight = 700;
+                this.fixedWidth = 1200;
+                this.fixedHeight = 1000;
+
+                this.columnSpacing = 100;
+                this.rowSpacing = 500;
             }
 
             initialise() {
@@ -60,7 +66,7 @@
                     w1 += n.columnWidth;
                 });
 
-                w1 += (node.subnodes.length - 1) * 50;
+                w1 += (node.subnodes.length - 1) * this.columnSpacing;
 
                 var size1 = this.graphics.measureText(node.title, "Didot", 90);
                 var size2 = this.graphics.measureText(node.asciiMath, "Courier New", 70);
@@ -75,10 +81,9 @@
 
                 node.subnodes.forEach(n => {
                     x1 += n.columnWidth;
-                    n.position = node.position.add(v2(-node.columnWidth + 25 + x1, 500));
+                    n.position = node.position.add(v2(-node.columnWidth + this.columnSpacing / 2 + x1, this.rowSpacing));
                     this.setSubnodePositions(n);
-                    x1 += n.columnWidth;
-                    x1 += 50;
+                    x1 += n.columnWidth + this.columnSpacing;
                 });
             }
 
@@ -104,21 +109,23 @@
                 if (node.supernode != null) {
                     var e5 = node.supernode.position.translate(0, h1);
                     var e6 = node.position.translate(0, -h1);
-                    graphics.drawLine(e5, e6, "hsl(" + hue + ", 0%, 50%)", 2);
+                    graphics.drawLine(e5, e6, "hsla(" + hue + ", 0%, 50%, 0.5)", 4);
                 }
 
                 var e7 = node.position.translate(0, -fs2 / 2 - 20);
                 var e8 = node.position.translate(0, fs2 / 2 + 20);
 
-                graphics.drawPath([e1, e2, e3, e4, e1], "hsl(" + hue + ", 80%, 97%)", "hsl(" + hue + ", 80%, 60%)", 2);
-                graphics.drawText(node.title, e7, "middlecentre", 0, fn1, fs1, "#202020");
-                graphics.drawText(node.asciiMath, e8, "middlecentre", 0, fn2, fs2, "#A0A0A0");
+                var u1 = v2(4, 20);
+
+                graphics.drawPath([e1.add(u1), e2.add(u1), e3.add(u1), e4.add(u1), e1.add(u1)], "hsla(" + hue + ", 0%, 50%, 0.2)", "", 0);
+                graphics.drawPath([e1, e2, e3, e4, e1], "hsl(" + hue + ", 50%, 45%)", "", 0);
+                graphics.drawText(node.title, e7, "middlecentre", 0, fn1, fs1, "#ffffff");
+                graphics.drawText(node.asciiMath, e8, "middlecentre", 0, fn2, fs2, "#ffffff");
 
                 node.subnodes.forEach(n => this.drawNode(graphics, n));
             }
 
             draw() {
-
                 this.graphics.clear(this.fixedWidth * this.resolutionFactor, this.fixedHeight * this.resolutionFactor);
 
                 if (this.nodeTree !== null) {
@@ -156,11 +163,11 @@
                 cache = null;
 
                 if (parseResult !== null) {
-                    asciiMathOutput.innerText = parseResult.asciiMath;
+                    asciiMathOutput.innerText = "ASCIIMath: " + parseResult.asciiMath;
                     katex.render(parseResult.latex, katexOutput);
                 }
                 else {
-                    asciiMathOutput.innerText = "";
+                    asciiMathOutput.innerText = "ASCIIMath: ";
                     katex.render("", katexOutput);
                 }
 
@@ -178,9 +185,9 @@
 
     <div class="mainbox">
         <input type="text" id="input1" />
-        <div id="asciiMathOutput1" style="text-align: center; font-family:'Courier New', Courier, monospace; font-size: 17  px; color: #C0C0C0;"></div>
+        <div class="asciiMathOutput" id="asciiMathOutput1" style="text-align: center;"></div>
         <div class="katexOutput" id="katexOutput1" style="text-align: center;"></div>
-        <canvas id="nodeTreeCanvas" style="width: 1500px; height: 700px; display: block; margin: 20px auto;"></canvas>
+        <canvas id="nodeTreeCanvas" style="display: block; margin: 20px auto;"></canvas>
         <pre style="display: none;"><code id="output1"></code></pre>
     </div>
 

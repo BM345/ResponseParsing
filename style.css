@@ -27,6 +27,12 @@ p {
     margin: 1em 0em;
 }
 
+.asciiMathOutput {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 17px;
+    color: #C0C0C0;
+}
+
 .katexOutput {
     font-size: 20px;
     color: inherit;

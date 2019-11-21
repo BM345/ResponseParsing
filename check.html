@@ -17,6 +17,12 @@
 
     <script type="text/javascript">
 
+        var nodeColours = {
+            "number": 220,
+            "binomialOperation": 350,
+            "identifier": 90,
+        }
+
         class App extends Application {
             constructor(canvasId) {
                 super(canvasId);
@@ -30,27 +36,49 @@
                 this.fixedHeight = 700;
             }
 
+            initialise() {
+                super.initialise();
+
+                this.graphics = new GraphicsContext(this.context);
+            }
+
             setNodeTree(nodeTree) {
                 this.nodeTree = nodeTree;
 
                 if (this.nodeTree !== null) {
                     this.nodeTree.position = v2(this.width / 2, this.height / 5);
+                    this.setColumnWidths(this.nodeTree);
                     this.setSubnodePositions(this.nodeTree);
                 }
             }
 
-            setSubnodePositions(node) {
-                var m = node.subnodes.length;
-                var a1 = 45;
-                var a2 = 135;
-                var da = (a2 - a1) / (m - 1);
-                var a = a1;
-                var u1 = v2(-1, 0);
+            setColumnWidths(node) {
+                var w1 = 0;
 
                 node.subnodes.forEach(n => {
-                    n.position = node.position.add(u1.rotate(-a).times(600));
+                    this.setColumnWidths(n);
+                    w1 += n.columnWidth;
+                });
+
+                w1 += (node.subnodes.length - 1) * 50;
+
+                var size1 = this.graphics.measureText(node.title, "Didot", 90);
+                var size2 = this.graphics.measureText(node.asciiMath, "Courier New", 70);
+
+                var w2 = Math.max(size1.width, size2.width) / 2 + 100;
+
+                node.columnWidth = Math.max(w1, w2);
+            }
+
+            setSubnodePositions(node) {
+                var x1 = 0;
+
+                node.subnodes.forEach(n => {
+                    x1 += n.columnWidth;
+                    n.position = node.position.add(v2(-node.columnWidth + 25 + x1, 500));
                     this.setSubnodePositions(n);
-                    a += da;
+                    x1 += n.columnWidth;
+                    x1 += 50;
                 });
             }
 
@@ -71,16 +99,18 @@
                 var e3 = node.position.translate(w1, h1);
                 var e4 = node.position.translate(-w1, h1);
 
+                var hue = nodeColours[node.type];
+
                 if (node.supernode != null) {
                     var e5 = node.supernode.position.translate(0, h1);
                     var e6 = node.position.translate(0, -h1);
-                    graphics.drawLine(e5, e6, "hsl(220, 80%, 50%)", 2);
+                    graphics.drawLine(e5, e6, "hsl(" + hue + ", 0%, 50%)", 2);
                 }
 
                 var e7 = node.position.translate(0, -fs2 / 2 - 20);
                 var e8 = node.position.translate(0, fs2 / 2 + 20);
 
-                graphics.drawPath([e1, e2, e3, e4, e1], "hsl(220, 80%, 97%)", "hsl(220, 80%, 60%)", 2);
+                graphics.drawPath([e1, e2, e3, e4, e1], "hsl(" + hue + ", 80%, 97%)", "hsl(" + hue + ", 80%, 60%)", 2);
                 graphics.drawText(node.title, e7, "middlecentre", 0, fn1, fs1, "#202020");
                 graphics.drawText(node.asciiMath, e8, "middlecentre", 0, fn2, fs2, "#A0A0A0");
 
@@ -88,12 +118,11 @@
             }
 
             draw() {
-                var graphics = new GraphicsContext(this.context);
 
-                graphics.clear(this.fixedWidth * this.resolutionFactor, this.fixedHeight * this.resolutionFactor);
+                this.graphics.clear(this.fixedWidth * this.resolutionFactor, this.fixedHeight * this.resolutionFactor);
 
                 if (this.nodeTree !== null) {
-                    this.drawNode(graphics, this.nodeTree);
+                    this.drawNode(this.graphics, this.nodeTree);
                 }
             }
         }
@@ -107,6 +136,7 @@
             var input = document.getElementById("input1");
             var output = document.getElementById("output1");
             var katexOutput = document.getElementById("katexOutput1");
+            var asciiMathOutput = document.getElementById("asciiMathOutput1");
 
             input.onkeyup = function (e) {
                 var parseResult = rp.getParseResult(input.value.toString());
@@ -126,9 +156,11 @@
                 cache = null;
 
                 if (parseResult !== null) {
+                    asciiMathOutput.innerText = parseResult.asciiMath;
                     katex.render(parseResult.latex, katexOutput);
                 }
                 else {
+                    asciiMathOutput.innerText = "";
                     katex.render("", katexOutput);
                 }
 
@@ -146,6 +178,7 @@
 
     <div class="mainbox">
         <input type="text" id="input1" />
+        <div id="asciiMathOutput1" style="text-align: center; font-family:'Courier New', Courier, monospace; font-size: 17  px; color: #C0C0C0;"></div>
         <div class="katexOutput" id="katexOutput1" style="text-align: center;"></div>
         <canvas id="nodeTreeCanvas" style="width: 1500px; height: 700px; display: block; margin: 20px auto;"></canvas>
         <pre style="display: none;"><code id="output1"></code></pre>

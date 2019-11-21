@@ -142,6 +142,7 @@ class ResponseParser {
                     }
                     else if (operator.text == "*") {
                         if (operator.isImplicit) {
+                            node.isImplicit = true;
                             node.text = node.operand1.text + node.operand2.text;
                             node.latex = node.operand1.latex + node.operand2.latex;
                             node.asciiMath = node.operand1.asciiMath + node.operand2.asciiMath;

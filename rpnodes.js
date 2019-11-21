@@ -198,6 +198,7 @@ class RPMultiplicationNode extends RPBinomialOperationNode {
         super();
 
         this.subtype = "multiplication";
+        this.isImplicit = false;
     }
 
     get title() {

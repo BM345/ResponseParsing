@@ -1,29 +1,33 @@
 
-
 class RPNode {
-    constructor() {
+    constructor(type = "") {
         this.supernode = null;
         this.depth = 0;
 
-        this.type = "";
+        this.type = type;
         this.subtype = "";
 
-        this.text = "";
-        this.latex = "";
-        this.asciiMath = "";
-        this.isComplete = false;
+        this._title = "Node";
 
         this.start = 0;
         this.end = 0;
+        this._text = "";
+
+        this._latex = "";
+        this._asciiMath = "";
+        this._mathML = "";
     }
 
-    get length() {
-        return this.end - this.start;
-    }
+    get title() { return this._title; }
 
-    get subnodes() {
-        return [];
-    }
+    get length() { return this.end - this.start; }
+    get text() { return this._text; }
+
+    get latex() { return this._latex; }
+    get asciiMath() { return this._asciiMath; }
+    get mathML() { return this._mathML; }
+
+    get subnodes() { return []; }
 
     setDepth(depth = 0) {
         this.depth = depth;
@@ -35,17 +39,13 @@ class RPNode {
             n.setDepth(depth + 1);
         });
     }
-
-    get title() {
-        return "";
-    }
 }
 
 class RPNumberNode extends RPNode {
     constructor() {
-        super();
+        super("number");
 
-        this.type = "number";
+        this._title = "Number";
 
         this.integralPart = "";
         this.decimalPart = "";
@@ -61,13 +61,17 @@ class RPNumberNode extends RPNode {
     get title() {
         return (this.subtype == "integer") ? "Integer" : "Decimal Number";
     }
+
+    get mathML() {
+        return "<mn>" + this._text + "</mn>";
+    }
 }
 
 class RPFractionNode extends RPNode {
     constructor() {
-        super();
+        super("fraction");
 
-        this.type = "fraction";
+        this._title = "Fraction";
 
         this.numerator = null;
         this.denominator = null;
@@ -77,16 +81,24 @@ class RPFractionNode extends RPNode {
         return [this.numerator, this.denominator];
     }
 
-    get title() {
-        return "Fraction";
+    get latex() {
+        return "\\frac{" + this.numerator.latex + "}{" + this.denominator.latex + "}";
+    }
+
+    get asciiMath() {
+        return "frac " + this.numerator.asciiMath + " " + this.denominator.asciiMath;
+    }
+
+    get mathML() {
+        return "<mfrac>" + this.numerator.mathML + this.denominator.mathML + "</mfrac>";
     }
 }
 
 class RPMixedFractionNode extends RPNode {
     constructor() {
-        super();
+        super("mixedFraction");
 
-        this.type = "mixedFraction";
+        this._title = "Mixed Fraction";
 
         this.wholePart = null;
         this.fractionPart = null;
@@ -96,16 +108,22 @@ class RPMixedFractionNode extends RPNode {
         return [this.wholePart, this.fractionPart];
     }
 
-    get title() {
-        return "Mixed Fraction";
+    get latex() {
+        return this.wholePart.latex + " " + this.fractionPart.latex;
+    }
+
+    get asciiMath() {
+        return this.wholePart.asciiMath + " " + this.fractionPart.asciiMath;
+    }
+
+    get mathML() {
+        return this.wholePart.mathML + this.fractionPart.mathML;
     }
 }
 
 class RPRadicalNode extends RPNode {
     constructor() {
-        super();
-
-        this.type = "radical";
+        super("radical");
 
         this.radix = 2;
         this.radixIsImplicit = true;
@@ -117,19 +135,32 @@ class RPRadicalNode extends RPNode {
     }
 
     get title() {
-        return (this.radix == 2) ? "Square Root" : "Radical";
+        return (this.radix == 2) ? "Square Root" : ((this.radix == 3) ? "Cube Root" : "Radical");
+    }
+
+    get latex() {
+        return "\\sqrt{" + this.radicand.latex + "}";
+    }
+
+    get asciiMath() {
+        return "sqrt(" + this.radicand.asciiMath + ")";
+    }
+
+    get mathML() {
+        if (this.radix == 2) {
+            return "<msqrt>" + this.radicand.mathML + "</msqrt>";
+        }
+        else {
+            return "<mroot>" + this.radicand.mathML + "<mn>" + this.radix + "</mn></mroot>";
+        }
     }
 }
 
 class RPIdentifierNode extends RPNode {
     constructor() {
-        super();
+        super("identifier");
 
-        this.type = "identifier";
-    }
-
-    get title() {
-        return "Identifier";
+        this._title = "Identifier";
     }
 }
 

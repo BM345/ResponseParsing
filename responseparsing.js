@@ -84,6 +84,7 @@ class ResponseParser {
             var node = this.parseBinomialOperator(inputText, marker.copy());;
 
             if (node === null) { node = this.parseBracketedExpression(inputText, marker.copy()) }
+            if (node === null) { node = this.parseFactorial(inputText, marker.copy()) }
             if (node === null) { node = this.parseMixedFraction(inputText, marker.copy()) }
             if (node === null) { node = this.parseFraction(inputText, marker.copy()); }
             if (node === null) { node = this.parseNamedFunction(inputText, marker.copy()); }
@@ -173,6 +174,18 @@ class ResponseParser {
 
                         operandStack.push(node);
                     }
+                    else if (operandStack.length >= 1 && operator.type == "operator") {
+                        if (operator.text == "!") { node = new RPFactorialNode(); }
+
+                        var operand = operandStack.pop();
+
+                        node.operand = operand;
+                        node.text = operand.text + operator.text;
+                        node.latex = operand.latex + operator.latex;
+                        node.asciiMath = operand.asciiMath + operator.asciiMath;
+
+                        operandStack.push(node);
+                    }
                     else if (operandStack.length >= 1 && operator.type == "namedFunction") {
                         node = operator;
                         var operand = operandStack.pop();
@@ -190,6 +203,26 @@ class ResponseParser {
                 break;
             }
         }
+    }
+
+    parseFactorial(inputText, marker) {
+        var start = marker.position;
+
+        if (inputText.charAt(marker.position) != "!") { return null; }
+
+        marker.position++;
+
+        var end = marker.position;
+
+        var node = new RPOperatorNode();
+
+        node.text = "!";
+        node.latex = "!";
+        node.asciiMath = "!";
+        node.start = start;
+        node.end = end;
+
+        return node;
     }
 
     parseBracketedExpression(inputText, marker) {

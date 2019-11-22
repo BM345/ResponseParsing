@@ -142,11 +142,52 @@ class RPOperatorNode extends RPNode {
     }
 
     get precedence() {
-        return "+-*/^".indexOf(this.text);
+        return "+-*/^!".indexOf(this.text);
     }
 
     get title() {
         return "Operator";
+    }
+}
+
+
+class RPPrefixOperationNode extends RPNode {
+    constructor() {
+        super();
+
+        this.type = "prefixOperation";
+
+        this.operand = null;
+    }
+
+    get subnodes() {
+        return [this.operand];
+    }
+}
+
+class RPSuffixOperationNode extends RPNode {
+    constructor() {
+        super();
+
+        this.type = "suffixOperation";
+
+        this.operand = null;
+    }
+
+    get subnodes() {
+        return [this.operand];
+    }
+}
+
+class RPFactorialNode extends RPSuffixOperationNode {
+    constructor() {
+        super();
+
+        this.type = "factorial";
+    }
+
+    get title() {
+        return "Factorial";
     }
 }
 
@@ -239,7 +280,7 @@ class RPNamedFunctionNode extends RPNode {
         this.functionName = [];
         this.parameters = [];
 
-        this.precedence = 5;
+        this.precedence = 6;
     }
 
     get title() {

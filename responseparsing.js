@@ -83,6 +83,7 @@ class ResponseParser {
 
             var node = this.parseBinomialOperator(inputText, marker.copy());;
 
+            if (node === null) { node = this.parseBracketedExpression(inputText, marker.copy()) }
             if (node === null) { node = this.parseMixedFraction(inputText, marker.copy()) }
             if (node === null) { node = this.parseFraction(inputText, marker.copy()); }
             if (node === null) { node = this.parseNamedFunction(inputText, marker.copy()); }
@@ -189,6 +190,52 @@ class ResponseParser {
                 break;
             }
         }
+    }
+
+    parseBracketedExpression(inputText, marker) {
+        var start = marker.position;
+
+        if (inputText.charAt(marker.position) != "(") { return null; }
+
+        marker.position++;
+
+        var n = 1;
+        var t = "";
+
+        while (marker.position < inputText.length && n > 0) {
+            var c = inputText.charAt(marker.position);
+            t += c;
+
+            if (c == "(") {
+                n++;
+            }
+            else if (c == ")") {
+                n--;
+            }
+
+            marker.position++;
+        }
+
+        var end = marker.position;
+
+        var node = new RPBracketedExpressionNode();
+
+        node.text = t;
+        node.start = start;
+        node.end = end;
+
+        if (end - start >= 2) {
+            var innerText = inputText.substring(start + 1, end - 1);
+            var innerExpression = this.parseExpression(innerText, new Marker());
+
+            node.innerExpression = innerExpression;
+
+            node.text = "(" + innerExpression.text + ")";
+            node.latex = "\\left(" + innerExpression.latex + "\\right)";
+            node.asciiMath = "(" + innerExpression.asciiMath + ")";
+        }
+
+        return node;
     }
 
     parseNamedFunction(inputText, marker) {

@@ -255,3 +255,22 @@ class RPNamedFunctionNode extends RPNode {
         return this.parameters;
     }
 }
+
+class RPBracketedExpressionNode extends RPNode {
+    constructor() {
+        super();
+
+        this.type = "bracketedExpression";
+
+        this.bracketType = "()";
+        this.innerExpression = null;
+    }
+
+    get title() {
+        return "Bracketed Expression";
+    }
+
+    get subnodes() {
+        return [this.innerExpression];
+    }
+}

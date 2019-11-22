@@ -23,7 +23,8 @@
             "identifier": 90,
             "radical": 280,
             "fraction": 15,
-            "mixedFraction": 30
+            "mixedFraction": 30,
+            "namedFunction": 200
         }
 
         class App extends Application {
@@ -109,13 +110,13 @@
                 if (node.supernode != null) {
                     var e5 = node.supernode.position.translate(0, h1);
                     var e6 = node.position.translate(0, -h1);
-                    graphics.drawLine(e5, e6, "hsla(" + hue + ", 0%, 50%, 0.5)", 4);
+                    graphics.drawLine(e5, e6, "hsla(" + hue + ", 0%, 50%, 0.3)", 8);
                 }
 
                 var e7 = node.position.translate(0, -fs2 / 2 - 20);
                 var e8 = node.position.translate(0, fs2 / 2 + 20);
 
-                var u1 = v2(4, 20);
+                var u1 = v2(0, 20);
 
                 graphics.drawPath([e1.add(u1), e2.add(u1), e3.add(u1), e4.add(u1), e1.add(u1)], "hsla(" + hue + ", 0%, 50%, 0.2)", "", 0);
                 graphics.drawPath([e1, e2, e3, e4, e1], "hsl(" + hue + ", 50%, 45%)", "", 0);
@@ -147,6 +148,8 @@
 
             input.onkeyup = function (e) {
                 var parseResult = rp.getParseResult(input.value.toString());
+
+                console.log(parseResult);
 
                 app.setNodeTree(parseResult);
 

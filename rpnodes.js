@@ -229,3 +229,29 @@ class RPExponentiationNode extends RPBinomialOperationNode {
         return "Exponentiation";
     }
 }
+
+class RPNamedFunctionNode extends RPNode {
+    constructor() {
+        super();
+
+        this.type = "namedFunction";
+
+        this.functionName = [];
+        this.parameters = [];
+
+        this.precedence = 5;
+    }
+
+    get title() {
+        if (this.functionName.length == 0) {
+            return "Named Function";
+        }
+        else {
+            return this.functionName[0] + " Function";
+        }
+    }
+
+    get subnodes() {
+        return this.parameters;
+    }
+}

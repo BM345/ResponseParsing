@@ -27,6 +27,15 @@ class ParserSettings {
     }
 }
 
+var namedFunctions = [
+    ["Sine", ["sin", "sine"]],
+    ["Cosine", ["cos", "cosine"]],
+    ["Tangent", ["tan", "tangent"]],
+    ["Arcsine", ["asin", "arcsin", "arcsine"]],
+    ["Arccosine", ["acos", "arccos", "arccosine"]],
+    ["Arctangent", ["atan", "arctan", "arctangent"]]
+]
+
 // Handles the process of scanning through a string to see what types of mathematical expression are in it.
 // At the moment, this could just be done using regular expressions.
 // However, regular expressions couldn't be used for more complicated mathematical expressions, which is why this design pattern is used.
@@ -76,13 +85,14 @@ class ResponseParser {
 
             if (node === null) { node = this.parseMixedFraction(inputText, marker.copy()) }
             if (node === null) { node = this.parseFraction(inputText, marker.copy()); }
+            if (node === null) { node = this.parseNamedFunction(inputText, marker.copy()); }
             if (node === null) { node = this.parseSquareRoot(inputText, marker.copy()); }
             if (node === null) { node = this.parseNumber(inputText, marker.copy()); }
             if (node === null) { node = this.parseIdentifier(inputText, marker.copy()); }
             if (node === null) { node = this.parseWhiteSpace(inputText, marker.copy()); }
             if (node === null) { break; }
 
-            if (node.type == "operator") {
+            if (node.type == "operator" || node.type == "namedFunction") {
                 this._applyOperators(operandStack, operatorStack, node);
 
                 operatorStack.push(node);
@@ -90,7 +100,7 @@ class ResponseParser {
             else if (node.type == "whiteSpace") {
             }
             else {
-                if (lastNode !== undefined && lastNode.type != "operator") {
+                if (lastNode !== undefined && lastNode.type != "operator" && lastNode.type != "namedFunction") {
                     var implicitTimes = new RPOperatorNode();
 
                     implicitTimes.text = "*";
@@ -121,51 +131,96 @@ class ResponseParser {
     _applyOperators(operandStack, operatorStack, nextOperator) {
         for (var i = operatorStack.length - 1; i >= 0; i--) {
             if (nextOperator === null || operatorStack[i].precedence >= nextOperator.precedence) {
-                if (operandStack.length >= 2) {
+                if (operandStack.length >= 1) {
                     var operator = operatorStack.pop();
 
                     var node;
+                    if (operandStack.length >= 2 && operator.type == "operator") {
 
-                    if (operator.text == "+") { node = new RPAdditionNode(); }
-                    if (operator.text == "-") { node = new RPSubtractionNode(); }
-                    if (operator.text == "*") { node = new RPMultiplicationNode(); }
-                    if (operator.text == "/") { node = new RPDivisionNode(); }
-                    if (operator.text == "^") { node = new RPExponentiationNode(); }
+                        if (operator.text == "+") { node = new RPAdditionNode(); }
+                        if (operator.text == "-") { node = new RPSubtractionNode(); }
+                        if (operator.text == "*") { node = new RPMultiplicationNode(); }
+                        if (operator.text == "/") { node = new RPDivisionNode(); }
+                        if (operator.text == "^") { node = new RPExponentiationNode(); }
 
-                    node.operand2 = operandStack.pop();
-                    node.operand1 = operandStack.pop();
+                        node.operand2 = operandStack.pop();
+                        node.operand1 = operandStack.pop();
 
-                    if (operator.text == "^") {
-                        node.text = node.operand1.text + operator.text + node.operand2.text;
-                        node.latex = node.operand1.latex + operator.latex + "{" + node.operand2.latex + "}";
-                        node.asciiMath = node.operand1.asciiMath + operator.asciiMath + node.operand2.asciiMath;
-                    }
-                    else if (operator.text == "*") {
-                        if (operator.isImplicit) {
-                            node.isImplicit = true;
-                            node.text = node.operand1.text + node.operand2.text;
-                            node.latex = node.operand1.latex + node.operand2.latex;
-                            node.asciiMath = node.operand1.asciiMath + node.operand2.asciiMath;
+                        if (operator.text == "^") {
+                            node.text = node.operand1.text + operator.text + node.operand2.text;
+                            node.latex = node.operand1.latex + operator.latex + "{" + node.operand2.latex + "}";
+                            node.asciiMath = node.operand1.asciiMath + operator.asciiMath + node.operand2.asciiMath;
+                        }
+                        else if (operator.text == "*") {
+                            if (operator.isImplicit) {
+                                node.isImplicit = true;
+                                node.text = node.operand1.text + node.operand2.text;
+                                node.latex = node.operand1.latex + node.operand2.latex;
+                                node.asciiMath = node.operand1.asciiMath + node.operand2.asciiMath;
+                            }
+                            else {
+                                node.text = node.operand1.text + operator.text + node.operand2.text;
+                                node.latex = node.operand1.latex + " " + operator.latex + " " + node.operand2.latex;
+                                node.asciiMath = node.operand1.asciiMath + operator.asciiMath + node.operand2.asciiMath;
+                            }
                         }
                         else {
                             node.text = node.operand1.text + operator.text + node.operand2.text;
-                            node.latex = node.operand1.latex + " " + operator.latex + " " + node.operand2.latex;
+                            node.latex = node.operand1.latex + operator.latex + node.operand2.latex;
                             node.asciiMath = node.operand1.asciiMath + operator.asciiMath + node.operand2.asciiMath;
                         }
-                    }
-                    else {
-                        node.text = node.operand1.text + operator.text + node.operand2.text;
-                        node.latex = node.operand1.latex + operator.latex + node.operand2.latex;
-                        node.asciiMath = node.operand1.asciiMath + operator.asciiMath + node.operand2.asciiMath;
-                    }
 
-                    operandStack.push(node);
+                        operandStack.push(node);
+                    }
+                    else if (operandStack.length >= 1 && operator.type == "namedFunction") {
+                        node = operator;
+                        var operand = operandStack.pop();
+
+                        node.parameters.push(operand);
+                        node.text += operand.text;
+                        node.latex += " " + operand.latex;
+                        node.asciiMath += " " + operand.asciiMath;
+
+                        operandStack.push(node);
+                    }
                 }
             }
             else {
                 break;
             }
         }
+    }
+
+    parseNamedFunction(inputText, marker) {
+        var start = marker.position;
+
+        var matchString = ""
+        var match = null;
+
+        namedFunctions.forEach(nf => {
+            nf[1].map(a => a).sort((a, b) => { return b.length - a.length }).forEach(n => {
+                if (inputText.substr(marker.position, n.length) == n) {
+                    match = nf;
+                    matchString = n;
+                    marker.position += n.length;
+                }
+            });
+        });
+
+        if (match === null) { return null; }
+
+        var end = marker.position;
+
+        var node = new RPNamedFunctionNode();
+
+        node.functionName = match;
+        node.text = matchString;
+        node.latex = "\\" + match[1][0];
+        node.asciiMath = match[1][0];
+        node.start = start;
+        node.end = end;
+
+        return node;
     }
 
     parseBinomialOperator(inputText, marker) {

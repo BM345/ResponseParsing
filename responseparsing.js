@@ -148,28 +148,12 @@ class ResponseParser {
                         node.operand2 = operandStack.pop();
                         node.operand1 = operandStack.pop();
 
-                        if (operator.text == "^") {
-                            node.text = node.operand1.text + operator.text + node.operand2.text;
-                            node.latex = node.operand1.latex + operator.latex + "{" + node.operand2.latex + "}";
-                            node.asciiMath = node.operand1.asciiMath + operator.asciiMath + node.operand2.asciiMath;
-                        }
-                        else if (operator.text == "*") {
-                            if (operator.isImplicit) {
-                                node.isImplicit = true;
-                                node.text = node.operand1.text + node.operand2.text;
-                                node.latex = node.operand1.latex + node.operand2.latex;
-                                node.asciiMath = node.operand1.asciiMath + node.operand2.asciiMath;
-                            }
-                            else {
-                                node.text = node.operand1.text + operator.text + node.operand2.text;
-                                node.latex = node.operand1.latex + " " + operator.latex + " " + node.operand2.latex;
-                                node.asciiMath = node.operand1.asciiMath + operator.asciiMath + node.operand2.asciiMath;
-                            }
+                        if (operator.text == "*" && operator.isImplicit) {
+                            node.isImplicit = true;
+                            node.text = node.operand1.text + node.operand2.text;
                         }
                         else {
                             node.text = node.operand1.text + operator.text + node.operand2.text;
-                            node.latex = node.operand1.latex + operator.latex + node.operand2.latex;
-                            node.asciiMath = node.operand1.asciiMath + operator.asciiMath + node.operand2.asciiMath;
                         }
 
                         operandStack.push(node);
@@ -216,11 +200,12 @@ class ResponseParser {
 
         var node = new RPOperatorNode();
 
-        node.text = "!";
-        node.latex = "!";
-        node.asciiMath = "!";
         node.start = start;
         node.end = end;
+        node._text = "!";
+
+        node._latex = "!";
+        node._asciiMath = "!";
 
         return node;
     }
@@ -253,19 +238,15 @@ class ResponseParser {
 
         var node = new RPBracketedExpressionNode();
 
-        node.text = t;
         node.start = start;
         node.end = end;
+        node._text = t;
 
         if (end - start >= 2) {
             var innerText = inputText.substring(start + 1, end - 1);
             var innerExpression = this.parseExpression(innerText, new Marker());
 
             node.innerExpression = innerExpression;
-
-            node.text = "(" + innerExpression.text + ")";
-            node.latex = "\\left(" + innerExpression.latex + "\\right)";
-            node.asciiMath = "(" + innerExpression.asciiMath + ")";
         }
 
         return node;
@@ -294,11 +275,13 @@ class ResponseParser {
         var node = new RPNamedFunctionNode();
 
         node.functionName = match;
-        node.text = matchString;
-        node.latex = "\\" + match[1][0];
-        node.asciiMath = match[1][0];
+
         node.start = start;
         node.end = end;
+        node._text = matchString;
+
+        node._latex = "\\" + match[1][0];
+        node._asciiMath = match[1][0];
 
         return node;
     }
@@ -318,11 +301,12 @@ class ResponseParser {
 
         var node = new RPOperatorNode();
 
-        node.text = c;
-        node.latex = (c == "*") ? "\\times" : c;
-        node.asciiMath = c;
         node.start = start;
         node.end = end;
+        node._text = c;
+
+        node._latex = (c == "*") ? "\\times" : c;
+        node._asciiMath = c;
 
         return node;
     }
@@ -342,11 +326,12 @@ class ResponseParser {
 
         var node = new RPIdentifierNode();
 
-        node.text = c;
-        node.latex = c;
-        node.asciiMath = c;
         node.start = start;
         node.end = end;
+        node._text = c;
+
+        node._latex = c;
+        node._asciiMath = c;
 
         return node;
     }
@@ -405,11 +390,10 @@ class ResponseParser {
 
         var node = new RPRadicalNode();
 
-        node.text = t1 + t2 + t3 + t4 + t5 + t6 + t7;
-        node.latex = "\\sqrt{" + number.latex + "}";
-        node.asciiMath = "sqrt(" + number.asciiMath + ")";
         node.start = start;
         node.end = end;
+        node._text = t1 + t2 + t3 + t4 + t5 + t6 + t7;
+
         node.radix = 2;
         node.radixIsImplicit = true;
         node.radicand = number;
@@ -433,11 +417,10 @@ class ResponseParser {
 
         var node = new RPMixedFractionNode();
 
-        node.text = wholePart.text + whiteSpace.text + fractionPart.text;
-        node.latex = wholePart.latex + " " + fractionPart.latex;
-        node.asciiMath = wholePart.asciiMath + " " + fractionPart.asciiMath;
         node.start = start;
         node.end = end;
+        node._text = wholePart.text + whiteSpace.text + fractionPart.text;
+
         node.wholePart = wholePart;
         node.fractionPart = fractionPart;
 
@@ -475,28 +458,18 @@ class ResponseParser {
         var denominator = this.parseNumber(inputText, marker);
         var end = marker.position;
 
-        // If there was no denominator, then it is a fraction, but not a complete one.
-        var isComplete = (denominator === null) ? false : true;
-
         var t1 = numerator.text;
         var t2 = (whiteSpace1 === null) ? "" : whiteSpace1.text;
         var t3 = "/";
         var t4 = (whiteSpace2 === null) ? "" : whiteSpace2.text;
         var t5 = (denominator === null) ? "" : denominator.text;
 
-        // The simplest form of the fraction is just the simplest form of the numerator and the denominator with a solidus in between.
-        var t6 = numerator.simplestForm;
-        var t7 = "/";
-        var t8 = (denominator === null) ? "" : denominator.simplestForm;
-
         var node = new RPFractionNode();
 
-        node.text = t1 + t2 + t3 + t4 + t5;
-        node.latex = "\\frac{" + numerator.latex + "}{" + denominator.latex + "}";
-        node.asciiMath = "frac " + numerator.asciiMath + " " + denominator.asciiMath;
         node.start = start;
         node.end = end;
-        node.isComplete = isComplete;
+        node._text = t1 + t2 + t3 + t4 + t5;
+
         node.numerator = numerator;
         node.denominator = denominator;
 
@@ -682,13 +655,17 @@ class ResponseParser {
             var node = new RPNumberNode();
 
             node.subtype = subtype;
-            node.text = ts + t;
+
             node.integralPart = integralPart;
             node.decimalPart = decimalPart;
-            node.latex = simplestForm;
-            node.asciiMath = simplestForm;
+
             node.start = start;
             node.end = end;
+            node._text = ts + t;
+
+            node._latex = simplestForm;
+            node._asciiMath = simplestForm;
+
             node.sign = sign;
             node.signIsExplicit = signIsExplicit;
             node.numberOfLeadingZeros = nlz;
@@ -730,16 +707,17 @@ class ResponseParser {
         }
         else {
             // If there was white space, return an object giving the properties of the white space.
-            return {
-                "type": "whiteSpace",
-                "text": t,
-                "latex": t,
-                "asciiMath": t,
-                "start": start,
-                "end": end,
-                "length": t.length,
-                "compressedWhiteSpace": " "
-            };
+
+            var node = new RPWhiteSpaceNode();
+
+            node.start = start;
+            node.end = end;
+            node._text = t;
+
+            node._latex = t;
+            node._asciiMath = t;
+
+            return node;
         }
     }
 }

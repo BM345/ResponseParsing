@@ -41,6 +41,12 @@ class RPNode {
     }
 }
 
+class RPWhiteSpaceNode extends RPNode {
+    constructor() {
+        super("whiteSpace");
+    }
+}
+
 class RPNumberNode extends RPNode {
     constructor() {
         super("number");
@@ -162,33 +168,37 @@ class RPIdentifierNode extends RPNode {
 
         this._title = "Identifier";
     }
+
+    get mathML() {
+        return "<mi>" + this._text + "</mi>";
+    }
 }
 
 class RPOperatorNode extends RPNode {
     constructor() {
-        super();
+        super("operator");
 
-        this.type = "operator";
+        this._title = "Operator";
+
         this.isImplicit = false;
     }
 
     get precedence() {
-        return "+-*/^!".indexOf(this.text);
+        return "+-*/^!=".indexOf(this.text);
     }
 
-    get title() {
-        return "Operator";
+    get mathML() {
+        return "<mo>" + this._text + "</mo>";
     }
 }
 
-
-class RPPrefixOperationNode extends RPNode {
+class RPUnaryOperationNode extends RPNode {
     constructor() {
-        super();
-
-        this.type = "prefixOperation";
+        super("unaryOperation");
 
         this.operand = null;
+
+        this.operator = null;
     }
 
     get subnodes() {
@@ -196,117 +206,141 @@ class RPPrefixOperationNode extends RPNode {
     }
 }
 
-class RPSuffixOperationNode extends RPNode {
+class RPFactorialNode extends RPUnaryOperationNode {
     constructor() {
         super();
 
-        this.type = "suffixOperation";
+        this.subtype = "factorial";
 
-        this.operand = null;
-    }
-
-    get subnodes() {
-        return [this.operand];
+        this._title = "Factorial";
     }
 }
 
-class RPFactorialNode extends RPSuffixOperationNode {
+class RPBinaryOperationNode extends RPNode {
     constructor() {
-        super();
-
-        this.type = "factorial";
-    }
-
-    get title() {
-        return "Factorial";
-    }
-}
-
-class RPBinomialOperationNode extends RPNode {
-    constructor() {
-        super();
-
-        this.type = "binomialOperation";
+        super("binomialOperation");
 
         this.operand1 = null;
         this.operand2 = null;
+
+        this.operator = null;
+
+        this._title = "BinaryOperation";
     }
 
     get subnodes() {
         return [this.operand1, this.operand2];
     }
-
-    get title() {
-        return "Binomial Operation";
-    }
 }
 
-class RPAdditionNode extends RPBinomialOperationNode {
+class RPAdditionNode extends RPBinaryOperationNode {
     constructor() {
         super();
 
         this.subtype = "addition";
+
+        this._title = "Addition";
     }
 
-    get title() {
-        return "Addition";
+    get latex() {
+        return this.operand1.latex + "+" + this.operand2.latex;
+    }
+
+    get asciiMath() {
+        return this.operand1.asciiMath + "+" + this.operand2.asciiMath;
     }
 }
 
-class RPSubtractionNode extends RPBinomialOperationNode {
+class RPSubtractionNode extends RPBinaryOperationNode {
     constructor() {
         super();
 
         this.subtype = "subtraction";
+
+        this._title = "Subtraction";
     }
 
-    get title() {
-        return "Subtraction";
+    get latex() {
+        return this.operand1.latex + "-" + this.operand2.latex;
+    }
+
+    get asciiMath() {
+        return this.operand1.asciiMath + "-" + this.operand2.asciiMath;
     }
 }
 
-class RPMultiplicationNode extends RPBinomialOperationNode {
+class RPMultiplicationNode extends RPBinaryOperationNode {
     constructor() {
         super();
 
         this.subtype = "multiplication";
         this.isImplicit = false;
+
+        this._title = "Multiplication";
     }
 
     get title() {
         return (this.isImplicit) ? "Multiplication (Implicit)" : "Multiplication";
     }
+
+    get latex() {
+        if (this.isImplicit) {
+            return this.operand1.latex + this.operand2.latex;
+        }
+        else {
+            return this.operand1.latex + " \\times " + this.operand2.latex;
+        }
+    }
+
+    get asciiMath() {
+        if (this.isImplicit) {
+            return this.operand1.asciiMath + this.operand2.asciiMath;
+        }
+        else {
+            return this.operand1.asciiMath + "*" + this.operand2.asciiMath;
+        }
+    }
 }
 
-class RPDivisionNode extends RPBinomialOperationNode {
+class RPDivisionNode extends RPBinaryOperationNode {
     constructor() {
         super();
 
         this.subtype = "division";
+
+        this._title = "Division";
     }
 
-    get title() {
-        return "Division";
+    get latex() {
+        return this.operand1.latex + "/" + this.operand2.latex;
+    }
+
+    get asciiMath() {
+        return this.operand1.asciiMath + "/" + this.operand2.asciiMath;
     }
 }
 
-class RPExponentiationNode extends RPBinomialOperationNode {
+class RPExponentiationNode extends RPBinaryOperationNode {
     constructor() {
         super();
 
         this.subtype = "exponentiation";
+
+        this._title = "Exponentiation";
     }
 
-    get title() {
-        return "Exponentiation";
+    get latex() {
+        return this.operand1.latex + "^{" + this.operand2.latex + "}";
+    }
+
+    get asciiMath() {
+        return this.operand1.asciiMath + "^" + this.operand2.asciiMath;
     }
 }
 
 class RPNamedFunctionNode extends RPNode {
     constructor() {
-        super();
-
-        this.type = "namedFunction";
+        super("namedFunction");
 
         this.functionName = [];
         this.parameters = [];
@@ -330,19 +364,27 @@ class RPNamedFunctionNode extends RPNode {
 
 class RPBracketedExpressionNode extends RPNode {
     constructor() {
-        super();
-
-        this.type = "bracketedExpression";
+        super("bracketedExpression");
 
         this.bracketType = "()";
         this.innerExpression = null;
-    }
 
-    get title() {
-        return "Bracketed Expression";
+        this._title = "Bracketed Expression";
     }
 
     get subnodes() {
         return [this.innerExpression];
+    }
+
+    get text() {
+        return "(" + this.innerExpression.text + ")";
+    }
+
+    get latex() {
+        return "\\left(" + this.innerExpression.latex + "\\right)";
+    }
+
+    get asciiMath() {
+        return "(" + this.innerExpression.asciiMath + ")";
     }
 }

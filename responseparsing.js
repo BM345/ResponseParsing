@@ -35,6 +35,7 @@ class ResponseParser {
 
     constructor() {
         this.settings = new ParserSettings();
+        this.simplifier = new Simplifier();
     }
 
     // The top-level parse function (for now).
@@ -44,7 +45,9 @@ class ResponseParser {
         var expression = this.parseExpression(inputText, m1);
 
         if (expression !== null && m1.position == inputText.length) {
+            expression = this.simplifier.simplifyNode(expression);
             expression.setDepth();
+
             return expression;
         }
 
@@ -96,7 +99,7 @@ class ResponseParser {
                 if (lastNode !== undefined && lastNode.type != "operator" && lastNode.type != "namedFunction") {
                     var implicitTimes = new RPOperatorNode();
 
-                    implicitTimes.text = "*";
+                    implicitTimes._text = "*";
                     implicitTimes.isImplicit = true;
 
                     operatorStack.push(implicitTimes);
@@ -141,10 +144,10 @@ class ResponseParser {
 
                         if (operator.text == "*" && operator.isImplicit) {
                             node.isImplicit = true;
-                            node.text = node.operand1.text + node.operand2.text;
+                            node._text = node.operand1.text + node.operand2.text;
                         }
                         else {
-                            node.text = node.operand1.text + operator.text + node.operand2.text;
+                            node._text = node.operand1.text + operator.text + node.operand2.text;
                         }
 
                         operandStack.push(node);
@@ -155,7 +158,7 @@ class ResponseParser {
                         var operand = operandStack.pop();
 
                         node.operand = operand;
-                        node.text = operand.text + operator.text;
+                        node._text = operand.text + operator.text;
 
                         operandStack.push(node);
                     }
@@ -164,9 +167,7 @@ class ResponseParser {
                         var operand = operandStack.pop();
 
                         node.parameters.push(operand);
-                        node.text += operand.text;
-                        node.latex += " " + operand.latex;
-                        node.asciiMath += " " + operand.asciiMath;
+                        node._text += operand.text;
 
                         operandStack.push(node);
                     }
@@ -193,9 +194,9 @@ class ResponseParser {
         node.end = end;
         node._text = "!";
 
-          node.value = "!";
+        node.value = "!";
 
-       return node;
+        return node;
     }
 
     parseBracketedExpression(inputText, marker) {
@@ -247,7 +248,7 @@ class ResponseParser {
         var match = null;
 
         namedFunctions.forEach(nf => {
-                                             nf.allowedWritings.map(a => a).sort((a, b) => { return b.length - a.length }).forEach(w => {
+            nf.allowedWritings.map(a => a).sort((a, b) => { return b.length - a.length }).forEach(w => {
                 if (inputText.substr(marker.position, w.length) == w) {
                     match = nf;
                     matchString = w;
@@ -262,7 +263,7 @@ class ResponseParser {
 
         var node = new RPNamedFunctionNode();
 
-  node.value = match;
+        node.value = match;
 
         node.start = start;
         node.end = end;
@@ -289,9 +290,9 @@ class ResponseParser {
         node.start = start;
         node.end = end;
         node._text = c;
-          node.value = c;
+        node.value = c;
 
-      return node;
+        return node;
     }
 
     parseIdentifier(inputText, marker) {
@@ -312,7 +313,7 @@ class ResponseParser {
         node.start = start;
         node.end = end;
         node._text = c;
-          node.value = c;
+        node.value = c;
 
         return node;
     }
@@ -435,7 +436,7 @@ class ResponseParser {
 
         node.start = start;
         node.end = end;
-        node._text =   inputText.slice(start, end);
+        node._text = inputText.slice(start, end);
 
         node.numerator = numerator;
         node.denominator = denominator;
@@ -629,9 +630,9 @@ class ResponseParser {
             node.start = start;
             node.end = end;
             node._text = ts + t;
-               node.value =    simplestForm;
+            node.value = simplestForm;
 
-           node.sign = sign;
+            node.sign = sign;
             node.signIsExplicit = signIsExplicit;
             node.numberOfLeadingZeros = nlz;
             node.numberOfTrailingZeros = ntz;
@@ -677,8 +678,8 @@ class ResponseParser {
 
             node.start = start;
             node.end = end;
-            node._text =t;
-              node.value = " ";
+            node._text = t;
+            node.value = " ";
 
             node._latex = t;
             node._asciiMath = t;

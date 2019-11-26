@@ -257,7 +257,7 @@ class RPFactorialNode extends RPUnaryOperationNode {
 
 class RPBinaryOperationNode extends RPNode {
     constructor() {
-        super("binomialOperation");
+        super("binaryOperation");
 
         this.operand1 = null;
         this.operand2 = null;
@@ -319,7 +319,7 @@ class RPMultiplicationNode extends RPBinaryOperationNode {
     }
 
     get title() {
-        return (this.isImplicit) ? "Multiplication (Implicit)" : "Multiplication";
+        return (this.isImplicit) ? "Multiplication" : "Multiplication";
     }
 
     get latex() {
@@ -449,3 +449,60 @@ class RPBracketedExpressionNode extends RPNode {
         return "(" + this.innerExpression.asciiMath + ")";
     }
 }
+
+class RPSurdNode extends RPNode {
+    constructor() {
+        super("surd");
+
+        this.coefficient = null;
+        this.radical = null;
+
+        this._title = "Surd";
+    }
+
+    get subnodes() {
+        return [this.coefficient, this.radical];
+    }
+
+    get latex() {
+        return this.coefficient.latex + " " + this.radical.latex;
+    }
+
+    get asciiMath() {
+        return this.coefficient.asciiMath + " " + this.radical.asciiMath;
+    }
+}
+
+class Simplifier {
+    constructor() { }
+
+    simplifyNode(node) {
+
+        node = this.replaceWithSurd(node);
+
+        return node;
+    }
+
+    replaceWithSurd(node) {
+        if (node.type == "binaryOperation"
+            && node.subtype == "multiplication"
+            && node.operand1.type == "number"
+            && node.operand2.type == "radical"
+            && node.operand2.radicand.type == "number") {
+            var surd = new RPSurdNode();
+
+            surd.coefficient = node.operand1;
+            surd.radical = node.operand2;
+
+            return surd;
+        }
+
+        return node;
+    }
+}
+
+
+
+
+
+

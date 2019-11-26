@@ -27,15 +27,6 @@ class ParserSettings {
     }
 }
 
-var namedFunctions = [
-    ["Sine", ["sin", "sine"]],
-    ["Cosine", ["cos", "cosine"]],
-    ["Tangent", ["tan", "tangent"]],
-    ["Arcsine", ["asin", "arcsin", "arcsine"]],
-    ["Arccosine", ["acos", "arccos", "arccosine"]],
-    ["Arctangent", ["atan", "arctan", "arctangent"]]
-]
-
 // Handles the process of scanning through a string to see what types of mathematical expression are in it.
 // At the moment, this could just be done using regular expressions.
 // However, regular expressions couldn't be used for more complicated mathematical expressions, which is why this design pattern is used.
@@ -165,8 +156,6 @@ class ResponseParser {
 
                         node.operand = operand;
                         node.text = operand.text + operator.text;
-                        node.latex = operand.latex + operator.latex;
-                        node.asciiMath = operand.asciiMath + operator.asciiMath;
 
                         operandStack.push(node);
                     }
@@ -204,10 +193,9 @@ class ResponseParser {
         node.end = end;
         node._text = "!";
 
-        node._latex = "!";
-        node._asciiMath = "!";
+          node.value = "!";
 
-        return node;
+       return node;
     }
 
     parseBracketedExpression(inputText, marker) {
@@ -259,11 +247,11 @@ class ResponseParser {
         var match = null;
 
         namedFunctions.forEach(nf => {
-            nf[1].map(a => a).sort((a, b) => { return b.length - a.length }).forEach(n => {
-                if (inputText.substr(marker.position, n.length) == n) {
+                                             nf.allowedWritings.map(a => a).sort((a, b) => { return b.length - a.length }).forEach(w => {
+                if (inputText.substr(marker.position, w.length) == w) {
                     match = nf;
-                    matchString = n;
-                    marker.position += n.length;
+                    matchString = w;
+                    marker.position += w.length;
                 }
             });
         });
@@ -274,14 +262,11 @@ class ResponseParser {
 
         var node = new RPNamedFunctionNode();
 
-        node.functionName = match;
+  node.value = match;
 
         node.start = start;
         node.end = end;
         node._text = matchString;
-
-        node._latex = "\\" + match[1][0];
-        node._asciiMath = match[1][0];
 
         return node;
     }
@@ -304,11 +289,9 @@ class ResponseParser {
         node.start = start;
         node.end = end;
         node._text = c;
+          node.value = c;
 
-        node._latex = (c == "*") ? "\\times" : c;
-        node._asciiMath = c;
-
-        return node;
+      return node;
     }
 
     parseIdentifier(inputText, marker) {
@@ -329,9 +312,7 @@ class ResponseParser {
         node.start = start;
         node.end = end;
         node._text = c;
-
-        node._latex = c;
-        node._asciiMath = c;
+          node.value = c;
 
         return node;
     }
@@ -380,19 +361,11 @@ class ResponseParser {
 
         var end = marker.position;
 
-        var t1 = name;
-        var t2 = (ws1 !== null) ? ws1.text : "";
-        var t3 = "(";
-        var t4 = (ws2 !== null) ? ws2.text : "";
-        var t5 = number.text;
-        var t6 = (ws3 !== null) ? ws3.text : "";
-        var t7 = ")";
-
         var node = new RPRadicalNode();
 
         node.start = start;
         node.end = end;
-        node._text = t1 + t2 + t3 + t4 + t5 + t6 + t7;
+        node._text = inputText.slice(start, end);
 
         node.radix = 2;
         node.radixIsImplicit = true;
@@ -419,7 +392,7 @@ class ResponseParser {
 
         node.start = start;
         node.end = end;
-        node._text = wholePart.text + whiteSpace.text + fractionPart.text;
+        node._text = inputText.slice(start, end);
 
         node.wholePart = wholePart;
         node.fractionPart = fractionPart;
@@ -458,17 +431,11 @@ class ResponseParser {
         var denominator = this.parseNumber(inputText, marker);
         var end = marker.position;
 
-        var t1 = numerator.text;
-        var t2 = (whiteSpace1 === null) ? "" : whiteSpace1.text;
-        var t3 = "/";
-        var t4 = (whiteSpace2 === null) ? "" : whiteSpace2.text;
-        var t5 = (denominator === null) ? "" : denominator.text;
-
         var node = new RPFractionNode();
 
         node.start = start;
         node.end = end;
-        node._text = t1 + t2 + t3 + t4 + t5;
+        node._text =   inputText.slice(start, end);
 
         node.numerator = numerator;
         node.denominator = denominator;
@@ -662,11 +629,9 @@ class ResponseParser {
             node.start = start;
             node.end = end;
             node._text = ts + t;
+               node.value =    simplestForm;
 
-            node._latex = simplestForm;
-            node._asciiMath = simplestForm;
-
-            node.sign = sign;
+           node.sign = sign;
             node.signIsExplicit = signIsExplicit;
             node.numberOfLeadingZeros = nlz;
             node.numberOfTrailingZeros = ntz;
@@ -712,7 +677,8 @@ class ResponseParser {
 
             node.start = start;
             node.end = end;
-            node._text = t;
+            node._text =t;
+              node.value = " ";
 
             node._latex = t;
             node._asciiMath = t;

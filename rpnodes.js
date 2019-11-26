@@ -44,6 +44,8 @@ class RPNode {
 class RPWhiteSpaceNode extends RPNode {
     constructor() {
         super("whiteSpace");
+
+        this.value = "";
     }
 }
 
@@ -53,6 +55,7 @@ class RPNumberNode extends RPNode {
 
         this._title = "Number";
 
+        this.value = "";
         this.integralPart = "";
         this.decimalPart = "";
         this.sign = "";
@@ -68,8 +71,16 @@ class RPNumberNode extends RPNode {
         return (this.subtype == "integer") ? "Integer" : "Decimal Number";
     }
 
+    get latex() {
+        return this.value;
+    }
+
+    get asciiMath() {
+        return this.value;
+    }
+
     get mathML() {
-        return "<mn>" + this._text + "</mn>";
+        return "<mn>" + this.value + "</mn>";
     }
 }
 
@@ -166,11 +177,21 @@ class RPIdentifierNode extends RPNode {
     constructor() {
         super("identifier");
 
+        this.value = "";
+
         this._title = "Identifier";
     }
 
+    get latex() {
+        return this.value;
+    }
+
+    get asciiMath() {
+        return this.value;
+    }
+
     get mathML() {
-        return "<mi>" + this._text + "</mi>";
+        return "<mi>" + this.value + "</mi>";
     }
 }
 
@@ -178,17 +199,27 @@ class RPOperatorNode extends RPNode {
     constructor() {
         super("operator");
 
+        this.value = "";
+
         this._title = "Operator";
 
         this.isImplicit = false;
     }
 
     get precedence() {
-        return "+-*/^!=".indexOf(this.text);
+        return "+-*/^!=".indexOf(this.value);
+    }
+
+    get latex() {
+        return (this.value == "*") ? "\\times" : this.value;
+    }
+
+    get asciiMath() {
+        return this.value;
     }
 
     get mathML() {
-        return "<mo>" + this._text + "</mo>";
+        return "<mo>" + this.value + "</mo>";
     }
 }
 
@@ -213,6 +244,14 @@ class RPFactorialNode extends RPUnaryOperationNode {
         this.subtype = "factorial";
 
         this._title = "Factorial";
+    }
+
+    get latex() {
+        return this.operand.latex + "!";
+    }
+
+    get asciiMath() {
+        return this.operand.asciiMath + "!";
     }
 }
 
@@ -338,27 +377,49 @@ class RPExponentiationNode extends RPBinaryOperationNode {
     }
 }
 
+class RPNamedFunction {
+    constructor(name = "", allowedWritings = [], latex = "", asciiMath = "", mathML = "") {
+        this.name = name;
+        this.allowedWritings = allowedWritings;
+        this.latex = latex;
+        this.asciiMath = asciiMath;
+        this.mathML = mathML;
+    }
+}
+
+var namedFunctions = [
+    new RPNamedFunction("Sine", ["sin", "sine"], "\\sin", "sin"),
+    new RPNamedFunction("Cosine", ["cos", "cosine"], "\\cos", "cos"),
+    new RPNamedFunction("Tangent", ["tan", "tangent"], "\\tan", "tan"),
+    new RPNamedFunction("Arcsine", ["asin", "arcsin", "arcsine"], "\\arcsin", "arcsin"),
+    new RPNamedFunction("Arccosine", ["acos", "arccos", "arccosine"], "\\arccos", "arccos"),
+    new RPNamedFunction("Arctangent", ["atan", "arctan", "arctangent"], "\\arctan", "arctan"),
+];
+
 class RPNamedFunctionNode extends RPNode {
     constructor() {
         super("namedFunction");
 
-        this.functionName = [];
+        this.value = null;
         this.parameters = [];
 
         this.precedence = 6;
     }
 
     get title() {
-        if (this.functionName.length == 0) {
-            return "Named Function";
-        }
-        else {
-            return this.functionName[0] + " Function";
-        }
+        return (this.value === null) ? "Named Function" : this.value.name + " Function";
     }
 
     get subnodes() {
         return this.parameters;
+    }
+
+    get latex() {
+        return this.value.latex + " " + this.parameters.map(p => p.latex).join(", ");
+    }
+
+    get asciiMath() {
+        return this.value.asciiMath + " " + this.parameters.map(p => p.asciiMath).join(", ");
     }
 }
 

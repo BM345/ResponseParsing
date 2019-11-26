@@ -3,7 +3,7 @@ var rp = require("../responseparsing");
 
 var parser = new rp.ResponseParser();
 
-describe("parseNumber", function () {
+describe("ResponseParser.parseNumber", function () {
     [
         ["123", "integer", "123", "", "positive", false, 0, 0, 3, 3, 0],
         ["+123", "integer", "123", "", "positive", true, 0, 0, 3, 3, 0],

@@ -76,7 +76,6 @@ describe("parseNumber", function () {
                 assert.equal(n.numberOfDecimalPlaces, a[10]);
             });
         });
-
     });
 });
 

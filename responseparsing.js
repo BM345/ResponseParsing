@@ -250,7 +250,7 @@ class ResponseParser {
         var matchString = ""
         var match = null;
 
-        namedFunctions.forEach(nf => {
+        nodes.namedFunctions.forEach(nf => {
             nf.allowedWritings.map(a => a).sort((a, b) => { return b.length - a.length }).forEach(w => {
                 if (inputText.substr(marker.position, w.length) == w) {
                     match = nf;

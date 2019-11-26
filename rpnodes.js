@@ -47,6 +47,10 @@ class RPWhiteSpaceNode extends RPNode {
 
         this.value = "";
     }
+
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype && object.value === this.value);
+    }
 }
 
 class RPNumberNode extends RPNode {
@@ -65,6 +69,10 @@ class RPNumberNode extends RPNode {
         this.minimumNumberOfSignificantFigures = 0;
         this.maximumNumberOfSignificantFigures = 0;
         this.numberOfDecimalPlaces = 0;
+    }
+
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype && object.value === this.value);
     }
 
     get title() {
@@ -94,6 +102,10 @@ class RPFractionNode extends RPNode {
         this.denominator = null;
     }
 
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype && object.numerator.isEqualTo(this.numerator) && object.denominator.isEqualTo(this.denominator));
+    }
+
     get subnodes() {
         return [this.numerator, this.denominator];
     }
@@ -121,6 +133,10 @@ class RPMixedFractionNode extends RPNode {
         this.fractionPart = null;
     }
 
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype && object.wholePart.isEqualTo(this.wholePart) && object.fractionPart.isEqualTo(this.fractionPart));
+    }
+
     get subnodes() {
         return [this.wholePart, this.fractionPart];
     }
@@ -145,6 +161,10 @@ class RPRadicalNode extends RPNode {
         this.radix = 2;
         this.radixIsImplicit = true;
         this.radicand = null;
+    }
+
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype && object.radix === this.radix && object.radicand.isEqualTo(this.radicand));
     }
 
     get subnodes() {
@@ -182,6 +202,10 @@ class RPIdentifierNode extends RPNode {
         this._title = "Identifier";
     }
 
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype && object.value === this.value);
+    }
+
     get latex() {
         return this.value;
     }
@@ -204,6 +228,10 @@ class RPOperatorNode extends RPNode {
         this._title = "Operator";
 
         this.isImplicit = false;
+    }
+
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype && object.value === this.value);
     }
 
     get precedence() {
@@ -246,6 +274,10 @@ class RPFactorialNode extends RPUnaryOperationNode {
         this._title = "Factorial";
     }
 
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype && object.operand.isEqualTo(this.operand));
+    }
+
     get latex() {
         return this.operand.latex + "!";
     }
@@ -265,6 +297,10 @@ class RPBinaryOperationNode extends RPNode {
         this.operator = null;
 
         this._title = "BinaryOperation";
+    }
+
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype && object.operand1.isEqualTo(this.operand1) && object.operand2.isEqualTo(this.operand2));
     }
 
     get subnodes() {
@@ -431,6 +467,10 @@ class RPBracketedExpressionNode extends RPNode {
         this.innerExpression = null;
 
         this._title = "Bracketed Expression";
+    }
+
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype  && object.bracketType == this.bracketType && object.innerExpression.isEqualTo(this.innerExpression));
     }
 
     get subnodes() {

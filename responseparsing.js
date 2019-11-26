@@ -1,3 +1,6 @@
+  
+
+     var nodes = require("./rpnodes.js");
 
 // A useful function to have in any parser - checks if any of the characters in a string are the given character.
 function isAnyOf(characters, character) {
@@ -35,7 +38,7 @@ class ResponseParser {
 
     constructor() {
         this.settings = new ParserSettings();
-        this.simplifier = new Simplifier();
+        this.simplifier = new nodes.Simplifier();
     }
 
     // The top-level parse function (for now).
@@ -97,7 +100,7 @@ class ResponseParser {
             }
             else {
                 if (lastNode !== undefined && lastNode.type != "operator" && lastNode.type != "namedFunction") {
-                    var implicitTimes = new RPOperatorNode();
+                    var implicitTimes = new nodes.RPOperatorNode();
 
                     implicitTimes._text = "*";
                     implicitTimes.isImplicit = true;
@@ -133,11 +136,11 @@ class ResponseParser {
                     var node;
                     if (operandStack.length >= 2 && operator.type == "operator") {
 
-                        if (operator.text == "+") { node = new RPAdditionNode(); }
-                        if (operator.text == "-") { node = new RPSubtractionNode(); }
-                        if (operator.text == "*") { node = new RPMultiplicationNode(); }
-                        if (operator.text == "/") { node = new RPDivisionNode(); }
-                        if (operator.text == "^") { node = new RPExponentiationNode(); }
+                        if (operator.text == "+") { node = new nodes.RPAdditionNode(); }
+                        if (operator.text == "-") { node = new nodes.RPSubtractionNode(); }
+                        if (operator.text == "*") { node = new nodes.RPMultiplicationNode(); }
+                        if (operator.text == "/") { node = new nodes.RPDivisionNode(); }
+                        if (operator.text == "^") { node = new nodes.RPExponentiationNode(); }
 
                         node.operand2 = operandStack.pop();
                         node.operand1 = operandStack.pop();
@@ -153,7 +156,7 @@ class ResponseParser {
                         operandStack.push(node);
                     }
                     else if (operandStack.length >= 1 && operator.type == "operator") {
-                        if (operator.text == "!") { node = new RPFactorialNode(); }
+                        if (operator.text == "!") { node = new nodes.RPFactorialNode(); }
 
                         var operand = operandStack.pop();
 
@@ -188,7 +191,7 @@ class ResponseParser {
 
         var end = marker.position;
 
-        var node = new RPOperatorNode();
+        var node = new nodes.RPOperatorNode();
 
         node.start = start;
         node.end = end;
@@ -225,7 +228,7 @@ class ResponseParser {
 
         var end = marker.position;
 
-        var node = new RPBracketedExpressionNode();
+        var node = new nodes.RPBracketedExpressionNode();
 
         node.start = start;
         node.end = end;
@@ -261,7 +264,7 @@ class ResponseParser {
 
         var end = marker.position;
 
-        var node = new RPNamedFunctionNode();
+        var node = new nodes.RPNamedFunctionNode();
 
         node.value = match;
 
@@ -285,7 +288,7 @@ class ResponseParser {
 
         var end = marker.position;
 
-        var node = new RPOperatorNode();
+        var node = new nodes.RPOperatorNode();
 
         node.start = start;
         node.end = end;
@@ -308,7 +311,7 @@ class ResponseParser {
 
         var end = marker.position;
 
-        var node = new RPIdentifierNode();
+        var node = new nodes.RPIdentifierNode();
 
         node.start = start;
         node.end = end;
@@ -362,7 +365,7 @@ class ResponseParser {
 
         var end = marker.position;
 
-        var node = new RPRadicalNode();
+        var node = new nodes.RPRadicalNode();
 
         node.start = start;
         node.end = end;
@@ -389,7 +392,7 @@ class ResponseParser {
 
         var end = marker.position;
 
-        var node = new RPMixedFractionNode();
+        var node = new nodes.RPMixedFractionNode();
 
         node.start = start;
         node.end = end;
@@ -432,7 +435,7 @@ class ResponseParser {
         var denominator = this.parseNumber(inputText, marker);
         var end = marker.position;
 
-        var node = new RPFractionNode();
+        var node = new nodes.RPFractionNode();
 
         node.start = start;
         node.end = end;
@@ -620,7 +623,7 @@ class ResponseParser {
         }
         else {
             // If a number was seen, return information about it.
-            var node = new RPNumberNode();
+            var node = new nodes.RPNumberNode();
 
             node.subtype = subtype;
 
@@ -674,7 +677,7 @@ class ResponseParser {
         else {
             // If there was white space, return an object giving the properties of the white space.
 
-            var node = new RPWhiteSpaceNode();
+            var node = new nodes.RPWhiteSpaceNode();
 
             node.start = start;
             node.end = end;
@@ -813,3 +816,6 @@ class Validator {
         }
     }
 }
+
+module.exports.Marker = Marker;
+module.exports.ResponseParser = ResponseParser;

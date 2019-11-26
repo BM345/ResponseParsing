@@ -566,6 +566,30 @@ class Simplifier {
     }
 }
 
+module.exports.RPNode = RPNode;
+module.exports.RPWhiteSpaceNode = RPWhiteSpaceNode;
+module.exports.RPNumberNode = RPNumberNode;
+module.exports.RPFractionNode = RPFractionNode;
+module.exports.RPMixedFractionNode = RPMixedFractionNode;
+module.exports.RPRadicalNode = RPRadicalNode;
+module.exports.RPIdentifierNode = RPIdentifierNode;
+module.exports.RPOperatorNode = RPOperatorNode;
+module.exports.RPUnaryOperationNode = RPUnaryOperationNode;
+module.exports.RPFactorialNode = RPFactorialNode;
+module.exports.RPBinaryOperationNode = RPBinaryOperationNode;
+module.exports.RPAdditionNode = RPAdditionNode;
+module.exports.RPSubtractionNode = RPSubtractionNode;
+module.exports.RPMultiplicationNode = RPMultiplicationNode;
+module.exports.RPDivisionNode = RPDivisionNode;
+module.exports.RPExponentiationNode = RPExponentiationNode;
+module.exports.RPNamedFunction = RPNamedFunction;
+module.exports.namedFunctions = namedFunctions;
+module.exports.RPNamedFunctionNode = RPNamedFunctionNode;
+module.exports.RPBracketedExpressionNode = RPBracketedExpressionNode;
+module.exports.RPSurdNode = RPSurdNode;
+module.exports.RPSummationNode = RPSummationNode;
+module.exports.Simplifier = Simplifier;
+
 
 
 

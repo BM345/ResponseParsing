@@ -473,12 +473,77 @@ class RPSurdNode extends RPNode {
     }
 }
 
+class RPSummationNode extends RPNode {
+    constructor() {
+        super("summation");
+
+        this.operands = [];
+
+        this._title = "Summation";
+    }
+
+    get subnodes() {
+        return this.operands;
+    }
+
+    get latex() {
+        return this.operands.map(o => o.latex).join("+");
+    }
+
+    get asciiMath() {
+        return this.operands.map(o => o.asciiMath).join("+");
+    }
+}
+
 class Simplifier {
     constructor() { }
 
     simplifyNode(node) {
 
         node = this.replaceWithSurd(node);
+        node = this.replaceWithSummation(node);
+        node = this.replaceWithSummation(node);
+
+        return node;
+    }
+
+    replaceWithSummation(node) {
+        if (node.subtype == "addition" && (node.operand1.subtype == "addition" || node.operand2.subtype == "addition")) {
+            var summation = new RPSummationNode();
+
+            if (node.operand1.subtype == "addition") {
+                summation.operands.push(node.operand1.operand1);
+                summation.operands.push(node.operand1.operand2);
+            }
+            else {
+                summation.operands.push(node.operand1);
+            }
+
+            if (node.operand2.subtype == "addition") {
+                summation.operands.push(node.operand2.operand1);
+                summation.operands.push(node.operand2.operand2);
+            }
+            else {
+                summation.operands.push(node.operand2);
+            }
+
+            return summation;
+        }
+        else if (node.type == "summation") {
+            var summation = new RPSummationNode();
+
+            node.operands.forEach(o => {
+                if (o.subtype == "addition") {
+                    summation.operands.push(o.operand1);
+                    summation.operands.push(o.operand2);
+                }
+                else {
+                    summation.operands.push(o);
+                }
+            });
+
+            return summation;
+        }
 
         return node;
     }

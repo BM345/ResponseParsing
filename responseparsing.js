@@ -1,6 +1,6 @@
-  
 
-     var nodes = require("./rpnodes.js");
+
+var nodes = require("./rpnodes.js");
 
 // A useful function to have in any parser - checks if any of the characters in a string are the given character.
 function isAnyOf(characters, character) {
@@ -342,26 +342,12 @@ class ResponseParser {
         // Allow optional white space here.
         var ws1 = this.parseWhiteSpace(inputText, marker);
 
-        // In this linear syntax, square roots must have brackets to show what the square root applies to.
-        if (inputText.charAt(marker.position) != "(") {
-            return null;
-        }
+        var radicand = this.parseNumber(inputText, marker.copy());
 
-        marker.position += 1;
+        if (radicand === null) { radicand = this.parseIdentifier(inputText, marker.copy()); }
+        if (radicand === null) { radicand = this.parseBracketedExpression(inputText, marker.copy()); }
 
-        // Allow optional white space here.
-        var ws2 = this.parseWhiteSpace(inputText, marker);
-        // Only numbers are allowed within square roots at the moment.
-        var number = this.parseNumber(inputText, marker);
-        // Allow optional white space here.
-        var ws3 = this.parseWhiteSpace(inputText, marker);
-
-        // Expect closing bracket.
-        if (inputText.charAt(marker.position) != ")") {
-            return null;
-        }
-
-        marker.position += 1;
+        marker.position += radicand.length;
 
         var end = marker.position;
 
@@ -373,7 +359,7 @@ class ResponseParser {
 
         node.radix = 2;
         node.radixIsImplicit = true;
-        node.radicand = number;
+        node.radicand = radicand;
 
         return node;
     }

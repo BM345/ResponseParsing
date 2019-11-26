@@ -470,7 +470,7 @@ class RPBracketedExpressionNode extends RPNode {
     }
 
     isEqualTo(object) {
-        return (object.type === this.type && object.subtype === this.subtype  && object.bracketType == this.bracketType && object.innerExpression.isEqualTo(this.innerExpression));
+        return (object.type === this.type && object.subtype === this.subtype && object.bracketType == this.bracketType && object.innerExpression.isEqualTo(this.innerExpression));
     }
 
     get subnodes() {
@@ -593,7 +593,7 @@ class Simplifier {
             && node.subtype == "multiplication"
             && node.operand1.type == "number"
             && node.operand2.type == "radical"
-            && node.operand2.radicand.type == "number") {
+            && (node.operand2.radicand.type == "number" || (node.operand2.radicand.type == "bracketedExpression" && node.operand2.radicand.innerExpression.type == "number"))) {
             var surd = new RPSurdNode();
 
             surd.coefficient = node.operand1;

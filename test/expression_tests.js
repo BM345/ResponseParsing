@@ -93,6 +93,26 @@ describe("RPNode.isEqualTo", function () {
         });
     });
 
+    describe("Surds", function () {
+        [
+            ["2 sqrt 2", true, 2, 2],
+            ["2sqrt2", true, 2, 2],
+            ["2 sqrt2", true, 2, 2],
+            ["2sqrt 2", true, 2, 2],
+            ["2 sqrt(2)", true, 2, 2],
+            ["2 sqrt (2)", true, 2, 2],
+            ["2 sqrt ( 2 )", true, 2, 2],
+            ["3 sqrt 2", true, 3, 2],
+            ["4 sqrt 2", true, 4, 2],
+        ].forEach(a => {
+            var n = parser.getParseResult(a[0]);
+
+            it(`should see that '${a[0]}' is${(a[1] == false) ? " not" : ""} a surd`, function () {
+                assert.equal(n.type, "surd");
+            });
+        });
+    });
+
     describe("Expressions", function () {
         [
             ["a+b", "a+b", true],
@@ -109,6 +129,8 @@ describe("RPNode.isEqualTo", function () {
             ["ab", "a+b", false],
             ["a+c", "a+b", false],
             ["c+b", "a+b", false],
+            ["a+2/3", "a+2/3", true],
+            ["a + 2 / 3", "a+2/3", true],
         ].forEach(a => {
             it(`should see that '${a[0]}' and '${a[1]}' are${(a[2] == false) ? " not" : ""} equal`, function () {
                 assert.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);

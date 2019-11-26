@@ -1,0 +1,22 @@
+{
+  "name": "responseparsing",
+  "version": "0.4.0",
+  "description": "A JavaScript library for parsing mathematical expressions and outputting them in a variety of formats",
+  "main": "responseparsing.js",
+  "dependencies": {},
+  "devDependencies": {
+    "mocha": "^6.2.2"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BM345/ResponseParsing.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/BM345/ResponseParsing/issues"
+  },
+  "homepage": "https://github.com/BM345/ResponseParsing#readme"
+}

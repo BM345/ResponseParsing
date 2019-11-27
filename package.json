@@ -2,12 +2,14 @@
   "name": "responseparsing",
   "version": "0.4.0",
   "description": "A JavaScript library for parsing mathematical expressions and outputting them in a variety of formats",
-  "main": "responseparsing.js",
+  "private": true,
   "dependencies": {
     "uniq": "^1.0.1"
   },
   "devDependencies": {
-    "mocha": "^6.2.2"
+    "mocha": "^6.2.2",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
   },
   "scripts": {
     "test": "mocha"

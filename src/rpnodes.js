@@ -1,5 +1,5 @@
 
-class RPNode {
+export class RPNode {
     constructor(type = "") {
         this.supernode = null;
         this.depth = 0;
@@ -41,7 +41,7 @@ class RPNode {
     }
 }
 
-class RPWhiteSpaceNode extends RPNode {
+export class RPWhiteSpaceNode extends RPNode {
     constructor() {
         super("whiteSpace");
 
@@ -53,7 +53,7 @@ class RPWhiteSpaceNode extends RPNode {
     }
 }
 
-class RPNumberNode extends RPNode {
+export class RPNumberNode extends RPNode {
     constructor() {
         super("number");
 
@@ -92,7 +92,7 @@ class RPNumberNode extends RPNode {
     }
 }
 
-class RPFractionNode extends RPNode {
+export class RPFractionNode extends RPNode {
     constructor() {
         super("fraction");
 
@@ -123,7 +123,7 @@ class RPFractionNode extends RPNode {
     }
 }
 
-class RPMixedFractionNode extends RPNode {
+export class RPMixedFractionNode extends RPNode {
     constructor() {
         super("mixedFraction");
 
@@ -154,7 +154,7 @@ class RPMixedFractionNode extends RPNode {
     }
 }
 
-class RPRadicalNode extends RPNode {
+export class RPRadicalNode extends RPNode {
     constructor() {
         super("radical");
 
@@ -193,7 +193,7 @@ class RPRadicalNode extends RPNode {
     }
 }
 
-class RPIdentifierNode extends RPNode {
+export class RPIdentifierNode extends RPNode {
     constructor() {
         super("identifier");
 
@@ -219,7 +219,7 @@ class RPIdentifierNode extends RPNode {
     }
 }
 
-class RPOperatorNode extends RPNode {
+export class RPOperatorNode extends RPNode {
     constructor() {
         super("operator");
 
@@ -251,13 +251,15 @@ class RPOperatorNode extends RPNode {
     }
 }
 
-class RPUnaryOperationNode extends RPNode {
+export class RPUnaryOperationNode extends RPNode {
     constructor() {
         super("unaryOperation");
 
         this.operand = null;
 
         this.operator = null;
+
+        this._title = "Unary Operation";
     }
 
     get subnodes() {
@@ -265,7 +267,31 @@ class RPUnaryOperationNode extends RPNode {
     }
 }
 
-class RPFactorialNode extends RPUnaryOperationNode {
+export class RPSignNode extends RPUnaryOperationNode {
+    constructor() {
+        super();
+
+        this.subtype = "sign";
+    }
+
+    get title() {
+        return (this.operator.value == "-") ? "Negation" : "Sign";
+    }
+
+    get text() {
+        return this.operator.text + this.operand.text;
+    }
+
+    get latex() {
+        return this.operator.latex + this.operand.latex;
+    }
+
+    get asciiMath() {
+        return this.operator.asciiMath + this.operand.asciiMath;
+    }
+}
+
+export class RPFactorialNode extends RPUnaryOperationNode {
     constructor() {
         super();
 
@@ -287,7 +313,7 @@ class RPFactorialNode extends RPUnaryOperationNode {
     }
 }
 
-class RPBinaryOperationNode extends RPNode {
+export class RPBinaryOperationNode extends RPNode {
     constructor() {
         super("binaryOperation");
 
@@ -308,7 +334,7 @@ class RPBinaryOperationNode extends RPNode {
     }
 }
 
-class RPAdditionNode extends RPBinaryOperationNode {
+export class RPAdditionNode extends RPBinaryOperationNode {
     constructor() {
         super();
 
@@ -326,7 +352,7 @@ class RPAdditionNode extends RPBinaryOperationNode {
     }
 }
 
-class RPSubtractionNode extends RPBinaryOperationNode {
+export class RPSubtractionNode extends RPBinaryOperationNode {
     constructor() {
         super();
 
@@ -344,7 +370,7 @@ class RPSubtractionNode extends RPBinaryOperationNode {
     }
 }
 
-class RPMultiplicationNode extends RPBinaryOperationNode {
+export class RPMultiplicationNode extends RPBinaryOperationNode {
     constructor() {
         super();
 
@@ -377,7 +403,7 @@ class RPMultiplicationNode extends RPBinaryOperationNode {
     }
 }
 
-class RPDivisionNode extends RPBinaryOperationNode {
+export class RPDivisionNode extends RPBinaryOperationNode {
     constructor() {
         super();
 
@@ -395,7 +421,7 @@ class RPDivisionNode extends RPBinaryOperationNode {
     }
 }
 
-class RPExponentiationNode extends RPBinaryOperationNode {
+export class RPExponentiationNode extends RPBinaryOperationNode {
     constructor() {
         super();
 
@@ -413,7 +439,7 @@ class RPExponentiationNode extends RPBinaryOperationNode {
     }
 }
 
-class RPNamedFunction {
+export class RPNamedFunction {
     constructor(name = "", allowedWritings = [], latex = "", asciiMath = "", mathML = "") {
         this.name = name;
         this.allowedWritings = allowedWritings;
@@ -423,7 +449,7 @@ class RPNamedFunction {
     }
 }
 
-var namedFunctions = [
+export var namedFunctions = [
     new RPNamedFunction("Sine", ["sin", "sine"], "\\sin", "sin"),
     new RPNamedFunction("Cosine", ["cos", "cosine"], "\\cos", "cos"),
     new RPNamedFunction("Tangent", ["tan", "tangent"], "\\tan", "tan"),
@@ -432,7 +458,7 @@ var namedFunctions = [
     new RPNamedFunction("Arctangent", ["atan", "arctan", "arctangent"], "\\arctan", "arctan"),
 ];
 
-class RPNamedFunctionNode extends RPNode {
+export class RPNamedFunctionNode extends RPNode {
     constructor() {
         super("namedFunction");
 
@@ -459,7 +485,7 @@ class RPNamedFunctionNode extends RPNode {
     }
 }
 
-class RPBracketedExpressionNode extends RPNode {
+export class RPBracketedExpressionNode extends RPNode {
     constructor() {
         super("bracketedExpression");
 
@@ -490,7 +516,7 @@ class RPBracketedExpressionNode extends RPNode {
     }
 }
 
-class RPSurdNode extends RPNode {
+export class RPSurdNode extends RPNode {
     constructor() {
         super("surd");
 
@@ -513,7 +539,7 @@ class RPSurdNode extends RPNode {
     }
 }
 
-class RPSummationNode extends RPNode {
+export class RPSummationNode extends RPNode {
     constructor() {
         super("summation");
 
@@ -535,7 +561,7 @@ class RPSummationNode extends RPNode {
     }
 }
 
-class Simplifier {
+export class Simplifier {
     constructor() { }
 
     simplifyNode(node) {
@@ -605,33 +631,3 @@ class Simplifier {
         return node;
     }
 }
-
-module.exports.RPNode = RPNode;
-module.exports.RPWhiteSpaceNode = RPWhiteSpaceNode;
-module.exports.RPNumberNode = RPNumberNode;
-module.exports.RPFractionNode = RPFractionNode;
-module.exports.RPMixedFractionNode = RPMixedFractionNode;
-module.exports.RPRadicalNode = RPRadicalNode;
-module.exports.RPIdentifierNode = RPIdentifierNode;
-module.exports.RPOperatorNode = RPOperatorNode;
-module.exports.RPUnaryOperationNode = RPUnaryOperationNode;
-module.exports.RPFactorialNode = RPFactorialNode;
-module.exports.RPBinaryOperationNode = RPBinaryOperationNode;
-module.exports.RPAdditionNode = RPAdditionNode;
-module.exports.RPSubtractionNode = RPSubtractionNode;
-module.exports.RPMultiplicationNode = RPMultiplicationNode;
-module.exports.RPDivisionNode = RPDivisionNode;
-module.exports.RPExponentiationNode = RPExponentiationNode;
-module.exports.RPNamedFunction = RPNamedFunction;
-module.exports.namedFunctions = namedFunctions;
-module.exports.RPNamedFunctionNode = RPNamedFunctionNode;
-module.exports.RPBracketedExpressionNode = RPBracketedExpressionNode;
-module.exports.RPSurdNode = RPSurdNode;
-module.exports.RPSummationNode = RPSummationNode;
-module.exports.Simplifier = Simplifier;
-
-
-
-
-
-

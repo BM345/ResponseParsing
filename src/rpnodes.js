@@ -28,6 +28,7 @@ export class RPNode {
     get mathML() { return this._mathML; }
 
     get subnodes() { return []; }
+    set subnodes(value) { }
 
     setDepth(depth = 0) {
         this.depth = depth;
@@ -110,6 +111,11 @@ export class RPFractionNode extends RPNode {
         return [this.numerator, this.denominator];
     }
 
+    set subnodes(value) {
+        this.numerator = value[0];
+        this.denominator = value[1];
+    }
+
     get latex() {
         return "\\frac{" + this.numerator.latex + "}{" + this.denominator.latex + "}";
     }
@@ -141,6 +147,11 @@ export class RPMixedFractionNode extends RPNode {
         return [this.wholePart, this.fractionPart];
     }
 
+    set subnodes(value) {
+        this.wholePart = value[0];
+        this.fractionPart = value[1];
+    }
+
     get latex() {
         return this.wholePart.latex + " " + this.fractionPart.latex;
     }
@@ -169,6 +180,10 @@ export class RPRadicalNode extends RPNode {
 
     get subnodes() {
         return [this.radicand];
+    }
+
+    set subnodes(value) {
+        this.radicand = value[0];
     }
 
     get title() {
@@ -265,6 +280,10 @@ export class RPUnaryOperationNode extends RPNode {
     get subnodes() {
         return [this.operand];
     }
+
+    set subnodes(value) {
+        this.operand = value[0];
+    }
 }
 
 export class RPSignNode extends RPUnaryOperationNode {
@@ -332,6 +351,11 @@ export class RPBinaryOperationNode extends RPNode {
     get subnodes() {
         return [this.operand1, this.operand2];
     }
+
+    set subnodes(value) {
+        this.operand1 = value[0];
+        this.operand2 = value[1];
+    }
 }
 
 export class RPAdditionNode extends RPBinaryOperationNode {
@@ -394,12 +418,7 @@ export class RPMultiplicationNode extends RPBinaryOperationNode {
     }
 
     get asciiMath() {
-        if (this.isImplicit) {
-            return this.operand1.asciiMath + this.operand2.asciiMath;
-        }
-        else {
-            return this.operand1.asciiMath + "*" + this.operand2.asciiMath;
-        }
+        return this.operand1.asciiMath + "*" + this.operand2.asciiMath;
     }
 }
 
@@ -476,6 +495,10 @@ export class RPNamedFunctionNode extends RPNode {
         return this.parameters;
     }
 
+    set subnodes(value) {
+        this.parameters = value;
+    }
+
     get latex() {
         return this.value.latex + " " + this.parameters.map(p => p.latex).join(", ");
     }
@@ -501,6 +524,10 @@ export class RPBracketedExpressionNode extends RPNode {
 
     get subnodes() {
         return [this.innerExpression];
+    }
+
+    set subnodes(value) {
+        this.innerExpression = value[0];
     }
 
     get text() {
@@ -530,6 +557,11 @@ export class RPSurdNode extends RPNode {
         return [this.coefficient, this.radical];
     }
 
+    set subnodes(value) {
+        this.coefficient = value[0];
+        this.radical = value[1];
+    }
+
     get latex() {
         return this.coefficient.latex + " " + this.radical.latex;
     }
@@ -552,6 +584,10 @@ export class RPSummationNode extends RPNode {
         return this.operands;
     }
 
+    set subnodes(value) {
+        this.operands = value;
+    }
+
     get latex() {
         return this.operands.map(o => o.latex).join("+");
     }
@@ -561,54 +597,89 @@ export class RPSummationNode extends RPNode {
     }
 }
 
+export class RPProductNode extends RPNode {
+    constructor() {
+        super("product");
+
+        this.operands = [];
+
+        this._title = "Product";
+    }
+
+    get subnodes() {
+        return this.operands;
+    }
+
+    set subnodes(value) {
+        this.operands = value;
+    }
+
+    get latex() {
+        return this.operands.map(o => o.latex).join(" \\times ");
+    }
+
+    get asciiMath() {
+        return this.operands.map(o => o.asciiMath).join("*");
+    }
+}
+
 export class Simplifier {
     constructor() { }
 
     simplifyNode(node) {
 
+        node.subnodes = this.simplifyNodes(node.subnodes);
+
         node = this.replaceWithSurd(node);
         node = this.replaceWithSummation(node);
-        node = this.replaceWithSummation(node);
+        node = this.replaceWithProduct(node);
 
         return node;
     }
 
+    simplifyNodes(nodes) {
+        return nodes.map(n => this.simplifyNode(n));
+    }
+
     replaceWithSummation(node) {
-        if (node.subtype == "addition" && (node.operand1.subtype == "addition" || node.operand2.subtype == "addition")) {
+        var isAdditionOrSummationNode = (node.subtype == "addition" || node.type == "summation");
+        var hasAdditionOrSummationSubnodes = (node.subnodes.filter(n => n.subtype == "addition" || n.type == "summation").length > 0);
+
+        if (isAdditionOrSummationNode && hasAdditionOrSummationSubnodes) {
             var summation = new RPSummationNode();
 
-            if (node.operand1.subtype == "addition") {
-                summation.operands.push(node.operand1.operand1);
-                summation.operands.push(node.operand1.operand2);
-            }
-            else {
-                summation.operands.push(node.operand1);
-            }
-
-            if (node.operand2.subtype == "addition") {
-                summation.operands.push(node.operand2.operand1);
-                summation.operands.push(node.operand2.operand2);
-            }
-            else {
-                summation.operands.push(node.operand2);
-            }
-
-            return summation;
-        }
-        else if (node.type == "summation") {
-            var summation = new RPSummationNode();
-
-            node.operands.forEach(o => {
-                if (o.subtype == "addition") {
-                    summation.operands.push(o.operand1);
-                    summation.operands.push(o.operand2);
+            node.subnodes.forEach(n => {
+                if (n.subtype == "addition" || n.type == "summation") {
+                    summation.operands = summation.operands.concat(n.subnodes);
                 }
                 else {
-                    summation.operands.push(o);
+                    summation.operands.push(n);
                 }
             });
 
             return summation;
+        }
+
+        return node;
+    }
+
+    replaceWithProduct(node) {
+        var isMultiplicationOrProductNode = (node.subtype == "multiplication" || node.type == "product");
+        var hasMultiplicationOrProductSubnodes = (node.subnodes.filter(n => n.subtype == "multiplication" || n.type == "product").length > 0);
+
+        if (isMultiplicationOrProductNode && hasMultiplicationOrProductSubnodes) {
+            var product = new RPProductNode();
+
+            node.subnodes.forEach(n => {
+                if (n.subtype == "multiplication" || n.type == "product") {
+                    product.operands = product.operands.concat(n.subnodes);
+                }
+                else {
+                    product.operands.push(n);
+                }
+            });
+
+            return product;
         }
 
         return node;

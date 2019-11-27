@@ -1,1 +1,1650 @@
-!function(t){var e={};function i(r){if(e[r])return e[r].exports;var n=e[r]={i:r,l:!1,exports:{}};return t[r].call(n.exports,n,n.exports,i),n.l=!0,n.exports}i.m=t,i.c=e,i.d=function(t,e,r){i.o(t,e)||Object.defineProperty(t,e,{enumerable:!0,get:r})},i.r=function(t){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},i.t=function(t,e){if(1&e&&(t=i(t)),8&e)return t;if(4&e&&"object"==typeof t&&t&&t.__esModule)return t;var r=Object.create(null);if(i.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var n in t)i.d(r,n,function(e){return t[e]}.bind(null,n));return r},i.n=function(t){var e=t&&t.__esModule?function(){return t.default}:function(){return t};return i.d(e,"a",e),e},i.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},i.p="",i(i.s=1)}([function(t,e,i){"use strict";class r{constructor(t=""){this.supernode=null,this.depth=0,this.type=t,this.subtype="",this._title="Node",this.start=0,this.end=0,this._text="",this._latex="",this._asciiMath="",this._mathML=""}get title(){return this._title}get length(){return this.end-this.start}get text(){return this._text}get latex(){return this._latex}get asciiMath(){return this._asciiMath}get mathML(){return this._mathML}get subnodes(){return[]}setDepth(t=0){this.depth=t;var e=this;this.subnodes.forEach(i=>{i.supernode=e,i.setDepth(t+1)})}}class n extends r{constructor(){super("whiteSpace"),this.value=""}isEqualTo(t){return t.type===this.type&&t.subtype===this.subtype&&t.value===this.value}}class s extends r{constructor(){super("number"),this._title="Number",this.value="",this.integralPart="",this.decimalPart="",this.sign="",this.signIsExplicit=!1,this.numberOfLeadingZeros=0,this.numberOfTrailingZeros=0,this.minimumNumberOfSignificantFigures=0,this.maximumNumberOfSignificantFigures=0,this.numberOfDecimalPlaces=0}isEqualTo(t){return t.type===this.type&&t.subtype===this.subtype&&t.value===this.value}get title(){return"integer"==this.subtype?"Integer":"Decimal Number"}get latex(){return this.value}get asciiMath(){return this.value}get mathML(){return"<mn>"+this.value+"</mn>"}}class a extends r{constructor(){super("fraction"),this._title="Fraction",this.numerator=null,this.denominator=null}isEqualTo(t){return t.type===this.type&&t.subtype===this.subtype&&t.numerator.isEqualTo(this.numerator)&&t.denominator.isEqualTo(this.denominator)}get subnodes(){return[this.numerator,this.denominator]}get latex(){return"\\frac{"+this.numerator.latex+"}{"+this.denominator.latex+"}"}get asciiMath(){return"frac "+this.numerator.asciiMath+" "+this.denominator.asciiMath}get mathML(){return"<mfrac>"+this.numerator.mathML+this.denominator.mathML+"</mfrac>"}}class o extends r{constructor(){super("mixedFraction"),this._title="Mixed Fraction",this.wholePart=null,this.fractionPart=null}isEqualTo(t){return t.type===this.type&&t.subtype===this.subtype&&t.wholePart.isEqualTo(this.wholePart)&&t.fractionPart.isEqualTo(this.fractionPart)}get subnodes(){return[this.wholePart,this.fractionPart]}get latex(){return this.wholePart.latex+" "+this.fractionPart.latex}get asciiMath(){return this.wholePart.asciiMath+" "+this.fractionPart.asciiMath}get mathML(){return this.wholePart.mathML+this.fractionPart.mathML}}class u extends r{constructor(){super("radical"),this.radix=2,this.radixIsImplicit=!0,this.radicand=null}isEqualTo(t){return t.type===this.type&&t.subtype===this.subtype&&t.radix===this.radix&&t.radicand.isEqualTo(this.radicand)}get subnodes(){return[this.radicand]}get title(){return 2==this.radix?"Square Root":3==this.radix?"Cube Root":"Radical"}get latex(){return"\\sqrt{"+this.radicand.latex+"}"}get asciiMath(){return"sqrt("+this.radicand.asciiMath+")"}get mathML(){return 2==this.radix?"<msqrt>"+this.radicand.mathML+"</msqrt>":"<mroot>"+this.radicand.mathML+"<mn>"+this.radix+"</mn></mroot>"}}class p extends r{constructor(){super("identifier"),this.value="",this._title="Identifier"}isEqualTo(t){return t.type===this.type&&t.subtype===this.subtype&&t.value===this.value}get latex(){return this.value}get asciiMath(){return this.value}get mathML(){return"<mi>"+this.value+"</mi>"}}class l extends r{constructor(){super("operator"),this.value="",this._title="Operator",this.isImplicit=!1}isEqualTo(t){return t.type===this.type&&t.subtype===this.subtype&&t.value===this.value}get precedence(){return"+-*/^!=".indexOf(this.value)}get latex(){return"*"==this.value?"\\times":this.value}get asciiMath(){return this.value}get mathML(){return"<mo>"+this.value+"</mo>"}}class h extends r{constructor(){super("unaryOperation"),this.operand=null,this.operator=null,this._title="Unary Operation"}get subnodes(){return[this.operand]}}class c extends h{constructor(){super(),this.subtype="sign"}get title(){return"-"==this.operator.value?"Negation":"Sign"}get text(){return this.operator.text+this.operand.text}get latex(){return this.operator.latex+this.operand.latex}get asciiMath(){return this.operator.asciiMath+this.operand.asciiMath}}class d extends h{constructor(){super(),this.subtype="factorial",this._title="Factorial"}isEqualTo(t){return t.type===this.type&&t.subtype===this.subtype&&t.operand.isEqualTo(this.operand)}get latex(){return this.operand.latex+"!"}get asciiMath(){return this.operand.asciiMath+"!"}}class m extends r{constructor(){super("binaryOperation"),this.operand1=null,this.operand2=null,this.operator=null,this._title="BinaryOperation"}isEqualTo(t){return t.type===this.type&&t.subtype===this.subtype&&t.operand1.isEqualTo(this.operand1)&&t.operand2.isEqualTo(this.operand2)}get subnodes(){return[this.operand1,this.operand2]}}class g extends m{constructor(){super(),this.subtype="addition",this._title="Addition"}get latex(){return this.operand1.latex+"+"+this.operand2.latex}get asciiMath(){return this.operand1.asciiMath+"+"+this.operand2.asciiMath}}class x extends m{constructor(){super(),this.subtype="subtraction",this._title="Subtraction"}get latex(){return this.operand1.latex+"-"+this.operand2.latex}get asciiMath(){return this.operand1.asciiMath+"-"+this.operand2.asciiMath}}class f extends m{constructor(){super(),this.subtype="multiplication",this.isImplicit=!1,this._title="Multiplication"}get title(){return this.isImplicit,"Multiplication"}get latex(){return this.isImplicit?this.operand1.latex+this.operand2.latex:this.operand1.latex+" \\times "+this.operand2.latex}get asciiMath(){return this.isImplicit?this.operand1.asciiMath+this.operand2.asciiMath:this.operand1.asciiMath+"*"+this.operand2.asciiMath}}class y extends m{constructor(){super(),this.subtype="division",this._title="Division"}get latex(){return this.operand1.latex+"/"+this.operand2.latex}get asciiMath(){return this.operand1.asciiMath+"/"+this.operand2.asciiMath}}class b extends m{constructor(){super(),this.subtype="exponentiation",this._title="Exponentiation"}get latex(){return this.operand1.latex+"^{"+this.operand2.latex+"}"}get asciiMath(){return this.operand1.asciiMath+"^"+this.operand2.asciiMath}}class v{constructor(t="",e=[],i="",r="",n=""){this.name=t,this.allowedWritings=e,this.latex=i,this.asciiMath=r,this.mathML=n}}var M=[new v("Sine",["sin","sine"],"\\sin","sin"),new v("Cosine",["cos","cosine"],"\\cos","cos"),new v("Tangent",["tan","tangent"],"\\tan","tan"),new v("Arcsine",["asin","arcsin","arcsine"],"\\arcsin","arcsin"),new v("Arccosine",["acos","arccos","arccosine"],"\\arccos","arccos"),new v("Arctangent",["atan","arctan","arctangent"],"\\arctan","arctan")];class w extends r{constructor(){super("namedFunction"),this.value=null,this.parameters=[],this.precedence=6}get title(){return null===this.value?"Named Function":this.value.name+" Function"}get subnodes(){return this.parameters}get latex(){return this.value.latex+" "+this.parameters.map(t=>t.latex).join(", ")}get asciiMath(){return this.value.asciiMath+" "+this.parameters.map(t=>t.asciiMath).join(", ")}}class E extends r{constructor(){super("bracketedExpression"),this.bracketType="()",this.innerExpression=null,this._title="Bracketed Expression"}isEqualTo(t){return t.type===this.type&&t.subtype===this.subtype&&t.bracketType==this.bracketType&&t.innerExpression.isEqualTo(this.innerExpression)}get subnodes(){return[this.innerExpression]}get text(){return"("+this.innerExpression.text+")"}get latex(){return"\\left("+this.innerExpression.latex+"\\right)"}get asciiMath(){return"("+this.innerExpression.asciiMath+")"}}class _ extends r{constructor(){super("surd"),this.coefficient=null,this.radical=null,this._title="Surd"}get subnodes(){return[this.coefficient,this.radical]}get latex(){return this.coefficient.latex+" "+this.radical.latex}get asciiMath(){return this.coefficient.asciiMath+" "+this.radical.asciiMath}}class S extends r{constructor(){super("summation"),this.operands=[],this._title="Summation"}get subnodes(){return this.operands}get latex(){return this.operands.map(t=>t.latex).join("+")}get asciiMath(){return this.operands.map(t=>t.asciiMath).join("+")}}class I{constructor(){}simplifyNode(t){return t=this.replaceWithSurd(t),t=this.replaceWithSummation(t),t=this.replaceWithSummation(t)}replaceWithSummation(t){if("addition"==t.subtype&&("addition"==t.operand1.subtype||"addition"==t.operand2.subtype)){var e=new S;return"addition"==t.operand1.subtype?(e.operands.push(t.operand1.operand1),e.operands.push(t.operand1.operand2)):e.operands.push(t.operand1),"addition"==t.operand2.subtype?(e.operands.push(t.operand2.operand1),e.operands.push(t.operand2.operand2)):e.operands.push(t.operand2),e}if("summation"==t.type){e=new S;return t.operands.forEach(t=>{"addition"==t.subtype?(e.operands.push(t.operand1),e.operands.push(t.operand2)):e.operands.push(t)}),e}return t}replaceWithSurd(t){if("binaryOperation"==t.type&&"multiplication"==t.subtype&&"number"==t.operand1.type&&"radical"==t.operand2.type&&("number"==t.operand2.radicand.type||"bracketedExpression"==t.operand2.radicand.type&&"number"==t.operand2.radicand.innerExpression.type)){var e=new _;return e.coefficient=t.operand1,e.radical=t.operand2,e}return t}}function T(t,e){return t.split("").filter(t=>t==e).length>0}i.d(e,"a",(function(){return P})),i.d(e,"b",(function(){return L}));class O{constructor(){this.position=0}copy(){var t=new O;return t.position=this.position,t}}class F{constructor(){this.removeLeadingZerosFromSimplifiedForms=!1,this.addLeadingZeroToDecimalsForSimplifiedForms=!0}}class P{constructor(){this.settings=new F,this.simplifier=new I}getParseResult(t){var e=new O,i=this.parseExpression(t,e);return null!==i&&e.position==t.length?((i=this.simplifier.simplifyNode(i)).setDepth(),i):null}anyAt(t,e,i){for(var r=0;r<t.length;r++){var n=t[r];if(e.substring(i.position,i.position+n.length)==n)return n}return!1}parseExpression(t,e){for(var i,r=[],n=[],s=0;e.position<t.length;){var a=this.parseBinomialOperator(t,e.copy());if(null===a&&(a=this.parseBracketedExpression(t,e.copy())),null===a&&(a=this.parseFactorial(t,e.copy())),null===a&&(a=this.parseMixedFraction(t,e.copy())),null===a&&(a=this.parseFraction(t,e.copy())),null===a&&(a=this.parseNamedFunction(t,e.copy())),null===a&&(a=this.parseSquareRoot(t,e.copy())),null===a&&(a=this.parseNumber(t,e.copy())),null===a&&(a=this.parseIdentifier(t,e.copy())),null===a&&(a=this.parseWhiteSpace(t,e.copy())),null===a)break;if("operator"==a.type||"namedFunction"==a.type)this._applyOperators(r,n,a),n.push(a),s++;else if("whiteSpace"==a.type);else{if(void 0!==i&&"operator"!=i.type&&"namedFunction"!=i.type){var o=new l;o._text="*",o.isImplicit=!0,n.push(o)}else if(1==s&&"operator"==i.type&&("+"==i.value||"-"==i.value)){var u=new c;u.operator=n.pop(),u.operand=a,a=u}r.push(a),s++}e.position+=a.length,"whiteSpace"!=a.type&&(i=a)}return this._applyOperators(r,n,null),1==r.length?r[0]:null}_applyOperators(t,e,i){for(var r=e.length-1;r>=0&&(null===i||e[r].precedence>=i.precedence);r--)if(t.length>=1){var n,s=e.pop();if(t.length>=2&&"operator"==s.type)"+"==s.text&&(n=new g),"-"==s.text&&(n=new x),"*"==s.text&&(n=new f),"/"==s.text&&(n=new y),"^"==s.text&&(n=new b),n.operand2=t.pop(),n.operand1=t.pop(),"*"==s.text&&s.isImplicit?(n.isImplicit=!0,n._text=n.operand1.text+n.operand2.text):n._text=n.operand1.text+s.text+n.operand2.text,t.push(n);else if(t.length>=1&&"operator"==s.type){"!"==s.text&&(n=new d);var a=t.pop();n.operand=a,n._text=a.text+s.text,t.push(n)}else if(t.length>=1&&"namedFunction"==s.type){n=s;a=t.pop();n.parameters.push(a),n._text+=a.text,t.push(n)}}}parseFactorial(t,e){var i=e.position;if("!"!=t.charAt(e.position))return null;e.position++;var r=e.position,n=new l;return n.start=i,n.end=r,n._text="!",n.value="!",n}parseBracketedExpression(t,e){var i=e.position;if("("!=t.charAt(e.position))return null;e.position++;for(var r=1,n="";e.position<t.length&&r>0;){var s=t.charAt(e.position);n+=s,"("==s?r++:")"==s&&r--,e.position++}var a=e.position,o=new E;if(o.start=i,o.end=a,o._text=n,a-i>=2){var u=t.substring(i+1,a-1),p=this.parseExpression(u,new O);o.innerExpression=p}return o}parseNamedFunction(t,e){var i=e.position,r="",n=null;if(M.forEach(i=>{i.allowedWritings.map(t=>t).sort((t,e)=>e.length-t.length).forEach(s=>{t.substr(e.position,s.length)==s&&(n=i,r=s,e.position+=s.length)})}),null===n)return null;var s=e.position,a=new w;return a.value=n,a.start=i,a.end=s,a._text=r,a}parseBinomialOperator(t,e){var i=e.position,r=t.charAt(e.position);if(!T("+-*/^",r))return null;e.position++;var n=e.position,s=new l;return s.start=i,s.end=n,s._text=r,s.value=r,s}parseIdentifier(t,e){var i=e.position,r=t.charAt(e.position);if(!T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",r))return null;e.position++;var n=e.position,s=new p;return s.start=i,s.end=n,s._text=r,s.value=r,s}parseSquareRoot(t,e){var i=e.position,r=this.anyAt(["sqrt","squareroot","root"],t,e);if(!1===r)return null;e.position+=r.length;this.parseWhiteSpace(t,e);var n=this.parseNumber(t,e.copy());if(null===n&&(n=this.parseIdentifier(t,e.copy())),null===n&&(n=this.parseBracketedExpression(t,e.copy())),null===n)return null;e.position+=n.length;var s=e.position,a=new u;return a.start=i,a.end=s,a._text=t.slice(i,s),a.radix=2,a.radixIsImplicit=!0,a.radicand=n,a}parseMixedFraction(t,e){var i=e.position,r=this.parseNumber(t,e);if(null===r)return null;if(null===this.parseWhiteSpace(t,e))return null;var n=this.parseFraction(t,e);if(null===n)return null;var s=e.position,a=new o;return a.start=i,a.end=s,a._text=t.slice(i,s),a.wholePart=r,a.fractionPart=n,a}parseFraction(t,e){var i=e.position,r=this.parseNumber(t,e);if(null===r)return null;this.parseWhiteSpace(t,e);if("/"!==t.charAt(e.position))return null;e.position+=1;this.parseWhiteSpace(t,e);var n=this.parseNumber(t,e),s=e.position,o=new a;return o.start=i,o.end=s,o._text=t.slice(i,s),o.numerator=r,o.denominator=n,o}parseNumber(t,e){var i="",r=e.position,n="",a="",o="",u="positive",p=!1,l=t.charAt(e.position);"+"==l?(o="+",p=!0,e.position++):"-"==l&&(o="-",u="negative",p=!0,e.position++);for(var h=0,c=0,d=0,m=0,g=0,x=0;e.position<t.length;){var f=t.charAt(e.position);if(T("0123456789",f))i+=f,e.position++,0==x?n+=f:(a+=f,m++),"0"==f&&0==d&&0==x?h++:"0"!=f?(d+=g,g=0,d++):"0"==f&&d>0&&g++;else{if("."!=f)break;if(0!=x)break;i+=f,e.position++,a+=f,x++}}var y=0==d&&i.length>0;y&&(u="zero");var b=0,v=0;y?(b=1,v=1,x>0&&(c=m)):x>0?(b=d+g,v=d+g,c=g):(b=d,v=d+g);var M=e.position,w=0==x?"integer":"decimalNumber",E="";""!=n||""!=a&&"."!=a?""==n?E=this.settings.addLeadingZeroToDecimalsForSimplifiedForms?"0":"":this.settings.removeLeadingZerosFromSimplifiedForms?(E=n.slice(h),this.settings.addLeadingZeroToDecimalsForSimplifiedForms&&(E=""==E?"0":E)):E=n:E="";var _="."==a?"":a,S=y?E+_:o+E+_;if(o+i=="")return null;var I=new s;return I.subtype=w,I.integralPart=n,I.decimalPart=a,I.start=r,I.end=M,I._text=o+i,I.value=S,I.sign=u,I.signIsExplicit=p,I.numberOfLeadingZeros=h,I.numberOfTrailingZeros=c,I.minimumNumberOfSignificantFigures=b,I.maximumNumberOfSignificantFigures=v,I.numberOfDecimalPlaces=m,I}parseWhiteSpace(t,e){for(var i="",r=e.position;e.position<t.length;){var s=t.charAt(e.position);if(!T(" \t\n",s))break;i+=s,e.position+=1}var a=e.position;if(""==i)return null;var o=new n;return o.start=r,o.end=a,o._text=i,o.value=" ",o._latex=i,o._asciiMath=i,o}}class L{constructor(){this.inputs=[],this.rp=new P,this.controlKeys=["ShiftLeft","ShiftRight","Backspace","Enter","Tab","CapsLock","MetaLeft","MetaRight","AltLeft","AltRight","ControlLeft","ControlRight","ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Escape"]}getNewInputValueOnKeyDown(t,e){var i=t.value.length;return t.selectionStart==i&&t.selectionEnd==i?t.value+e.key:t.value.slice(0,t.selectionStart)+e.key+t.value.slice(t.selectionEnd,i)}addInput(t,e,i,r,n){this.inputs.push([t,e,i,r,n]);var s=this;t.onkeydown=function(r){if(0==s.controlKeys.filter(t=>r.code==t).length){var n=s.getNewInputValueOnKeyDown(t,r),a=s.rp.getParseResult(n);if(console.log(n),console.log(a),null===a)return void r.preventDefault();"integer"!=e||"number"==a.type&&"integer"==a.subtype||r.preventDefault(),"decimalNumber"==e&&"number"!=a.type&&r.preventDefault(),"fraction"==e&&"fraction"!=a.type&&"number"!=a.type&&r.preventDefault(),null!==a?katex.render(a.latex,i):katex.render("",i)}},t.onkeyup=function(e){r.innerText="";var n=s.rp.getParseResult(t.value);null!==n?katex.render(n.latex,i):katex.render("",i)},n.onmousedown=function(i){var n=t.value,a=s.rp.getParseResult(n);console.log(n),console.log(a),r.innerText="","integer"==e&&(null===a||"number"!=a.type&&"integer"==a.subtype)&&(r.innerText="Your answer must be a whole number."),"decimalNumber"!=e||null!==a&&"number"==a.type||(r.innerText="Your answer must be a decimal number or a whole number.")}}}},function(t,e,i){"use strict";i.r(e);var r=new(i(0).b);window.addEventListener("load",(function(){var t=document.getElementById("input1"),e=document.getElementById("validationMessage1"),i=document.getElementById("submitButton1"),n=document.getElementById("katexOutput1"),s=document.getElementById("input2"),a=document.getElementById("validationMessage2"),o=document.getElementById("submitButton2"),u=document.getElementById("katexOutput2"),p=document.getElementById("input3"),l=document.getElementById("validationMessage3"),h=document.getElementById("submitButton3"),c=document.getElementById("katexOutput3");r.addInput(t,"integer",n,e,i),r.addInput(s,"decimalNumber",u,a,o),r.addInput(p,"fraction",c,l,h)}))}]);
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+
+// CONCATENATED MODULE: ./src/rpnodes.js
+
+class RPNode {
+    constructor(type = "") {
+        this.supernode = null;
+        this.depth = 0;
+
+        this.type = type;
+        this.subtype = "";
+
+        this._title = "Node";
+
+        this.start = 0;
+        this.end = 0;
+        this._text = "";
+
+        this._latex = "";
+        this._asciiMath = "";
+        this._mathML = "";
+    }
+
+    get title() { return this._title; }
+
+    get length() { return this.end - this.start; }
+    get text() { return this._text; }
+
+    get latex() { return this._latex; }
+    get asciiMath() { return this._asciiMath; }
+    get mathML() { return this._mathML; }
+
+    get subnodes() { return []; }
+    set subnodes(value) { }
+
+    setDepth(depth = 0) {
+        this.depth = depth;
+
+        var that = this;
+
+        this.subnodes.forEach(n => {
+            n.supernode = that;
+            n.setDepth(depth + 1);
+        });
+    }
+}
+
+class RPWhiteSpaceNode extends RPNode {
+    constructor() {
+        super("whiteSpace");
+
+        this.value = "";
+    }
+
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype && object.value === this.value);
+    }
+}
+
+class RPNumberNode extends RPNode {
+    constructor() {
+        super("number");
+
+        this._title = "Number";
+
+        this.value = "";
+        this.integralPart = "";
+        this.decimalPart = "";
+        this.sign = "";
+        this.signIsExplicit = false;
+        this.numberOfLeadingZeros = 0;
+        this.numberOfTrailingZeros = 0;
+        this.minimumNumberOfSignificantFigures = 0;
+        this.maximumNumberOfSignificantFigures = 0;
+        this.numberOfDecimalPlaces = 0;
+    }
+
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype && object.value === this.value);
+    }
+
+    get title() {
+        return (this.subtype == "integer") ? "Integer" : "Decimal Number";
+    }
+
+    get latex() {
+        return this.value;
+    }
+
+    get asciiMath() {
+        return this.value;
+    }
+
+    get mathML() {
+        return "<mn>" + this.value + "</mn>";
+    }
+}
+
+class RPFractionNode extends RPNode {
+    constructor() {
+        super("fraction");
+
+        this._title = "Fraction";
+
+        this.numerator = null;
+        this.denominator = null;
+    }
+
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype && object.numerator.isEqualTo(this.numerator) && object.denominator.isEqualTo(this.denominator));
+    }
+
+    get subnodes() {
+        return [this.numerator, this.denominator];
+    }
+
+    set subnodes(value) {
+        this.numerator = value[0];
+        this.denominator = value[1];
+    }
+
+    get latex() {
+        return "\\frac{" + this.numerator.latex + "}{" + this.denominator.latex + "}";
+    }
+
+    get asciiMath() {
+        return "frac " + this.numerator.asciiMath + " " + this.denominator.asciiMath;
+    }
+
+    get mathML() {
+        return "<mfrac>" + this.numerator.mathML + this.denominator.mathML + "</mfrac>";
+    }
+}
+
+class RPMixedFractionNode extends RPNode {
+    constructor() {
+        super("mixedFraction");
+
+        this._title = "Mixed Fraction";
+
+        this.wholePart = null;
+        this.fractionPart = null;
+    }
+
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype && object.wholePart.isEqualTo(this.wholePart) && object.fractionPart.isEqualTo(this.fractionPart));
+    }
+
+    get subnodes() {
+        return [this.wholePart, this.fractionPart];
+    }
+
+    set subnodes(value) {
+        this.wholePart = value[0];
+        this.fractionPart = value[1];
+    }
+
+    get latex() {
+        return this.wholePart.latex + " " + this.fractionPart.latex;
+    }
+
+    get asciiMath() {
+        return this.wholePart.asciiMath + " " + this.fractionPart.asciiMath;
+    }
+
+    get mathML() {
+        return this.wholePart.mathML + this.fractionPart.mathML;
+    }
+}
+
+class RPRadicalNode extends RPNode {
+    constructor() {
+        super("radical");
+
+        this.radix = 2;
+        this.radixIsImplicit = true;
+        this.radicand = null;
+    }
+
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype && object.radix === this.radix && object.radicand.isEqualTo(this.radicand));
+    }
+
+    get subnodes() {
+        return [this.radicand];
+    }
+
+    set subnodes(value) {
+        this.radicand = value[0];
+    }
+
+    get title() {
+        return (this.radix == 2) ? "Square Root" : ((this.radix == 3) ? "Cube Root" : "Radical");
+    }
+
+    get latex() {
+        return "\\sqrt{" + this.radicand.latex + "}";
+    }
+
+    get asciiMath() {
+        return "sqrt(" + this.radicand.asciiMath + ")";
+    }
+
+    get mathML() {
+        if (this.radix == 2) {
+            return "<msqrt>" + this.radicand.mathML + "</msqrt>";
+        }
+        else {
+            return "<mroot>" + this.radicand.mathML + "<mn>" + this.radix + "</mn></mroot>";
+        }
+    }
+}
+
+class RPIdentifierNode extends RPNode {
+    constructor() {
+        super("identifier");
+
+        this.value = "";
+
+        this._title = "Identifier";
+    }
+
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype && object.value === this.value);
+    }
+
+    get latex() {
+        return this.value;
+    }
+
+    get asciiMath() {
+        return this.value;
+    }
+
+    get mathML() {
+        return "<mi>" + this.value + "</mi>";
+    }
+}
+
+class RPOperatorNode extends RPNode {
+    constructor() {
+        super("operator");
+
+        this.value = "";
+
+        this._title = "Operator";
+
+        this.isImplicit = false;
+    }
+
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype && object.value === this.value);
+    }
+
+    get precedence() {
+        return "+-*/^!=".indexOf(this.value);
+    }
+
+    get latex() {
+        return (this.value == "*") ? "\\times" : this.value;
+    }
+
+    get asciiMath() {
+        return this.value;
+    }
+
+    get mathML() {
+        return "<mo>" + this.value + "</mo>";
+    }
+}
+
+class RPUnaryOperationNode extends RPNode {
+    constructor() {
+        super("unaryOperation");
+
+        this.operand = null;
+
+        this.operator = null;
+
+        this._title = "Unary Operation";
+    }
+
+    get subnodes() {
+        return [this.operand];
+    }
+
+    set subnodes(value) {
+        this.operand = value[0];
+    }
+}
+
+class RPSignNode extends RPUnaryOperationNode {
+    constructor() {
+        super();
+
+        this.subtype = "sign";
+    }
+
+    get title() {
+        return (this.operator.value == "-") ? "Negation" : "Sign";
+    }
+
+    get text() {
+        return this.operator.text + this.operand.text;
+    }
+
+    get latex() {
+        return this.operator.latex + this.operand.latex;
+    }
+
+    get asciiMath() {
+        return this.operator.asciiMath + this.operand.asciiMath;
+    }
+}
+
+class RPFactorialNode extends RPUnaryOperationNode {
+    constructor() {
+        super();
+
+        this.subtype = "factorial";
+
+        this._title = "Factorial";
+    }
+
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype && object.operand.isEqualTo(this.operand));
+    }
+
+    get latex() {
+        return this.operand.latex + "!";
+    }
+
+    get asciiMath() {
+        return this.operand.asciiMath + "!";
+    }
+}
+
+class RPBinaryOperationNode extends RPNode {
+    constructor() {
+        super("binaryOperation");
+
+        this.operand1 = null;
+        this.operand2 = null;
+
+        this.operator = null;
+
+        this._title = "BinaryOperation";
+    }
+
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype && object.operand1.isEqualTo(this.operand1) && object.operand2.isEqualTo(this.operand2));
+    }
+
+    get subnodes() {
+        return [this.operand1, this.operand2];
+    }
+
+    set subnodes(value) {
+        this.operand1 = value[0];
+        this.operand2 = value[1];
+    }
+}
+
+class RPAdditionNode extends RPBinaryOperationNode {
+    constructor() {
+        super();
+
+        this.subtype = "addition";
+
+        this._title = "Addition";
+    }
+
+    get latex() {
+        return this.operand1.latex + "+" + this.operand2.latex;
+    }
+
+    get asciiMath() {
+        return this.operand1.asciiMath + "+" + this.operand2.asciiMath;
+    }
+}
+
+class RPSubtractionNode extends RPBinaryOperationNode {
+    constructor() {
+        super();
+
+        this.subtype = "subtraction";
+
+        this._title = "Subtraction";
+    }
+
+    get latex() {
+        return this.operand1.latex + "-" + this.operand2.latex;
+    }
+
+    get asciiMath() {
+        return this.operand1.asciiMath + "-" + this.operand2.asciiMath;
+    }
+}
+
+class RPMultiplicationNode extends RPBinaryOperationNode {
+    constructor() {
+        super();
+
+        this.subtype = "multiplication";
+        this.isImplicit = false;
+
+        this._title = "Multiplication";
+    }
+
+    get title() {
+        return (this.isImplicit) ? "Multiplication" : "Multiplication";
+    }
+
+    get latex() {
+        if (this.isImplicit) {
+            return this.operand1.latex + this.operand2.latex;
+        }
+        else {
+            return this.operand1.latex + " \\times " + this.operand2.latex;
+        }
+    }
+
+    get asciiMath() {
+        return this.operand1.asciiMath + "*" + this.operand2.asciiMath;
+    }
+}
+
+class RPDivisionNode extends RPBinaryOperationNode {
+    constructor() {
+        super();
+
+        this.subtype = "division";
+
+        this._title = "Division";
+    }
+
+    get latex() {
+        return this.operand1.latex + "/" + this.operand2.latex;
+    }
+
+    get asciiMath() {
+        return this.operand1.asciiMath + "/" + this.operand2.asciiMath;
+    }
+}
+
+class RPExponentiationNode extends RPBinaryOperationNode {
+    constructor() {
+        super();
+
+        this.subtype = "exponentiation";
+
+        this._title = "Exponentiation";
+    }
+
+    get latex() {
+        return this.operand1.latex + "^{" + this.operand2.latex + "}";
+    }
+
+    get asciiMath() {
+        return this.operand1.asciiMath + "^" + this.operand2.asciiMath;
+    }
+}
+
+class RPNamedFunction {
+    constructor(name = "", allowedWritings = [], latex = "", asciiMath = "", mathML = "") {
+        this.name = name;
+        this.allowedWritings = allowedWritings;
+        this.latex = latex;
+        this.asciiMath = asciiMath;
+        this.mathML = mathML;
+    }
+}
+
+var namedFunctions = [
+    new RPNamedFunction("Sine", ["sin", "sine"], "\\sin", "sin"),
+    new RPNamedFunction("Cosine", ["cos", "cosine"], "\\cos", "cos"),
+    new RPNamedFunction("Tangent", ["tan", "tangent"], "\\tan", "tan"),
+    new RPNamedFunction("Arcsine", ["asin", "arcsin", "arcsine"], "\\arcsin", "arcsin"),
+    new RPNamedFunction("Arccosine", ["acos", "arccos", "arccosine"], "\\arccos", "arccos"),
+    new RPNamedFunction("Arctangent", ["atan", "arctan", "arctangent"], "\\arctan", "arctan"),
+];
+
+class RPNamedFunctionNode extends RPNode {
+    constructor() {
+        super("namedFunction");
+
+        this.value = null;
+        this.parameters = [];
+
+        this.precedence = 6;
+    }
+
+    get title() {
+        return (this.value === null) ? "Named Function" : this.value.name + " Function";
+    }
+
+    get subnodes() {
+        return this.parameters;
+    }
+
+    set subnodes(value) {
+        this.parameters = value;
+    }
+
+    get latex() {
+        return this.value.latex + " " + this.parameters.map(p => p.latex).join(", ");
+    }
+
+    get asciiMath() {
+        return this.value.asciiMath + " " + this.parameters.map(p => p.asciiMath).join(", ");
+    }
+}
+
+class RPBracketedExpressionNode extends RPNode {
+    constructor() {
+        super("bracketedExpression");
+
+        this.bracketType = "()";
+        this.innerExpression = null;
+
+        this._title = "Bracketed Expression";
+    }
+
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype && object.bracketType == this.bracketType && object.innerExpression.isEqualTo(this.innerExpression));
+    }
+
+    get subnodes() {
+        return [this.innerExpression];
+    }
+
+    set subnodes(value) {
+        this.innerExpression = value[0];
+    }
+
+    get text() {
+        return "(" + this.innerExpression.text + ")";
+    }
+
+    get latex() {
+        return "\\left(" + this.innerExpression.latex + "\\right)";
+    }
+
+    get asciiMath() {
+        return "(" + this.innerExpression.asciiMath + ")";
+    }
+}
+
+class RPSurdNode extends RPNode {
+    constructor() {
+        super("surd");
+
+        this.coefficient = null;
+        this.radical = null;
+
+        this._title = "Surd";
+    }
+
+    get subnodes() {
+        return [this.coefficient, this.radical];
+    }
+
+    set subnodes(value) {
+        this.coefficient = value[0];
+        this.radical = value[1];
+    }
+
+    get latex() {
+        return this.coefficient.latex + " " + this.radical.latex;
+    }
+
+    get asciiMath() {
+        return this.coefficient.asciiMath + " " + this.radical.asciiMath;
+    }
+}
+
+class RPSummationNode extends RPNode {
+    constructor() {
+        super("summation");
+
+        this.operands = [];
+
+        this._title = "Summation";
+    }
+
+    get subnodes() {
+        return this.operands;
+    }
+
+    set subnodes(value) {
+        this.operands = value;
+    }
+
+    get latex() {
+        return this.operands.map(o => o.latex).join("+");
+    }
+
+    get asciiMath() {
+        return this.operands.map(o => o.asciiMath).join("+");
+    }
+}
+
+class RPProductNode extends RPNode {
+    constructor() {
+        super("product");
+
+        this.operands = [];
+
+        this._title = "Product";
+    }
+
+    get subnodes() {
+        return this.operands;
+    }
+
+    set subnodes(value) {
+        this.operands = value;
+    }
+
+    get latex() {
+        return this.operands.map(o => o.latex).join(" \\times ");
+    }
+
+    get asciiMath() {
+        return this.operands.map(o => o.asciiMath).join("*");
+    }
+}
+
+class Simplifier {
+    constructor() { }
+
+    simplifyNode(node) {
+
+        node.subnodes = this.simplifyNodes(node.subnodes);
+
+        node = this.replaceWithSurd(node);
+        node = this.replaceWithSummation(node);
+        node = this.replaceWithProduct(node);
+
+        return node;
+    }
+
+    simplifyNodes(nodes) {
+        return nodes.map(n => this.simplifyNode(n));
+    }
+
+    replaceWithSummation(node) {
+        var isAdditionOrSummationNode = (node.subtype == "addition" || node.type == "summation");
+        var hasAdditionOrSummationSubnodes = (node.subnodes.filter(n => n.subtype == "addition" || n.type == "summation").length > 0);
+
+        if (isAdditionOrSummationNode && hasAdditionOrSummationSubnodes) {
+            var summation = new RPSummationNode();
+
+            node.subnodes.forEach(n => {
+                if (n.subtype == "addition" || n.type == "summation") {
+                    summation.operands = summation.operands.concat(n.subnodes);
+                }
+                else {
+                    summation.operands.push(n);
+                }
+            });
+
+            return summation;
+        }
+
+        return node;
+    }
+
+    replaceWithProduct(node) {
+        var isMultiplicationOrProductNode = (node.subtype == "multiplication" || node.type == "product");
+        var hasMultiplicationOrProductSubnodes = (node.subnodes.filter(n => n.subtype == "multiplication" || n.type == "product").length > 0);
+
+        if (isMultiplicationOrProductNode && hasMultiplicationOrProductSubnodes) {
+            var product = new RPProductNode();
+
+            node.subnodes.forEach(n => {
+                if (n.subtype == "multiplication" || n.type == "product") {
+                    product.operands = product.operands.concat(n.subnodes);
+                }
+                else {
+                    product.operands.push(n);
+                }
+            });
+
+            return product;
+        }
+
+        return node;
+    }
+
+    replaceWithSurd(node) {
+        if (node.type == "binaryOperation"
+            && node.subtype == "multiplication"
+            && node.operand1.type == "number"
+            && node.operand2.type == "radical"
+            && (node.operand2.radicand.type == "number" || (node.operand2.radicand.type == "bracketedExpression" && node.operand2.radicand.innerExpression.type == "number"))) {
+            var surd = new RPSurdNode();
+
+            surd.coefficient = node.operand1;
+            surd.radical = node.operand2;
+
+            return surd;
+        }
+
+        return node;
+    }
+}
+// CONCATENATED MODULE: ./src/responseparsing.js
+/* unused harmony export Marker */
+/* unused harmony export ParserSettings */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return responseparsing_ResponseParser; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return Validator; });
+
+
+// A useful function to have in any parser - checks if any of the characters in a string are the given character.
+function isAnyOf(characters, character) {
+    return (characters.split("").filter(c => c == character).length > 0);
+}
+
+// A marker object for keeping track of the position in a string that the parser is looking at.
+// Can also be extended to track line numbers and line positions.
+class Marker {
+    constructor() {
+        this.position = 0;
+    }
+
+    copy() {
+        var marker = new Marker();
+
+        marker.position = this.position;
+
+        return marker;
+    }
+}
+
+class ParserSettings {
+    constructor() {
+        this.removeLeadingZerosFromSimplifiedForms = false;
+        this.addLeadingZeroToDecimalsForSimplifiedForms = true;
+    }
+}
+
+// Handles the process of scanning through a string to see what types of mathematical expression are in it.
+// At the moment, this could just be done using regular expressions.
+// However, regular expressions couldn't be used for more complicated mathematical expressions, which is why this design pattern is used.
+// This design pattern can also return lots of other interesting information about what the user types, such as number of significant figures.
+class responseparsing_ResponseParser {
+
+    constructor() {
+        this.settings = new ParserSettings();
+        this.simplifier = new Simplifier();
+    }
+
+    // The top-level parse function (for now).
+    getParseResult(inputText) {
+        var m1 = new Marker();
+
+        var expression = this.parseExpression(inputText, m1);
+
+        if (expression !== null && m1.position == inputText.length) {
+            expression = this.simplifier.simplifyNode(expression);
+            expression.setDepth();
+
+            return expression;
+        }
+
+        // If nothing is found, return nothing.
+        return null;
+    }
+
+    // A useful function for checking if any of a set of words appears at the given position in a string.
+    anyAt(words, inputText, marker) {
+        for (var i = 0; i < words.length; i++) {
+            var w = words[i];
+
+            if (inputText.substring(marker.position, marker.position + w.length) == w) {
+                return w;
+            }
+        }
+
+        return false;
+    }
+
+    parseExpression(inputText, marker) {
+        var operandStack = [];
+        var operatorStack = [];
+        var n = 0;
+        var lastNode;
+
+        while (marker.position < inputText.length) {
+
+            var node = this.parseBinomialOperator(inputText, marker.copy());;
+
+            if (node === null) { node = this.parseBracketedExpression(inputText, marker.copy()) }
+            if (node === null) { node = this.parseFactorial(inputText, marker.copy()) }
+            if (node === null) { node = this.parseMixedFraction(inputText, marker.copy()) }
+            if (node === null) { node = this.parseFraction(inputText, marker.copy()); }
+            if (node === null) { node = this.parseNamedFunction(inputText, marker.copy()); }
+            if (node === null) { node = this.parseSquareRoot(inputText, marker.copy()); }
+            if (node === null) { node = this.parseNumber(inputText, marker.copy()); }
+            if (node === null) { node = this.parseIdentifier(inputText, marker.copy()); }
+            if (node === null) { node = this.parseWhiteSpace(inputText, marker.copy()); }
+            if (node === null) { break; }
+
+            if (node.type == "operator" || node.type == "namedFunction") {
+                this._applyOperators(operandStack, operatorStack, node);
+
+                operatorStack.push(node);
+                n++;
+            }
+            else if (node.type == "whiteSpace") {
+            }
+            else {
+                if (lastNode !== undefined && lastNode.type != "operator" && lastNode.type != "namedFunction") {
+                    var implicitTimes = new RPOperatorNode();
+
+                    implicitTimes._text = "*";
+                    implicitTimes.isImplicit = true;
+
+                    operatorStack.push(implicitTimes);
+                }
+                else if (n == 1 && lastNode.type == "operator" && (lastNode.value == "+" || lastNode.value == "-")) {
+                    var signNode = new RPSignNode();
+                    signNode.operator = operatorStack.pop();
+                    signNode.operand = node;
+
+                    node = signNode;
+                }
+
+                operandStack.push(node);
+                n++;
+            }
+
+            marker.position += node.length;
+
+            if (node.type != "whiteSpace") {
+                lastNode = node;
+            }
+        }
+
+        this._applyOperators(operandStack, operatorStack, null);
+
+        if (operandStack.length == 1) {
+            return operandStack[0];
+        }
+
+        return null;
+    }
+
+    _applyOperators(operandStack, operatorStack, nextOperator) {
+        for (var i = operatorStack.length - 1; i >= 0; i--) {
+            if (nextOperator === null || operatorStack[i].precedence >= nextOperator.precedence) {
+                if (operandStack.length >= 1) {
+                    var operator = operatorStack.pop();
+
+                    var node;
+                    if (operandStack.length >= 2 && operator.type == "operator") {
+
+                        if (operator.text == "+") { node = new RPAdditionNode(); }
+                        if (operator.text == "-") { node = new RPSubtractionNode(); }
+                        if (operator.text == "*") { node = new RPMultiplicationNode(); }
+                        if (operator.text == "/") { node = new RPDivisionNode(); }
+                        if (operator.text == "^") { node = new RPExponentiationNode(); }
+
+                        node.operand2 = operandStack.pop();
+                        node.operand1 = operandStack.pop();
+
+                        if (operator.text == "*" && operator.isImplicit) {
+                            node.isImplicit = true;
+                            node._text = node.operand1.text + node.operand2.text;
+                        }
+                        else {
+                            node._text = node.operand1.text + operator.text + node.operand2.text;
+                        }
+
+                        operandStack.push(node);
+                    }
+                    else if (operandStack.length >= 1 && operator.type == "operator") {
+                        if (operator.text == "!") { node = new RPFactorialNode(); }
+
+                        var operand = operandStack.pop();
+
+                        node.operand = operand;
+                        node._text = operand.text + operator.text;
+
+                        operandStack.push(node);
+                    }
+                    else if (operandStack.length >= 1 && operator.type == "namedFunction") {
+                        node = operator;
+                        var operand = operandStack.pop();
+
+                        node.parameters.push(operand);
+                        node._text += operand.text;
+
+                        operandStack.push(node);
+                    }
+                }
+            }
+            else {
+                break;
+            }
+        }
+    }
+
+    parseFactorial(inputText, marker) {
+        var start = marker.position;
+
+        if (inputText.charAt(marker.position) != "!") { return null; }
+
+        marker.position++;
+
+        var end = marker.position;
+
+        var node = new RPOperatorNode();
+
+        node.start = start;
+        node.end = end;
+        node._text = "!";
+
+        node.value = "!";
+
+        return node;
+    }
+
+    parseBracketedExpression(inputText, marker) {
+        var start = marker.position;
+
+        if (inputText.charAt(marker.position) != "(") { return null; }
+
+        marker.position++;
+
+        var n = 1;
+        var t = "";
+
+        while (marker.position < inputText.length && n > 0) {
+            var c = inputText.charAt(marker.position);
+            t += c;
+
+            if (c == "(") {
+                n++;
+            }
+            else if (c == ")") {
+                n--;
+            }
+
+            marker.position++;
+        }
+
+        var end = marker.position;
+
+        var node = new RPBracketedExpressionNode();
+
+        node.start = start;
+        node.end = end;
+        node._text = t;
+
+        if (end - start >= 2) {
+            var innerText = inputText.substring(start + 1, end - 1);
+            var innerExpression = this.parseExpression(innerText, new Marker());
+
+            node.innerExpression = innerExpression;
+        }
+
+        return node;
+    }
+
+    parseNamedFunction(inputText, marker) {
+        var start = marker.position;
+
+        var matchString = ""
+        var match = null;
+
+        namedFunctions.forEach(nf => {
+            nf.allowedWritings.map(a => a).sort((a, b) => { return b.length - a.length }).forEach(w => {
+                if (inputText.substr(marker.position, w.length) == w) {
+                    match = nf;
+                    matchString = w;
+                    marker.position += w.length;
+                }
+            });
+        });
+
+        if (match === null) { return null; }
+
+        var end = marker.position;
+
+        var node = new RPNamedFunctionNode();
+
+        node.value = match;
+
+        node.start = start;
+        node.end = end;
+        node._text = matchString;
+
+        return node;
+    }
+
+    parseBinomialOperator(inputText, marker) {
+        var start = marker.position;
+
+        var c = inputText.charAt(marker.position);
+
+        if (!isAnyOf("+-*/^", c)) {
+            return null;
+        }
+
+        marker.position++;
+
+        var end = marker.position;
+
+        var node = new RPOperatorNode();
+
+        node.start = start;
+        node.end = end;
+        node._text = c;
+        node.value = c;
+
+        return node;
+    }
+
+    parseIdentifier(inputText, marker) {
+        var start = marker.position;
+
+        var c = inputText.charAt(marker.position);
+
+        if (!isAnyOf("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", c)) {
+            return null;
+        }
+
+        marker.position++;
+
+        var end = marker.position;
+
+        var node = new RPIdentifierNode();
+
+        node.start = start;
+        node.end = end;
+        node._text = c;
+        node.value = c;
+
+        return node;
+    }
+
+    // Determine if there is a square root at the current position.
+    parseSquareRoot(inputText, marker) {
+        var start = marker.position;
+
+        // We want to allow several possible ways of allowing inputting square roots, so that the student doesn't have to remember a particular syntax in order to write a square root.
+        var functionNames = ["sqrt", "squareroot", "root"];
+
+        // See if any of the allowed function names are at the current position.
+        var name = this.anyAt(functionNames, inputText, marker);
+
+        // If not, then there is no square root here, so return nothing.
+        if (name === false) {
+            return null;
+        }
+
+        // If there is, then move the marker along by the length of the name.
+        marker.position += name.length;
+
+        // Allow optional white space here.
+        var ws1 = this.parseWhiteSpace(inputText, marker);
+
+        var radicand = this.parseNumber(inputText, marker.copy());
+
+        if (radicand === null) { radicand = this.parseIdentifier(inputText, marker.copy()); }
+        if (radicand === null) { radicand = this.parseBracketedExpression(inputText, marker.copy()); }
+        if (radicand === null) { return null; }
+
+        marker.position += radicand.length;
+
+        var end = marker.position;
+
+        var node = new RPRadicalNode();
+
+        node.start = start;
+        node.end = end;
+        node._text = inputText.slice(start, end);
+
+        node.radix = 2;
+        node.radixIsImplicit = true;
+        node.radicand = radicand;
+
+        return node;
+    }
+
+    parseMixedFraction(inputText, marker) {
+        var start = marker.position;
+
+        var wholePart = this.parseNumber(inputText, marker);
+        if (wholePart === null) { return null; }
+
+        var whiteSpace = this.parseWhiteSpace(inputText, marker);
+        if (whiteSpace === null) { return null; }
+
+        var fractionPart = this.parseFraction(inputText, marker);
+        if (fractionPart === null) { return null; }
+
+        var end = marker.position;
+
+        var node = new RPMixedFractionNode();
+
+        node.start = start;
+        node.end = end;
+        node._text = inputText.slice(start, end);
+
+        node.wholePart = wholePart;
+        node.fractionPart = fractionPart;
+
+        return node;
+    }
+
+    // Determine if there is a fraction at the current position.
+    parseFraction(inputText, marker) {
+        var start = marker.position;
+
+        // First see if there is a number for the numerator.
+        var numerator = this.parseNumber(inputText, marker);
+
+        // If there is no numerator, there is no fraction, so return nothing.
+        if (numerator === null) {
+            return null;
+        }
+
+        // Check for white space - white space is allowed here.
+        var whiteSpace1 = this.parseWhiteSpace(inputText, marker);
+
+        // Get the character at the current position.
+        var c = inputText.charAt(marker.position);
+
+        // If the current character isn't a forward slash, then it isn't a fraction.
+        if (c !== "/") {
+            return null;
+        }
+
+        marker.position += 1;
+
+        // Check for more white space again.
+        var whiteSpace2 = this.parseWhiteSpace(inputText, marker);
+        // Look for a denominator.
+        var denominator = this.parseNumber(inputText, marker);
+        var end = marker.position;
+
+        var node = new RPFractionNode();
+
+        node.start = start;
+        node.end = end;
+        node._text = inputText.slice(start, end);
+
+        node.numerator = numerator;
+        node.denominator = denominator;
+
+        return node;
+    }
+
+    // Determine if there is a number (either an integer or a decimal) at the current position.
+    parseNumber(inputText, marker) {
+        var t = "";
+        var start = marker.position;
+
+        var integralPart = "";
+        var decimalPart = "";
+
+        var ts = "";
+        var sign = "positive";
+        var signIsExplicit = false;
+
+        // The number may start with a plus or a minus sign.
+        // Get the character at the current position.
+        var d = inputText.charAt(marker.position);
+
+        // Check if the character is either a plus or a minus sign.
+        // If it is, record this, and then move the marker on by 1.
+        if (d == "+") {
+            ts = "+";
+            signIsExplicit = true;
+            marker.position++;
+        }
+        else if (d == "-") {
+            ts = "-";
+            sign = "negative";
+            signIsExplicit = true;
+            marker.position++;
+        }
+
+        // Set-up some counter variables - this is often the best way to get information like the number of significant figures that a number has.
+        var nlz = 0; // The number of leading zeros.
+        var ntz = 0; // The number of trailing zeros.
+        var nsf = 0; // The number of significant figures.
+        var ndp = 0; // The number of decimal places.
+
+        var p = 0; // A counter for any zeros that may or may not be significant digits.
+        var q = 0; // A counter for the number of decimal points seen so far.
+
+        // Loop over the characters in the string.
+        while (marker.position < inputText.length) {
+            // Get the character at the current position.
+            var c = inputText.charAt(marker.position);
+
+            if (isAnyOf("0123456789", c)) {
+                // If the current character is any of 0123456789, then it's a number character, so add it to the substring.
+                t += c;
+                marker.position++;
+
+                // If the decimal point has been seen, add the character to the decimal part.
+                // Otherwise, add the character to the integral part.
+                // Also, each digit seen after the decimal point should increase the decimal places counter.
+                if (q == 0) {
+                    integralPart += c;
+                } else {
+                    decimalPart += c;
+                    ndp++;
+                }
+
+                if (c == "0" && nsf == 0 && q == 0) {
+                    // If the current digit is 0, and no non-zero digits have been seen so far, or the decimal point, then it's a leading zero.
+                    nlz++;
+                }
+                else if (c != "0") {
+                    // If the current digit is not a 0, then it's a significant digit, so increase the significant digits counter by 1.
+                    // Also, any zeros that have been seen since the last non-zero significant digit are also significant digits.
+                    nsf += p;
+                    p = 0;
+                    nsf++;
+                }
+                else if (c == "0" && nsf > 0) {
+                    // If the current digit is 0, and 1 or more significant digits have been seen so far, then this zero may be a significant digit, so increase this counter by one.
+                    p++;
+                }
+            }
+            else if (c == ".") {
+                if (q == 0) {
+                    // If the current character is a full-stop, it's a decimal point, so increase the decimal points counter by 1.
+                    t += c;
+                    marker.position++;
+
+                    decimalPart += c;
+
+                    q++;
+                }
+                else {
+                    // If a second decimal point is seen, break the loop.
+                    break;
+                }
+            }
+            else {
+                // If the character isn't in 0123456789., then break the loop.
+                break;
+            }
+        }
+
+        var allZero = (nsf == 0 && t.length > 0) ? true : false; // Whether or not all of the digits given were zero.
+
+        if (allZero) {
+            sign = "zero";
+        }
+
+        var minimumNSF = 0;
+        var maximumNSF = 0;
+
+        if (allZero) {
+            // If all of the digits in the given number are zero, can only assume that the final zero is a significant digit.
+
+            minimumNSF = 1;
+            maximumNSF = 1;
+            if (q > 0) {
+                ntz = ndp;
+            }
+        }
+        else {
+            // Otherwise at least one non-zero digit has been given.
+            if (q > 0) {
+                // For a decimal number, all of the digits to the end of the decimal part are significant digits, even if they're zeros.
+                minimumNSF = nsf + p;
+                maximumNSF = nsf + p;
+
+                // The number of trailing zeros is equal to the counter p.
+                ntz = p;
+            }
+            else {
+                // For an integer, any zeros at the end of the number may or may not be significant digits, so set the minimum and maximum to be different.
+                minimumNSF = nsf;
+                maximumNSF = nsf + p;
+            }
+        }
+
+        var end = marker.position;
+
+        // If there was a decimal point, then the number was a decimal.
+        var subtype = (q == 0) ? "integer" : "decimalNumber";
+
+        // Remove any leading zeros for the simplest form of the number.
+        // Except if the number is a decimal, in which case there should be one leading zero.
+        var t1 = "";
+
+        if (integralPart == "" && (decimalPart == "" || decimalPart == ".")) {
+            // If essentially nothing has been written, write nothing for the integral part.
+            t1 = "";
+        }
+        else if (integralPart == "") {
+            // If the number is just something like .123, then it should be written 0.123
+            if (this.settings.addLeadingZeroToDecimalsForSimplifiedForms) {
+                t1 = "0";
+            }
+            else {
+                t1 = "";
+            }
+        }
+        else {
+            // Otherwise just remove the leading zeros.
+            if (this.settings.removeLeadingZerosFromSimplifiedForms) {
+                t1 = integralPart.slice(nlz);
+                if (this.settings.addLeadingZeroToDecimalsForSimplifiedForms) {
+                    t1 = (t1 == "") ? "0" : t1;
+                }
+            }
+            else {
+                t1 = integralPart;
+            }
+        }
+
+        // If the decimal part consists of just a decimal point and no digits, remove the decimal point for the simplest form.
+        var t2 = (decimalPart == ".") ? "" : decimalPart;
+        var simplestForm = (allZero) ? t1 + t2 : ts + t1 + t2;
+
+        if (ts + t == "") {
+            // If no number was seen, return nothing.
+            return null;
+        }
+        else {
+            // If a number was seen, return information about it.
+            var node = new RPNumberNode();
+
+            node.subtype = subtype;
+
+            node.integralPart = integralPart;
+            node.decimalPart = decimalPart;
+
+            node.start = start;
+            node.end = end;
+            node._text = ts + t;
+            node.value = simplestForm;
+
+            node.sign = sign;
+            node.signIsExplicit = signIsExplicit;
+            node.numberOfLeadingZeros = nlz;
+            node.numberOfTrailingZeros = ntz;
+            node.minimumNumberOfSignificantFigures = minimumNSF;
+            node.maximumNumberOfSignificantFigures = maximumNSF;
+            node.numberOfDecimalPlaces = ndp;
+
+            return node;
+        }
+    }
+
+    // Determine if there is any white space at the current position.
+    parseWhiteSpace(inputText, marker) {
+        var t = "";
+        var start = marker.position;
+
+        // Look through the string until the end of the string.
+        while (marker.position < inputText.length) {
+            // Get the character at the current position.
+            var c = inputText.charAt(marker.position);
+
+            if (isAnyOf(" \t\n", c)) {
+                // If the current character is white space, add it to the buffer variable.
+                t += c;
+                marker.position += 1;
+            }
+            else {
+                // If it's not white space, break.
+                break;
+            }
+        }
+
+        var end = marker.position;
+
+        if (t == "") {
+            // If there was no white space, return nothing.
+            return null;
+        }
+        else {
+            // If there was white space, return an object giving the properties of the white space.
+
+            var node = new RPWhiteSpaceNode();
+
+            node.start = start;
+            node.end = end;
+            node._text = t;
+            node.value = " ";
+
+            node._latex = t;
+            node._asciiMath = t;
+
+            return node;
+        }
+    }
+}
+
+// Handles the actual on-page events and the validation messages.
+class Validator {
+    constructor() {
+        this.inputs = [];
+
+        // Create an instance of ResponseParser.
+        this.rp = new responseparsing_ResponseParser();
+
+        // None of these keys can add a character into a single-line text input, so we don't need to check any of them on the keydown event.
+        this.controlKeys = [
+            "ShiftLeft",
+            "ShiftRight",
+            "Backspace",
+            "Enter",
+            "Tab",
+            "CapsLock",
+            "MetaLeft",
+            "MetaRight",
+            "AltLeft",
+            "AltRight",
+            "ControlLeft",
+            "ControlRight",
+            "ArrowLeft",
+            "ArrowRight",
+            "ArrowUp",
+            "ArrowDown",
+            "Escape"];
+    }
+
+    // Gets what the new value of a text input would be if a keydown event were allowed to proceed.
+    getNewInputValueOnKeyDown(input, e) {
+        var length = input.value.length;
+
+        if (input.selectionStart == length && input.selectionEnd == length) {
+            return input.value + e.key;
+        }
+        else {
+            return input.value.slice(0, input.selectionStart) + e.key + input.value.slice(input.selectionEnd, length);
+        }
+    }
+
+    // Inputs that are to be checked by the validator can be added using this function.
+    addInput(input, inputType, katexOutput, validationMessageElement, submitButton) {
+        this.inputs.push([input, inputType, katexOutput, validationMessageElement, submitButton]);
+
+        var that = this;
+
+        // A check is performed whenever the user tries to type another character into the input.
+        input.onkeydown = function (e) {
+            // If the key that's pressed is one of the control keys, ignore the event.
+            if (that.controlKeys.filter(ck => e.code == ck).length == 0) {
+                // Get what the new value of the input will be.
+                var t = that.getNewInputValueOnKeyDown(input, e);
+                // Parse the value to see what it is.
+                var parseResult = that.rp.getParseResult(t);
+
+                console.log(t);
+                console.log(parseResult);
+
+                if (parseResult === null) {
+                    e.preventDefault();
+                    return;
+                }
+
+                if (inputType == "integer" && (parseResult.type != "number" || parseResult.subtype != "integer")) {
+                    e.preventDefault();
+                }
+
+                if (inputType == "decimalNumber" && parseResult.type != "number") {
+                    e.preventDefault();
+                }
+
+                if (inputType == "fraction" && (parseResult.type != "fraction" && parseResult.type != "number")) {
+                    e.preventDefault();
+                }
+
+                if (parseResult !== null) {
+                    katex.render(parseResult.latex, katexOutput);
+                }
+                else {
+                    katex.render("", katexOutput);
+                }
+            }
+        }
+
+        input.onkeyup = function (e) {
+
+            validationMessageElement.innerText = "";
+
+            var parseResult = that.rp.getParseResult(input.value);
+
+            if (parseResult !== null) {
+                katex.render(parseResult.latex, katexOutput);
+            }
+            else {
+                katex.render("", katexOutput);
+            }
+
+        }
+
+        // A second check has to be performed on submit.
+        submitButton.onmousedown = function (e) {
+            // Get the value of the input.
+            var t = input.value;
+            // Parse the value to see what it is.
+            var parseResult = that.rp.getParseResult(t);
+
+            console.log(t);
+            console.log(parseResult);
+
+            validationMessageElement.innerText = "";
+
+            // If the answer is supposed to be an integer, but it's not, then give a validation message.
+            if (inputType == "integer" && (parseResult === null || (parseResult.type != "number" && parseResult.subtype == "integer"))) {
+                validationMessageElement.innerText = "Your answer must be a whole number.";
+            }
+
+            // If the answer is supposed to be a decimal, but it's not, then give a validation message.
+            if (inputType == "decimalNumber" && (parseResult === null || parseResult.type != "number")) {
+                validationMessageElement.innerText = "Your answer must be a decimal number or a whole number.";
+            }
+        }
+    }}
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _responseparsing_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
+
+
+var validator = new _responseparsing_js__WEBPACK_IMPORTED_MODULE_0__[/* Validator */ "b"]();
+
+window.addEventListener("load", function () {
+    var i1 = document.getElementById("input1");
+    var o1 = document.getElementById("validationMessage1");
+    var sb1 = document.getElementById("submitButton1");
+    var ko1 = document.getElementById("katexOutput1");
+
+    var i2 = document.getElementById("input2");
+    var o2 = document.getElementById("validationMessage2");
+    var sb2 = document.getElementById("submitButton2");
+    var ko2 = document.getElementById("katexOutput2");
+
+    var i3 = document.getElementById("input3");
+    var o3 = document.getElementById("validationMessage3");
+    var sb3 = document.getElementById("submitButton3");
+    var ko3 = document.getElementById("katexOutput3");
+
+    validator.addInput(i1, "integer", ko1, o1, sb1);
+    validator.addInput(i2, "decimalNumber", ko2, o2, sb2);
+    validator.addInput(i3, "fraction", ko3, o3, sb3);
+});
+
+/***/ })
+/******/ ]);

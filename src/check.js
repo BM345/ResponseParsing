@@ -4,6 +4,7 @@ var nodeColours = {
     "number": 220,
     "binaryOperation": 350,
     "summation": 350,
+    "product": 350,
     "identifier": 90,
     "radical": 280,
     "surd": 290,

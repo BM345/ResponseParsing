@@ -633,6 +633,7 @@ export class Simplifier {
         node = this.replaceWithSurd(node);
         node = this.replaceWithSummation(node);
         node = this.replaceWithProduct(node);
+        node = this.simplifyUnaryOperator(node);
 
         return node;
     }
@@ -697,6 +698,24 @@ export class Simplifier {
             surd.radical = node.operand2;
 
             return surd;
+        }
+
+        return node;
+    }
+
+    simplifyUnaryOperator(node) {
+        if (node.type == "unaryOperation" && node.subtype == "sign" && node.operand.type == "number") {
+            var number = node.operand;
+
+            number.start = node.start;
+            number.end = node.end;
+            number._text = node.text;
+            number.value = node.operator.value + node.operand.value;
+
+            number.sign = (node.operator.value == "+") ? "positive" : "negative";
+            number.signIsExplicit = true;
+
+            return number;
         }
 
         return node;

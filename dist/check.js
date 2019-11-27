@@ -726,6 +726,7 @@ class Simplifier {
         node = this.replaceWithSurd(node);
         node = this.replaceWithSummation(node);
         node = this.replaceWithProduct(node);
+        node = this.simplifyUnaryOperator(node);
 
         return node;
     }
@@ -790,6 +791,24 @@ class Simplifier {
             surd.radical = node.operand2;
 
             return surd;
+        }
+
+        return node;
+    }
+
+    simplifyUnaryOperator(node) {
+        if (node.type == "unaryOperation" && node.subtype == "sign" && node.operand.type == "number") {
+            var number = node.operand;
+
+            number.start = node.start;
+            number.end = node.end;
+            number._text = node.text;
+            number.value = node.operator.value + node.operand.value;
+
+            number.sign = (node.operator.value == "+") ? "positive" : "negative";
+            number.signIsExplicit = true;
+
+            return number;
         }
 
         return node;
@@ -911,7 +930,13 @@ class responseparsing_ResponseParser {
                 }
                 else if (n == 1 && lastNode.type == "operator" && (lastNode.value == "+" || lastNode.value == "-")) {
                     var signNode = new RPSignNode();
-                    signNode.operator = operatorStack.pop();
+                    var operator = operatorStack.pop();
+
+                    signNode.start = operator.start;
+                    signNode.end = node.end;
+                    signNode._text = inputText.slice(signNode.start, signNode.end);
+
+                    signNode.operator = operator;
                     signNode.operand = node;
 
                     node = signNode;
@@ -921,7 +946,7 @@ class responseparsing_ResponseParser {
                 n++;
             }
 
-            marker.position += node.length;
+            marker.position = node.end;
 
             if (node.type != "whiteSpace") {
                 lastNode = node;
@@ -1430,7 +1455,7 @@ class responseparsing_ResponseParser {
             node.start = start;
             node.end = end;
             node._text = ts + t;
-            node.value = simplestForm;
+            node.value = ts + simplestForm;
 
             node.sign = sign;
             node.signIsExplicit = signIsExplicit;
@@ -1611,7 +1636,8 @@ class Validator {
                 validationMessageElement.innerText = "Your answer must be a decimal number or a whole number.";
             }
         }
-    }}
+    }
+}
 
 
 /***/ }),

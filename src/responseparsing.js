@@ -109,7 +109,13 @@ export class ResponseParser {
                 }
                 else if (n == 1 && lastNode.type == "operator" && (lastNode.value == "+" || lastNode.value == "-")) {
                     var signNode = new nodes.RPSignNode();
-                    signNode.operator = operatorStack.pop();
+                    var operator = operatorStack.pop();
+
+                    signNode.start = operator.start;
+                    signNode.end = node.end;
+                    signNode._text = inputText.slice(signNode.start, signNode.end);
+
+                    signNode.operator = operator;
                     signNode.operand = node;
 
                     node = signNode;
@@ -119,7 +125,7 @@ export class ResponseParser {
                 n++;
             }
 
-            marker.position += node.length;
+            marker.position = node.end;
 
             if (node.type != "whiteSpace") {
                 lastNode = node;
@@ -628,7 +634,7 @@ export class ResponseParser {
             node.start = start;
             node.end = end;
             node._text = ts + t;
-            node.value = simplestForm;
+            node.value = ts + simplestForm;
 
             node.sign = sign;
             node.signIsExplicit = signIsExplicit;
@@ -809,4 +815,5 @@ export class Validator {
                 validationMessageElement.innerText = "Your answer must be a decimal number or a whole number.";
             }
         }
-    }}
+    }
+}

@@ -74,6 +74,7 @@ class ResponseParser {
     parseExpression(inputText, marker) {
         var operandStack = [];
         var operatorStack = [];
+        var n = 0;
         var lastNode;
 
         while (marker.position < inputText.length) {
@@ -95,6 +96,7 @@ class ResponseParser {
                 this._applyOperators(operandStack, operatorStack, node);
 
                 operatorStack.push(node);
+                n++;
             }
             else if (node.type == "whiteSpace") {
             }
@@ -107,8 +109,16 @@ class ResponseParser {
 
                     operatorStack.push(implicitTimes);
                 }
+                else if (n == 1 && lastNode.type == "operator" && (lastNode.value == "+" || lastNode.value == "-")) {
+                    var unaryOperationNode = new nodes.RPUnaryOperationNode();
+                    unaryOperationNode.operator = operatorStack.pop();
+                    unaryOperationNode.operand = node;
+
+                    node = unaryOperationNode;
+                }
 
                 operandStack.push(node);
+                n++;
             }
 
             marker.position += node.length;
@@ -346,6 +356,7 @@ class ResponseParser {
 
         if (radicand === null) { radicand = this.parseIdentifier(inputText, marker.copy()); }
         if (radicand === null) { radicand = this.parseBracketedExpression(inputText, marker.copy()); }
+        if (radicand === null) { return null; }
 
         marker.position += radicand.length;
 

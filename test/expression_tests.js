@@ -95,21 +95,73 @@ describe("RPNode.isEqualTo", function () {
 
     describe("Surds", function () {
         [
-            ["2 sqrt 2", true, 2, 2],
-            ["2sqrt2", true, 2, 2],
-            ["2 sqrt2", true, 2, 2],
-            ["2sqrt 2", true, 2, 2],
-            ["2 sqrt(2)", true, 2, 2],
-            ["2 sqrt (2)", true, 2, 2],
-            ["2 sqrt ( 2 )", true, 2, 2],
-            ["3 sqrt 2", true, 3, 2],
-            ["4 sqrt 2", true, 4, 2],
+            ["2 sqrt 2", true, "2", "2"],
+            ["2sqrt2", true, "2", "2"],
+            ["2 sqrt2", true, "2", "2"],
+            ["2sqrt 2", true, "2", "2"],
+            ["2 sqrt(2)", true, "2", "(2)"],
+            ["2 sqrt (2)", true, "2", "(2)"],
+            ["2 sqrt ( 2 )", true, "2", "(2)"],
+            ["3 sqrt 2", true, "3", "2"],
+            ["4 sqrt 2", true, "4", "2"],
+            ["12 sqrt 34", true, "12", "34"],
+            ["12.34 sqrt 56.78", true, "12.34", "56.78"],
+            ["-2 sqrt -2", true, "-2", "-2"],
+            ["+2 sqrt +2", true, "+2", "+2"],
+            ["2 root 2", true, "2", "2"],
+            ["2 squareroot 2", true, "2", "2"],
+            ["2 sqr 3", false],
+            ["2 sqrt * 3", false],
         ].forEach(a => {
             var n = parser.getParseResult(a[0]);
 
-            it(`should see that '${a[0]}' is${(a[1] == false) ? " not" : ""} a surd`, function () {
-                assert.equal(n.type, "surd");
+            if (a[1] == true) {
+                it(`should see that '${a[0]}' is a surd`, function () {
+                    assert.equal(n.type, "surd");
+                });
+
+                it(`should see that the coefficient of '${a[0]}' is '${a[2]}'`, function () {
+                    assert.equal(n.coefficient.text, a[2]);
+                });
+
+                it(`should see that the radicand of '${a[0]}' is '${a[3]}'`, function () {
+                    assert.equal(n.radical.radicand.text, a[3]);
+                });
+            }
+            else {
+                it(`should see that '${a[0]}' is not a surd`, function () {
+                    assert.notEqual(n.type, "surd");
+                });
+            }
+        });
+    });
+
+    describe("Additions and Summations", function () {
+        [
+            ["a+a", "binaryOperation", "addition"],
+            ["a+a+a", "summation", "", 3, ["a", "a", "a"]],
+            ["a+a+a+a", "summation", "", 4, ["a", "a", "a", "a"]],
+            ["a+a+a+a+a", "summation", "", 5, ["a", "a", "a", "a", "a"]],
+            ["a+a+a+a+a+a", "summation", "", 6, ["a", "a", "a", "a", "a", "a"]],
+            ["a+b+c", "summation", "", 3, ["a", "b", "c"]],
+            ["c+b+a", "summation", "", 3, ["c", "b", "a"]],
+            ["m+b+g+w+t", "summation", "",  5, ["m", "b", "g", "w", "t"]],
+        ].forEach(a => {
+            var n = parser.getParseResult(a[0]);
+
+            it(`should see that '${a[0]}' has the type '${a[1]}' and the subtype '${a[2]}'`, function () {
+                assert.equal(n.type, a[1]);
+                assert.equal(n.subtype, a[2]);
             });
+
+            if (a[1] == "summation") {
+                it(`should see that the operands of '${a[0]}' are ${a[4].map(b => "'" + b + "'").join(", ")}`, function () {
+                    assert.equal(n.operands.length, a[3]);
+                    for (var i = 0; i < n.operands.length; i++) {
+                        assert.equal(n.operands[i].value, a[4][i]);
+                    }
+                });
+            }
         });
     });
 

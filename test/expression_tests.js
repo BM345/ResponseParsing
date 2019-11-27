@@ -1,5 +1,5 @@
-var assert = require("assert");
-var rp = require("../src/responseparsing");
+import assert from "assert";
+import * as rp from "../src/responseparsing.js";
 
 var parser = new rp.ResponseParser();
 

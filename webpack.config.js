@@ -1,21 +1,22 @@
-const path = require('path');
+const path = require('path')      ;
+let glob = require("glob");
+
+
+let entry = {
+  index: "./src/index.js",
+  check: "./src/check.js",
+};
+let outputPath = "dist";
+
+if (process.env.TESTBUILD) {
+  entry =  glob.sync(__dirname + "/test/*_tests.js");
+  outputPath = "test-dist";
+}
 
 module.exports = {
-  entry: {
-    index: "./src/index.js",
-    check: "./src/check.js",
-  },
+  entry: entry,
   output: {
     filename: "[name].js",
-    path: path.resolve(__dirname, 'dist'),
-  },
-  module: {
-    rules: [
-      {
-        test: /tests\.js$/,
-        use: 'mocha-loader',
-        exclude: /node_modules/,
-      },
-    ],
-  },
+    path: path.resolve(__dirname, outputPath),
+  }
 };

@@ -13,7 +13,7 @@
     "webpack-cli": "^3.3.10"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "TESTBUILD=true webpack && mocha test-dist/main.js"
   },
   "repository": {
     "type": "git",

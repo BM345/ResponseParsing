@@ -1025,12 +1025,7 @@ class RPMultiplicationNode extends RPBinaryOperationNode {
     }
 
     get asciiMath() {
-        if (this.isImplicit) {
-            return this.operand1.asciiMath + this.operand2.asciiMath;
-        }
-        else {
-            return this.operand1.asciiMath + "*" + this.operand2.asciiMath;
-        }
+        return this.operand1.asciiMath + "*" + this.operand2.asciiMath;
     }
 }
 
@@ -1209,6 +1204,32 @@ class RPSummationNode extends RPNode {
     }
 }
 
+class RPProductNode extends RPNode {
+    constructor() {
+        super("product");
+
+        this.operands = [];
+
+        this._title = "Product";
+    }
+
+    get subnodes() {
+        return this.operands;
+    }
+
+    set subnodes(value) {
+        this.operands = value;
+    }
+
+    get latex() {
+        return this.operands.map(o => o.latex).join(" \\times ");
+    }
+
+    get asciiMath() {
+        return this.operands.map(o => o.asciiMath).join("*");
+    }
+}
+
 class Simplifier {
     constructor() { }
 
@@ -1218,7 +1239,8 @@ class Simplifier {
 
         node = this.replaceWithSurd(node);
         node = this.replaceWithSummation(node);
-        node = this.replaceWithSummation(node);
+        node = this.replaceWithProduct(node);
+        node = this.simplifyUnaryOperator(node);
 
         return node;
     }
@@ -1249,6 +1271,28 @@ class Simplifier {
         return node;
     }
 
+    replaceWithProduct(node) {
+        var isMultiplicationOrProductNode = (node.subtype == "multiplication" || node.type == "product");
+        var hasMultiplicationOrProductSubnodes = (node.subnodes.filter(n => n.subtype == "multiplication" || n.type == "product").length > 0);
+
+        if (isMultiplicationOrProductNode && hasMultiplicationOrProductSubnodes) {
+            var product = new RPProductNode();
+
+            node.subnodes.forEach(n => {
+                if (n.subtype == "multiplication" || n.type == "product") {
+                    product.operands = product.operands.concat(n.subnodes);
+                }
+                else {
+                    product.operands.push(n);
+                }
+            });
+
+            return product;
+        }
+
+        return node;
+    }
+
     replaceWithSurd(node) {
         if (node.type == "binaryOperation"
             && node.subtype == "multiplication"
@@ -1261,6 +1305,24 @@ class Simplifier {
             surd.radical = node.operand2;
 
             return surd;
+        }
+
+        return node;
+    }
+
+    simplifyUnaryOperator(node) {
+        if (node.type == "unaryOperation" && node.subtype == "sign" && node.operand.type == "number") {
+            var number = node.operand;
+
+            number.start = node.start;
+            number.end = node.end;
+            number._text = node.text;
+            number.value = node.operator.value + node.operand.value;
+
+            number.sign = (node.operator.value == "+") ? "positive" : "negative";
+            number.signIsExplicit = true;
+
+            return number;
         }
 
         return node;
@@ -1382,7 +1444,13 @@ class responseparsing_ResponseParser {
                 }
                 else if (n == 1 && lastNode.type == "operator" && (lastNode.value == "+" || lastNode.value == "-")) {
                     var signNode = new RPSignNode();
-                    signNode.operator = operatorStack.pop();
+                    var operator = operatorStack.pop();
+
+                    signNode.start = operator.start;
+                    signNode.end = node.end;
+                    signNode._text = inputText.slice(signNode.start, signNode.end);
+
+                    signNode.operator = operator;
                     signNode.operand = node;
 
                     node = signNode;
@@ -1392,7 +1460,7 @@ class responseparsing_ResponseParser {
                 n++;
             }
 
-            marker.position += node.length;
+            marker.position = node.end;
 
             if (node.type != "whiteSpace") {
                 lastNode = node;
@@ -1901,7 +1969,7 @@ class responseparsing_ResponseParser {
             node.start = start;
             node.end = end;
             node._text = ts + t;
-            node.value = simplestForm;
+            node.value = ts + simplestForm;
 
             node.sign = sign;
             node.signIsExplicit = signIsExplicit;
@@ -2082,7 +2150,8 @@ class Validator {
                 validationMessageElement.innerText = "Your answer must be a decimal number or a whole number.";
             }
         }
-    }}
+    }
+}
 
 
 /***/ }),

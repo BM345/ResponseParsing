@@ -1241,6 +1241,7 @@ class Simplifier {
         node = this.replaceWithSummation(node);
         node = this.replaceWithProduct(node);
         node = this.simplifyUnaryOperator(node);
+        node = this.removeNestedBrackets(node);
 
         return node;
     }
@@ -1323,6 +1324,17 @@ class Simplifier {
             number.signIsExplicit = true;
 
             return number;
+        }
+
+        return node;
+    }
+
+    removeNestedBrackets(node) {
+        if (node.type == "bracketedExpression" && node.innerExpression.type == "bracketedExpression") {
+            node.innerExpression = node.innerExpression.innerExpression;
+        }
+        else if (node.type == "radical" && node.radicand.type == "bracketedExpression") {
+            node.radicand = node.radicand.innerExpression;
         }
 
         return node;
@@ -2272,9 +2284,13 @@ describe("RPNode.isEqualTo", function () {
             ["2sqrt2", true, "2", "2"],
             ["2 sqrt2", true, "2", "2"],
             ["2sqrt 2", true, "2", "2"],
-            ["2 sqrt(2)", true, "2", "(2)"],
-            ["2 sqrt (2)", true, "2", "(2)"],
-            ["2 sqrt ( 2 )", true, "2", "(2)"],
+            ["2 sqrt(2)", true, "2", "2"],
+            ["2 sqrt (2)", true, "2", "2"],
+            ["2 sqrt ( 2 )", true, "2", "2"],
+            ["2 sqrt ((2))", true, "2", "2"],
+            ["2 sqrt (((2)))", true, "2", "2"],
+            ["2 sqrt ((((2))))", true, "2", "2"],
+            ["2 sqrt ( ( ( ( 2 ) ) ) )", true, "2", "2"],
             ["3 sqrt 2", true, "3", "2"],
             ["4 sqrt 2", true, "4", "2"],
             ["12 sqrt 34", true, "12", "34"],

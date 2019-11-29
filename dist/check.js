@@ -1704,6 +1704,12 @@ class Validator {
             "ArrowUp",
             "ArrowDown",
             "Escape"];
+
+        this.keyRestrictions = {
+            "surd": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-() ",
+            "complexNumber": "0123456789.+-i ",
+            "vector": "0123456789.+-ijk ",
+        };
     }
 
     // Gets what the new value of a text input would be if a keydown event were allowed to proceed.
@@ -1726,8 +1732,33 @@ class Validator {
 
         // A check is performed whenever the user tries to type another character into the input.
         input.onkeydown = function (e) {
+
+            validationMessageElement.innerText = "";
+
             // If the key that's pressed is one of the control keys, ignore the event.
             if (that.controlKeys.filter(ck => e.code == ck).length == 0) {
+
+                if (inputType == "surd") {
+                    if (!isAnyOf(that.keyRestrictions["surd"], e.key)) {
+                        e.preventDefault();
+                        validationMessageElement.innerText = "You should only use the characters 0-9, the minus sign, brackets, and 'sqrt' for the square root sign.";
+                    }
+                }
+
+                if (inputType == "complexNumber") {
+                    if (!isAnyOf(that.keyRestrictions["complexNumber"], e.key)) {
+                        e.preventDefault();
+                        validationMessageElement.innerText = "";
+                    }
+                }
+
+                if (inputType == "vector") {
+                    if (!isAnyOf(that.keyRestrictions["vector"], e.key)) {
+                        e.preventDefault();
+                        validationMessageElement.innerText = "";
+                    }
+                }
+
                 // Get what the new value of the input will be.
                 var t = that.getNewInputValueOnKeyDown(input, e);
                 // Parse the value to see what it is.
@@ -1736,35 +1767,21 @@ class Validator {
                 console.log(t);
                 console.log(parseResult);
 
-                if (parseResult === null) {
-                    e.preventDefault();
-                    return;
-                }
-
-                if (inputType == "integer" && (parseResult.type != "number" || parseResult.subtype != "integer")) {
+                if (inputType == "integer" && (parseResult === null || parseResult.type != "number" || parseResult.subtype != "integer")) {
                     e.preventDefault();
                 }
 
-                if (inputType == "decimalNumber" && parseResult.type != "number") {
+                if (inputType == "decimalNumber" && (parseResult === null || parseResult.type != "number")) {
                     e.preventDefault();
                 }
 
-                if (inputType == "fraction" && (parseResult.type != "fraction" && parseResult.type != "number")) {
+                if (inputType == "fraction" && (parseResult === null || parseResult.type != "fraction" && parseResult.type != "number")) {
                     e.preventDefault();
-                }
-
-                if (parseResult !== null) {
-                    katex.render(parseResult.latex, katexOutput);
-                }
-                else {
-                    katex.render("", katexOutput);
                 }
             }
         }
 
         input.onkeyup = function (e) {
-
-            validationMessageElement.innerText = "";
 
             var parseResult = that.rp.getParseResult(input.value);
 
@@ -1797,6 +1814,18 @@ class Validator {
             // If the answer is supposed to be a decimal, but it's not, then give a validation message.
             if (inputType == "decimalNumber" && (parseResult === null || parseResult.type != "number")) {
                 validationMessageElement.innerText = "Your answer must be a decimal number or a whole number.";
+            }
+
+            if (inputType == "surd" && (parseResult === null || parseResult.type != "surd" || parseResult.type != "number")) {
+                validationMessageElement.innerText = "Your answer must be a surd.";
+            }
+
+            if (inputType == "complexNumber" && (parseResult === null || parseResult.type != "complexNumber" || parseResult.type != "number")) {
+                validationMessageElement.innerText = "Your answer must be a real number, an imaginary number, or a complex number.";
+            }
+
+            if (inputType == "vector" && (parseResult === null || parseResult.type != "vector")) {
+                validationMessageElement.innerText = "Your answer must be a vector";
             }
         }
     }

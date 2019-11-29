@@ -102,7 +102,7 @@ export class ResponseParser {
                 if (lastNode !== undefined && lastNode.type != "operator" && lastNode.type != "namedFunction") {
                     var implicitTimes = new nodes.RPOperatorNode();
 
-                    implicitTimes._text = "*";
+                    implicitTimes.value = "*";
                     implicitTimes.isImplicit = true;
 
                     operatorStack.push(implicitTimes);
@@ -150,16 +150,16 @@ export class ResponseParser {
                     var node;
                     if (operandStack.length >= 2 && operator.type == "operator") {
 
-                        if (operator.text == "+") { node = new nodes.RPAdditionNode(); }
-                        if (operator.text == "-") { node = new nodes.RPSubtractionNode(); }
-                        if (operator.text == "*") { node = new nodes.RPMultiplicationNode(); }
-                        if (operator.text == "/") { node = new nodes.RPDivisionNode(); }
-                        if (operator.text == "^") { node = new nodes.RPExponentiationNode(); }
+                        if (operator.value == "+") { node = new nodes.RPAdditionNode(); }
+                        if (operator.value == "-") { node = new nodes.RPSubtractionNode(); }
+                        if (operator.value == "*") { node = new nodes.RPMultiplicationNode(); }
+                        if (operator.value == "/") { node = new nodes.RPDivisionNode(); }
+                        if (operator.value == "^") { node = new nodes.RPExponentiationNode(); }
 
                         node.operand2 = operandStack.pop();
                         node.operand1 = operandStack.pop();
 
-                        if (operator.text == "*" && operator.isImplicit) {
+                        if (operator.value == "*" && operator.isImplicit) {
                             node.isImplicit = true;
                             node._text = node.operand1.text + node.operand2.text;
                         }
@@ -170,7 +170,7 @@ export class ResponseParser {
                         operandStack.push(node);
                     }
                     else if (operandStack.length >= 1 && operator.type == "operator") {
-                        if (operator.text == "!") { node = new nodes.RPFactorialNode(); }
+                        if (operator.value == "!") { node = new nodes.RPFactorialNode(); }
 
                         var operand = operandStack.pop();
 

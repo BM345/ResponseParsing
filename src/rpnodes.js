@@ -368,11 +368,21 @@ export class RPAdditionNode extends RPBinaryOperationNode {
     }
 
     get latex() {
-        return this.operand1.latex + "+" + this.operand2.latex;
+        if (this.operand2.subtype == "sign") {
+            return this.operand1.latex + this.operand2.latex;
+        }
+        else {
+            return this.operand1.latex + "+" + this.operand2.latex;
+        }
     }
 
     get asciiMath() {
-        return this.operand1.asciiMath + "+" + this.operand2.asciiMath;
+        if (this.operand2.subtype == "sign") {
+            return this.operand1.asciiMath + this.operand2.asciiMath;
+        }
+        else {
+            return this.operand1.asciiMath + "+" + this.operand2.asciiMath;
+        }
     }
 }
 
@@ -589,11 +599,33 @@ export class RPSummationNode extends RPNode {
     }
 
     get latex() {
-        return this.operands.map(o => o.latex).join("+");
+        var l = "";
+
+        for (var i = 0; i < this.operands.length; i++) {
+            if (i == 0 || this.operands[i].subtype == "sign") {
+                l += this.operands[i].latex;
+            }
+            else {
+                l += "+" + this.operands[i].latex;
+            }
+        }
+
+        return l;
     }
 
     get asciiMath() {
-        return this.operands.map(o => o.asciiMath).join("+");
+        var a = "";
+
+        for (var i = 0; i < this.operands.length; i++) {
+            if (i == 0 || this.operands[i].subtype == "sign") {
+                a += this.operands[i].asciiMath;
+            }
+            else {
+                a += "+" + this.operands[i].asciiMath;
+            }
+        }
+
+        return a;
     }
 }
 
@@ -604,32 +636,6 @@ export class RPVectorNode extends RPSummationNode {
         this.type = "vector";
 
         this._title = "Vector";
-    }
-}
-
-export class RPTermSetNode extends RPNode {
-    constructor() {
-        super("termSet");
-
-        this.terms = [];
-
-        this._title = "Term Set";
-    }
-
-    get subnodes() {
-        return this.terms;
-    }
-
-    set subnodes(value) {
-        this.terms = value;
-    }
-
-    get latex() {
-        return this.terms.map(t => t.latex).join();
-    }
-
-    get asciiMath() {
-        return this.terms.map(t => t.asciiMath).join();
     }
 }
 
@@ -662,14 +668,18 @@ export class RPProductNode extends RPNode {
 export class Simplifier {
     constructor() { }
 
-    simplifyNode(node) {
+    simplifyNode(node, d = 0) {
 
-        node.subnodes = this.simplifyNodes(node.subnodes);
+        node.subnodes = this.simplifyNodes(node.subnodes, d + 1);
 
         node = this.replaceWithSurd(node);
         node = this.replaceSubtractions(node);
         node = this.replaceWithSummation(node);
-        node = this.replaceWithVectors(node);
+
+        if (d == 0) {
+            node = this.replaceWithVectors(node);
+        }
+
         node = this.replaceWithProduct(node);
         node = this.simplifyUnaryOperator(node);
         node = this.removeNestedBrackets(node);
@@ -677,8 +687,8 @@ export class Simplifier {
         return node;
     }
 
-    simplifyNodes(nodes) {
-        return nodes.map(n => this.simplifyNode(n));
+    simplifyNodes(nodes, d = 0) {
+        return nodes.map(n => this.simplifyNode(n, d));
     }
 
     replaceSubtractions(node) {

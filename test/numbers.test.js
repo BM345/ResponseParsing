@@ -82,6 +82,25 @@ describe("Parsing Numbers", function () {
         });
     });
 
+    describe("As nodes", function () {
+        [
+            ["123", "123", true],
+            ["   123   ", "123", true],
+            ["456", "123", false],
+            ["   456   ", "123", false],
+            ["123.0", "123", false],
+            ["123.", "123", false],
+            ["0123", "123", false],
+        ].forEach(a => {
+            it(`should see that '${a[0]}' and '${a[1]}' ARE${(a[2] == false) ? " NOT" : ""} equal`, function () {
+                var r1 = parser.getParseResult(a[0]);
+                var r2 = parser.getParseResult(a[1]);
+
+                assert.equal(r1.isEqualTo(r2), a[2]);
+            });
+        });
+    });
+
 });
 
 

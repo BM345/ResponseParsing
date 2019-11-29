@@ -3,23 +3,7 @@ import * as rp from "../src/responseparsing.js";
 
 var parser = new rp.ResponseParser();
 
-describe("RPNode.isEqualTo", function () {
-
-    describe("Numbers", function () {
-        [
-            ["123", "123", true],
-            ["   123   ", "123", true],
-            ["456", "123", false],
-            ["   456   ", "123", false],
-            ["123.0", "123", false],
-            ["123.", "123", false],
-            ["0123", "123", false],
-        ].forEach(a => {
-            it(`should see that '${a[0]}' and '${a[1]}' are${(a[2] == false) ? " not" : ""} equal`, function () {
-                assert.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);
-            });
-        });
-    });
+ 
 
     describe("Additions and Summations", function () {
         [
@@ -30,7 +14,7 @@ describe("RPNode.isEqualTo", function () {
             ["a+a+a+a+a+a", "summation", "", 6, ["a", "a", "a", "a", "a", "a"]],
             ["a+b+c", "summation", "", 3, ["a", "b", "c"]],
             ["c+b+a", "summation", "", 3, ["c", "b", "a"]],
-            ["m+b+g+w+t", "summation", "",  5, ["m", "b", "g", "w", "t"]],
+            ["m+b+g+w+t", "summation", "", 5, ["m", "b", "g", "w", "t"]],
         ].forEach(a => {
             var n = parser.getParseResult(a[0]);
 
@@ -74,5 +58,3 @@ describe("RPNode.isEqualTo", function () {
             });
         });
     });
-
-});

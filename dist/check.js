@@ -683,6 +683,22 @@ class RPSummationNode extends RPNode {
         this._title = "Summation";
     }
 
+    isEqualTo(object) {
+        if (object.type !== this.type || object.subtype !== this.subtype || object.operands.length !== this.operands.length) {
+            return false;
+        }
+
+        var allOperandsAreEqual = true;
+
+        for (var i = 0; i < this.operands.length; i++) {
+            if (!object.operands[i].isEqualTo(this.operands[i])) {
+                allOperandsAreEqual = false;
+            }
+        }
+
+        return allOperandsAreEqual;
+    }
+
     get subnodes() {
         return this.operands;
     }
@@ -843,6 +859,13 @@ class Simplifier {
                     vector.subnodes = vector.subnodes.concat(n.subnodes);
                 }
             });
+
+            return vector;
+        }
+        else if (this.isIJKVectorComponent(node)) {
+            var vector = new RPVectorNode();
+
+            vector.subnodes.push(node);
 
             return vector;
         }

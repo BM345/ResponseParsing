@@ -3556,7 +3556,7 @@ describe("Parsing Vectors", function () {
             ["2i+i", "3i", false],
             ["1i", "i", false],
             ["-2i", "2i", false],
-            ["-i", "i", false]
+            ["-i", "i", false],
         ].forEach(a => {
             if (a[2] == true) {
                 it(`should see that '${a[0]}' and '${a[1]}' ARE the same vector`, function () {
@@ -3574,6 +3574,70 @@ describe("Parsing Vectors", function () {
                     assert_default.a.equal(r1.isEqualTo(r2), false);
                 });
             }
+        });
+    });
+
+    describe("Whether the ASCIIMath output is correct", function () {
+        [
+            ["i", "i"],
+            ["   i   ", "i"],
+            ["+i", "+i"],
+            ["-i", "-i"],
+            ["3i", "3*i"],
+            ["3.3i", "3.3*i"],
+            ["   3   i   ", "3*i"],
+            ["   3.3   i   ", "3.3*i"],
+            ["i+j", "i+j"],
+            ["i-j", "i-j"],
+            ["+i+j", "+i+j"],
+            ["-i-j", "-i-j"],
+            ["3i+3j", "3*i+3*j"],
+            ["3i+j", "3*i+j"],
+            ["i+3j", "i+3*j"],
+            ["3i-3j", "3*i-3*j"],
+            ["-3i-3j", "-3*i-3*j"],
+            ["i+j+k", "i+j+k"],
+            ["   i   +   j   +   k   ", "i+j+k"],
+            ["3i+4j+5k", "3*i+4*j+5*k"],
+            ["   3   i   +   4   j   +   5   k   ", "3*i+4*j+5*k"],
+        ].forEach(a => {
+            it(`should see that the ASCIIMath output for '${a[0]}' is '${a[1]}'`, function () {
+                var r1 = parser.getParseResult(a[0]);
+
+                assert_default.a.equal(r1.asciiMath, a[1]);
+            });
+        });
+    });
+
+    describe("Whether the LaTeX output is correct", function () {
+        [
+            ["i", "i"],
+            ["   i   ", "i"],
+            ["+i", "+i"],
+            ["-i", "-i"],
+            ["3i", "3i"],
+            ["3.3i", "3.3i"],
+            ["   3   i   ", "3i"],
+            ["   3.3   i   ", "3.3i"],
+            ["i+j", "i+j"],
+            ["i-j", "i-j"],
+            ["+i+j", "+i+j"],
+            ["-i-j", "-i-j"],
+            ["3i+3j", "3i+3j"],
+            ["3i+j", "3i+j"],
+            ["i+3j", "i+3j"],
+            ["3i-3j", "3i-3j"],
+            ["-3i-3j", "-3i-3j"],
+            ["i+j+k", "i+j+k"],
+            ["   i   +   j   +   k   ", "i+j+k"],
+            ["3i+4j+5k", "3i+4j+5k"],
+            ["   3   i   +   4   j   +   5   k   ", "3i+4j+5k"],
+        ].forEach(a => {
+            it(`should see that the LaTeX output for '${a[0]}' is '${a[1]}'`, function () {
+                var r1 = parser.getParseResult(a[0]);
+
+                assert_default.a.equal(r1.latex, a[1]);
+            });
         });
     });
 

@@ -3,7 +3,11 @@ import * as rp from "../src/responseparsing.js";
 
 var parser = new rp.ResponseParser();
 
-describe("ResponseParser.parseNumber", function () {
+parser.simplifier.settings.lookForVectors = false;
+parser.simplifier.settings.lookForComplexNumbers = false;
+
+describe("Parsing Numbers", function () {
+
     [
         ["123", "integer", "123", "", "positive", false, 0, 0, 3, 3, 0],
         ["+123", "integer", "123", "", "positive", true, 0, 0, 3, 3, 0],
@@ -77,6 +81,7 @@ describe("ResponseParser.parseNumber", function () {
             });
         });
     });
+
 });
 
 

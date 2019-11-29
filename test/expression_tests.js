@@ -5,26 +5,6 @@ var parser = new rp.ResponseParser();
 
 describe("RPNode.isEqualTo", function () {
 
-    describe("Identifiers", function () {
-        [
-            ["x", "x", true],
-            [" x", "x", true],
-            ["   x", "x", true],
-            ["x ", "x", true],
-            ["x   ", "x", true],
-            [" x ", "x", true],
-            ["   x   ", "x", true],
-            ["x", "y", false],
-            ["   x   ", "y", false],
-            ["xy", "y", false],
-            ["xy", "yx", false],
-        ].forEach(a => {
-            it(`should see that '${a[0]}' and '${a[1]}' are${(a[2] == false) ? " not" : ""} equal`, function () {
-                assert.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);
-            });
-        });
-    });
-
     describe("Numbers", function () {
         [
             ["123", "123", true],
@@ -38,105 +18,6 @@ describe("RPNode.isEqualTo", function () {
             it(`should see that '${a[0]}' and '${a[1]}' are${(a[2] == false) ? " not" : ""} equal`, function () {
                 assert.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);
             });
-        });
-    });
-
-    describe("Fractions", function () {
-        [
-            ["1/2", "1/2", true],
-            [" 1/2", "1/2", true],
-            ["   1/2", "1/2", true],
-            ["1 /2", "1/2", true],
-            ["   1   /2", "1/2", true],
-            ["   1   /   2", "1/2", true],
-            ["   1   /   2   ", "1/2", true],
-            [" 1 / 2 ", "1/2", true],
-            ["123/456", "123/456", true],
-            [" 123 / 456 ", "123/456", true],
-            ["   123   /   456   ", "123/456", true],
-            ["1/2", "1/3", false],
-            ["1/3", "2/3", false],
-            ["2/4", "3/5", false],
-            ["1./2", "1/2", false],
-            ["1/2.", "1/2", false],
-            ["1./2.", "1/2", false],
-            ["01/2", "1/2", false],
-            ["001/2", "1/2", false],
-            ["1.0/2", "1/2", false],
-            ["1/2.0", "1/2", false],
-            ["1.0/2.0", "1/2", false],
-        ].forEach(a => {
-            it(`should see that '${a[0]}' and '${a[1]}' are${(a[2] == false) ? " not" : ""} equal`, function () {
-                assert.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);
-            });
-        });
-    });
-
-    describe("Mixed Fractions", function () {
-        [
-            ["1 2/3", "1 2/3", true],
-            [" 1 2/3 ", "1 2/3", true],
-            ["   1   2/3   ", "1 2/3", true],
-            ["   1   2   /   3   ", "1 2/3", true],
-            ["12/3", "1 2/3", false],
-            ["1 1/3", "1 2/3", false],
-            ["2 2/3", "1 2/3", false],
-            ["1 2/4", "1 2/3", false],
-            ["1 2./3", "1 2/3", false],
-            ["1 2.0/3", "1 2/3", false],
-            ["1 2/3.", "1 2/3", false],
-            ["1 2/3.0", "1 2/3", false],
-        ].forEach(a => {
-            it(`should see that '${a[0]}' and '${a[1]}' are${(a[2] == false) ? " not" : ""} equal`, function () {
-                assert.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);
-            });
-        });
-    });
-
-    describe("Surds", function () {
-        [
-            ["2 sqrt 2", true, "2", "2"],
-            ["2sqrt2", true, "2", "2"],
-            ["2 sqrt2", true, "2", "2"],
-            ["2sqrt 2", true, "2", "2"],
-            ["2 sqrt(2)", true, "2", "2"],
-            ["2 sqrt (2)", true, "2", "2"],
-            ["2 sqrt ( 2 )", true, "2", "2"],
-            ["2 sqrt ((2))", true, "2", "2"],
-            ["2 sqrt (((2)))", true, "2", "2"],
-            ["2 sqrt ((((2))))", true, "2", "2"],
-            ["2 sqrt ( ( ( ( 2 ) ) ) )", true, "2", "2"],
-            ["3 sqrt 2", true, "3", "2"],
-            ["4 sqrt 2", true, "4", "2"],
-            ["12 sqrt 34", true, "12", "34"],
-            ["12.34 sqrt 56.78", true, "12.34", "56.78"],
-            ["-2 sqrt -2", true, "-2", "-2"],
-            ["+2 sqrt +2", true, "+2", "+2"],
-            ["2 root 2", true, "2", "2"],
-            ["2 squareroot 2", true, "2", "2"],
-            ["2 sqr 3", false],
-            ["2 sqrt * 3", false],
-        ].forEach(a => {
-            var n = parser.getParseResult(a[0]);
-
-            if (a[1] == true) {
-                it(`should see that '${a[0]}' is a surd`, function () {
-                    assert.equal(n.type, "surd");
-                });
-
-                it(`should see that the coefficient of '${a[0]}' is '${a[2]}'`, function () {
-                    assert.equal(n.coefficient.text, a[2]);
-                });
-
-                it(`should see that the radicand of '${a[0]}' is '${a[3]}'`, function () {
-                    assert.equal(n.radical.radicand.text, a[3]);
-                });
-            }
-            else {
-                it(`should see that '${a[0]}' is not a surd`, function () {
-                    assert.notEqual(n.type, "surd");
-                });
-            }
         });
     });
 

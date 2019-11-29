@@ -1539,9 +1539,9 @@ class Simplifier {
     }
 }
 // CONCATENATED MODULE: ./src/responseparsing.js
-/* unused harmony export Marker */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Marker; });
 /* unused harmony export ParserSettings */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return responseparsing_ResponseParser; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return responseparsing_ResponseParser; });
 /* unused harmony export Validator */
 
 
@@ -2398,7 +2398,12 @@ class Validator {
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(3);
-module.exports = __webpack_require__(10);
+__webpack_require__(10);
+__webpack_require__(11);
+__webpack_require__(12);
+__webpack_require__(13);
+__webpack_require__(14);
+module.exports = __webpack_require__(15);
 
 
 /***/ }),
@@ -2413,7 +2418,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var parser = new _src_responseparsing_js__WEBPACK_IMPORTED_MODULE_1__[/* ResponseParser */ "a"]();
+var parser = new _src_responseparsing_js__WEBPACK_IMPORTED_MODULE_1__[/* ResponseParser */ "b"]();
 
 parser.simplifier.settings.lookForVectors = false;
 parser.simplifier.settings.lookForComplexNumbers = true;
@@ -3621,7 +3626,314 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var parser = new _src_responseparsing_js__WEBPACK_IMPORTED_MODULE_1__[/* ResponseParser */ "a"]();
+var parser = new _src_responseparsing_js__WEBPACK_IMPORTED_MODULE_1__[/* ResponseParser */ "b"]();
+
+describe("Parsing Fractions", function () {
+
+    [
+        ["1/2", "1/2", true],
+        [" 1/2", "1/2", true],
+        ["   1/2", "1/2", true],
+        ["1 /2", "1/2", true],
+        ["   1   /2", "1/2", true],
+        ["   1   /   2", "1/2", true],
+        ["   1   /   2   ", "1/2", true],
+        [" 1 / 2 ", "1/2", true],
+        ["123/456", "123/456", true],
+        [" 123 / 456 ", "123/456", true],
+        ["   123   /   456   ", "123/456", true],
+        ["1/2", "1/3", false],
+        ["1/3", "2/3", false],
+        ["2/4", "3/5", false],
+        ["1./2", "1/2", false],
+        ["1/2.", "1/2", false],
+        ["1./2.", "1/2", false],
+        ["01/2", "1/2", false],
+        ["001/2", "1/2", false],
+        ["1.0/2", "1/2", false],
+        ["1/2.0", "1/2", false],
+        ["1.0/2.0", "1/2", false],
+    ].forEach(a => {
+        it(`should see that '${a[0]}' and '${a[1]}' ARE${(a[2] == false) ? " NOT" : ""} equal`, function () {
+            var r1 = parser.getParseResult(a[0]);
+            var r2 = parser.getParseResult(a[1]);
+
+            assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);
+        });
+    });
+
+});
+
+/***/ }),
+/* 11 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var assert__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
+/* harmony import */ var assert__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(assert__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _src_responseparsing_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
+
+
+
+var parser = new _src_responseparsing_js__WEBPACK_IMPORTED_MODULE_1__[/* ResponseParser */ "b"]();
+
+describe("Parsing Identifiers", function () {
+
+    [
+        ["x", "x", true],
+        [" x", "x", true],
+        ["   x", "x", true],
+        ["x ", "x", true],
+        ["x   ", "x", true],
+        [" x ", "x", true],
+        ["   x   ", "x", true],
+        ["x", "y", false],
+        ["   x   ", "y", false],
+        ["xy", "y", false],
+        ["xy", "yx", false],
+    ].forEach(a => {
+        it(`should see that '${a[0]}' and '${a[1]}' ARE${(a[2] == false) ? " NOT" : ""} equal`, function () {
+            var r1 = parser.getParseResult(a[0]);
+            var r2 = parser.getParseResult(a[1]);
+
+            assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);
+        });
+    });
+
+});
+
+/***/ }),
+/* 12 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var assert__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
+/* harmony import */ var assert__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(assert__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _src_responseparsing_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
+
+
+
+var parser = new _src_responseparsing_js__WEBPACK_IMPORTED_MODULE_1__[/* ResponseParser */ "b"]();
+
+describe("Mixed Fractions", function () {
+    [
+        ["1 2/3", "1 2/3", true],
+        [" 1 2/3 ", "1 2/3", true],
+        ["   1   2/3   ", "1 2/3", true],
+        ["   1   2   /   3   ", "1 2/3", true],
+        ["12/3", "1 2/3", false],
+        ["1 1/3", "1 2/3", false],
+        ["2 2/3", "1 2/3", false],
+        ["1 2/4", "1 2/3", false],
+        ["1 2./3", "1 2/3", false],
+        ["1 2.0/3", "1 2/3", false],
+        ["1 2/3.", "1 2/3", false],
+        ["1 2/3.0", "1 2/3", false],
+    ].forEach(a => {
+        it(`should see that '${a[0]}' and '${a[1]}' ARE${(a[2] == false) ? " NOT" : ""} equal`, function () {
+            var r1 = parser.getParseResult(a[0]);
+            var r2 = parser.getParseResult(a[1]);
+
+            assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);
+        });
+    });
+});
+
+/***/ }),
+/* 13 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var assert__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
+/* harmony import */ var assert__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(assert__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _src_responseparsing_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
+
+
+
+var parser = new _src_responseparsing_js__WEBPACK_IMPORTED_MODULE_1__[/* ResponseParser */ "b"]();
+
+parser.simplifier.settings.lookForVectors = false;
+parser.simplifier.settings.lookForComplexNumbers = false;
+
+describe("Parsing Numbers", function () {
+
+    [
+        ["123", "integer", "123", "", "positive", false, 0, 0, 3, 3, 0],
+        ["+123", "integer", "123", "", "positive", true, 0, 0, 3, 3, 0],
+        ["-123", "integer", "123", "", "negative", true, 0, 0, 3, 3, 0],
+        ["-00123", "integer", "00123", "", "negative", true, 2, 0, 3, 3, 0],
+        ["-0012300", "integer", "0012300", "", "negative", true, 2, 0, 3, 5, 0],
+        ["-0012300456", "integer", "0012300456", "", "negative", true, 2, 0, 8, 8, 0],
+        ["12.345", "decimalNumber", "12", ".345", "positive", false, 0, 0, 5, 5, 3],
+        ["+12.345", "decimalNumber", "12", ".345", "positive", true, 0, 0, 5, 5, 3],
+        ["-12.345", "decimalNumber", "12", ".345", "negative", true, 0, 0, 5, 5, 3],
+        ["0.123", "decimalNumber", "0", ".123", "positive", false, 1, 0, 3, 3, 3],
+        [".123", "decimalNumber", "", ".123", "positive", false, 0, 0, 3, 3, 3],
+        ["-.12300", "decimalNumber", "", ".12300", "negative", true, 0, 2, 5, 5, 5],
+        ["-.0012300456", "decimalNumber", "", ".0012300456", "negative", true, 0, 0, 8, 8, 10],
+        ["123.", "decimalNumber", "123", ".", "positive", false, 0, 0, 3, 3, 0],
+        ["000.123", "decimalNumber", "000", ".123", "positive", false, 3, 0, 3, 3, 3],
+        ["0", "integer", "0", "", "zero", false, 1, 0, 1, 1, 0],
+        ["000", "integer", "000", "", "zero", false, 3, 0, 1, 1, 0],
+        ["0.0", "decimalNumber", "0", ".0", "zero", false, 1, 1, 1, 1, 1],
+        ["0.0000", "decimalNumber", "0", ".0000", "zero", false, 1, 4, 1, 1, 4],
+        ["000.0", "decimalNumber", "000", ".0", "zero", false, 3, 1, 1, 1, 1],
+        ["000.0000", "decimalNumber", "000", ".0000", "zero", false, 3, 4, 1, 1, 4],
+        ["+0", "integer", "0", "", "zero", true, 1, 0, 1, 1, 0],
+        ["-0", "integer", "0", "", "zero", true, 1, 0, 1, 1, 0]
+    ].forEach(a => {
+        var n = parser.parseNumber(a[0], new _src_responseparsing_js__WEBPACK_IMPORTED_MODULE_1__[/* Marker */ "a"]());
+
+        describe(a[0], function () {
+            it(`should see that '${a[0]}' has the type 'number'`, function () {
+                assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, "number");
+            });
+
+            it(`should see that '${a[0]}' has the subtype '${a[1]}'`, function () {
+                assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);
+            });
+
+            it(`should see that the integral part of '${a[0]}' is '${a[2]}'`, function () {
+                assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);
+            });
+
+            it(`should see that the decimal part of '${a[0]}' is '${a[3]}'`, function () {
+                assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);
+            });
+
+            it(`should see that the sign of '${a[0]}' is '${a[4]}'`, function () {
+                assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);
+            });
+
+            it(`should see that '${a[0]}' has an ${(a[5] == true) ? "explicit" : "implicit"} sign`, function () {
+                assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);
+            });
+
+            it(`should see that '${a[0]}' has ${a[6]} leading zeros`, function () {
+                assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);
+            });
+
+            it(`should see that '${a[0]}' has ${a[7]} trailing zeros`, function () {
+                assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);
+            });
+
+            it(`should see that there are a minimum of ${a[8]} s.f. in '${a[0]}'`, function () {
+                assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);
+            });
+
+            it(`should see that there are a maximum of ${a[9]} s.f. in '${a[0]}'`, function () {
+                assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);
+            });
+
+            it(`should see that '${a[0]}' has ${a[10]} decimal places`, function () {
+                assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);
+            });
+        });
+    });
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var assert__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
+/* harmony import */ var assert__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(assert__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _src_responseparsing_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
+
+
+
+var parser = new _src_responseparsing_js__WEBPACK_IMPORTED_MODULE_1__[/* ResponseParser */ "b"]();
+
+describe("Parsing Surds", function () {
+
+    [
+        ["2 sqrt 2", true, "2", "2"],
+        ["2sqrt2", true, "2", "2"],
+        ["2 sqrt2", true, "2", "2"],
+        ["2sqrt 2", true, "2", "2"],
+        ["2 sqrt(2)", true, "2", "2"],
+        ["2 sqrt (2)", true, "2", "2"],
+        ["2 sqrt ( 2 )", true, "2", "2"],
+        ["2 sqrt ((2))", true, "2", "2"],
+        ["2 sqrt (((2)))", true, "2", "2"],
+        ["2 sqrt ((((2))))", true, "2", "2"],
+        ["2 sqrt ( ( ( ( 2 ) ) ) )", true, "2", "2"],
+        ["3 sqrt 2", true, "3", "2"],
+        ["4 sqrt 2", true, "4", "2"],
+        ["12 sqrt 34", true, "12", "34"],
+        ["12.34 sqrt 56.78", true, "12.34", "56.78"],
+        ["-2 sqrt -2", true, "-2", "-2"],
+        ["+2 sqrt +2", true, "+2", "+2"],
+        ["2 root 2", true, "2", "2"],
+        ["2 squareroot 2", true, "2", "2"],
+        ["2 sqr 3", false],
+        ["2 sqrt * 3", false],
+    ].forEach(a => {
+        var r1 = parser.getParseResult(a[0]);
+
+        if (a[1] == true) {
+            it(`should see that '${a[0]}' IS a surd`, function () {
+                assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, "surd");
+            });
+
+            it(`should see that the coefficient of '${a[0]}' is '${a[2]}'`, function () {
+                assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.coefficient.text, a[2]);
+            });
+
+            it(`should see that the radicand of '${a[0]}' is '${a[3]}'`, function () {
+                assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.radical.radicand.text, a[3]);
+            });
+        }
+        else {
+            it(`should see that '${a[0]}' IS NOT a surd`, function () {
+                assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, "surd");
+            });
+        }
+    });
+
+});
+
+/***/ }),
+/* 15 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var assert__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
+/* harmony import */ var assert__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(assert__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _src_responseparsing_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
+
+
+
+var parser = new _src_responseparsing_js__WEBPACK_IMPORTED_MODULE_1__[/* ResponseParser */ "b"]();
 
 parser.simplifier.settings.lookForVectors = true;
 parser.simplifier.settings.lookForComplexNumbers = false;

@@ -659,7 +659,7 @@ export class RPComplexNumberNode extends RPSummationNode {
     constructor() {
         super();
 
-        this.type == "complexNumber";
+        this.type = "complexNumber";
 
         this._title = "Complex Number";
     }
@@ -691,8 +691,17 @@ export class RPProductNode extends RPNode {
     }
 }
 
+export class SimplifierSettings {
+    constructor() {
+        this.lookForVectors = false;
+        this.lookForComplexNumbers = true;
+    }
+}
+
 export class Simplifier {
-    constructor() { }
+    constructor() {
+        this.settings = new SimplifierSettings();
+    }
 
     simplifyNode(node, d = 0) {
 
@@ -703,8 +712,12 @@ export class Simplifier {
         node = this.replaceWithSummation(node);
 
         if (d == 0) {
-            node = this.replaceWithComplexNumbers(node);
-            node = this.replaceWithVectors(node);
+            if (this.settings.lookForVectors) {
+                node = this.replaceWithVectors(node);
+            }
+            else if (this.settings.lookForComplexNumbers) {
+                node = this.replaceWithComplexNumbers(node);
+            }
         }
 
         node = this.replaceWithProduct(node);
@@ -810,6 +823,13 @@ export class Simplifier {
                     complexNumber.subnodes = complexNumber.subnodes.concat(n.subnodes);
                 }
             });
+
+            return complexNumber;
+        }
+        else if (this.isComplexNumberTerm(node)) {
+            var complexNumber = new RPComplexNumberNode();
+
+            complexNumber.subnodes.push(node);
 
             return complexNumber;
         }

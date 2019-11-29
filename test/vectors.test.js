@@ -3,6 +3,9 @@ import * as rp from "../src/responseparsing.js";
 
 var parser = new rp.ResponseParser();
 
+parser.simplifier.settings.lookForVectors = true;
+parser.simplifier.settings.lookForComplexNumbers = false;
+
 describe("Parsing Vectors", function () {
 
     describe("Whether or not it can correctly identify vectors", function () {

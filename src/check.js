@@ -31,6 +31,8 @@ class App extends Application {
 
         this.columnSpacing = 100;
         this.rowSpacing = 500;
+          this.nodeMarginX = 50;
+          this.nodeMarginY = 35;
     }
 
     initialise() {
@@ -62,7 +64,7 @@ class App extends Application {
         var size1 = this.graphics.measureText(node.title, "Didot", 90);
         var size2 = this.graphics.measureText(node.asciiMath, "Courier New", 70);
 
-        var w2 = Math.max(size1.width, size2.width) / 2 + 100;
+        var w2 = Math.max(size1.width, size2.width) / 2 + 2 * this.nodeMarginX;
 
         node.columnWidth = Math.max(w1, w2);
     }

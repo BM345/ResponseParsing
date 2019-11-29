@@ -8,7 +8,7 @@ let entry = {
 let outputPath = "dist";
 
 if (process.env.TESTBUILD) {
-  entry = glob.sync(__dirname + "/test/*_tests.js");
+  entry = glob.sync(__dirname + "/test/*.test.js");
   outputPath = "test-dist";
 }
 

@@ -753,6 +753,13 @@ export class Simplifier {
 
             return vector;
         }
+        else if (this.isIJKVectorComponent(node)) {
+            var vector = new RPVectorNode();
+
+            vector.subnodes.push(node);
+
+            return vector;
+        }
 
         return node;
     }

@@ -639,6 +639,16 @@ export class RPVectorNode extends RPSummationNode {
     }
 }
 
+export class RPComplexNumberNode extends RPSummationNode {
+    constructor() {
+        super();
+
+        this.type == "complexNumber";
+
+        this._title = "Complex Number";
+    }
+}
+
 export class RPProductNode extends RPNode {
     constructor() {
         super("product");
@@ -677,6 +687,7 @@ export class Simplifier {
         node = this.replaceWithSummation(node);
 
         if (d == 0) {
+            node = this.replaceWithComplexNumbers(node);
             node = this.replaceWithVectors(node);
         }
 
@@ -741,6 +752,43 @@ export class Simplifier {
             });
 
             return vector;
+        }
+
+        return node;
+    }
+
+    isComplexNumberTerm(node) {
+        var isUnsignedTerm = (m) => {
+            var isImaginaryConstant = (n) => { return (n.type == "identifier" && n.value == "i"); }
+
+            if (isImaginaryConstant(m)) { return true; }
+            if (m.subtype == "multiplication" && m.operand1.type == "number" && isImaginaryConstant(m.operand2)) { return true; }
+
+            return false;
+        }
+
+        if (isUnsignedTerm(node)) { return true; }
+        if (node.subtype == "sign" && isUnsignedTerm(node.operand)) { return true; }
+        if (node.type == "number") { return true; }
+        if (node.subtype == "sign" && node.operand.type == "number") { return true; }
+
+        return false;
+    }
+
+    replaceWithComplexNumbers(node) {
+        if ((node.subtype == "addition" || node.type == "summation") && node.subnodes.filter(n => (!this.isComplexNumberTerm(n) && n.type != "complexNumber")).length == 0) {
+            var complexNumber = new RPComplexNumberNode();
+
+            node.subnodes.forEach(n => {
+                if (this.isComplexNumberTerm(n)) {
+                    complexNumber.subnodes.push(n);
+                }
+                else if (n.type == "complexNumber") {
+                    complexNumber.subnodes = complexNumber.subnodes.concat(n.subnodes);
+                }
+            });
+
+            return complexNumber;
         }
 
         return node;

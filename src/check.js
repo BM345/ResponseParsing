@@ -14,6 +14,7 @@ var nodeColours = {
     "bracketedExpression": 300,
     "unaryOperation": 250,
     "vector":180,
+    "complexNumber":160,
 }
 
 class App extends Application {

@@ -13,6 +13,7 @@ var nodeColours = {
     "namedFunction": 200,
     "bracketedExpression": 300,
     "unaryOperation": 250,
+    "vector":180,
 }
 
 class App extends Application {

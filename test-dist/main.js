@@ -1204,6 +1204,32 @@ class RPSummationNode extends RPNode {
     }
 }
 
+class RPTermSetNode extends RPNode {
+    constructor() {
+        super("termSet");
+
+        this.terms = [];
+
+        this._title = "Term Set";
+    }
+
+    get subnodes() {
+        return this.terms;
+    }
+
+    set subnodes(value) {
+        this.terms = value;
+    }
+
+    get latex() {
+        return this.terms.map(t => t.latex).join();
+    }
+
+    get asciiMath() {
+        return this.terms.map(t => t.asciiMath).join();
+    }
+}
+
 class RPProductNode extends RPNode {
     constructor() {
         super("product");
@@ -1238,6 +1264,7 @@ class Simplifier {
         node.subnodes = this.simplifyNodes(node.subnodes);
 
         node = this.replaceWithSurd(node);
+        node = this.replaceSubtractions(node);
         node = this.replaceWithSummation(node);
         node = this.replaceWithProduct(node);
         node = this.simplifyUnaryOperator(node);
@@ -1248,6 +1275,26 @@ class Simplifier {
 
     simplifyNodes(nodes) {
         return nodes.map(n => this.simplifyNode(n));
+    }
+
+    replaceSubtractions(node) {
+        if (node.subtype == "subtraction") {
+            var addition = new RPAdditionNode();
+            var u = new RPUnaryOperationNode();
+            var o = new RPOperatorNode();
+
+            o.value = "-";
+
+            u.operator = o;
+            u.operand = node.operand2;
+
+            addition.operand1 = node.operand1;
+            addition.operand2 = u;
+
+            return addition;
+        }
+
+        return node;
     }
 
     replaceWithSummation(node) {

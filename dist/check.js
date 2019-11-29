@@ -690,6 +690,42 @@ class RPSummationNode extends RPNode {
     }
 }
 
+class RPVectorNode extends RPSummationNode {
+    constructor() {
+        super();
+
+        this.type = "vector";
+
+        this._title = "Vector";
+    }
+}
+
+class RPTermSetNode extends RPNode {
+    constructor() {
+        super("termSet");
+
+        this.terms = [];
+
+        this._title = "Term Set";
+    }
+
+    get subnodes() {
+        return this.terms;
+    }
+
+    set subnodes(value) {
+        this.terms = value;
+    }
+
+    get latex() {
+        return this.terms.map(t => t.latex).join();
+    }
+
+    get asciiMath() {
+        return this.terms.map(t => t.asciiMath).join();
+    }
+}
+
 class RPProductNode extends RPNode {
     constructor() {
         super("product");
@@ -724,7 +760,9 @@ class Simplifier {
         node.subnodes = this.simplifyNodes(node.subnodes);
 
         node = this.replaceWithSurd(node);
+        node = this.replaceSubtractions(node);
         node = this.replaceWithSummation(node);
+        node = this.replaceWithVectors(node);
         node = this.replaceWithProduct(node);
         node = this.simplifyUnaryOperator(node);
         node = this.removeNestedBrackets(node);
@@ -734,6 +772,61 @@ class Simplifier {
 
     simplifyNodes(nodes) {
         return nodes.map(n => this.simplifyNode(n));
+    }
+
+    replaceSubtractions(node) {
+        if (node.subtype == "subtraction") {
+            var addition = new RPAdditionNode();
+            var s = new RPSignNode();
+            var o = new RPOperatorNode();
+
+            o.value = "-";
+
+            s.operator = o;
+            s.operand = node.operand2;
+
+            addition.operand1 = node.operand1;
+            addition.operand2 = s;
+
+            return addition;
+        }
+
+        return node;
+    }
+
+    isIJKVectorComponent(node) {
+        var isUnsignedComponent = (m) => {
+            var isUnitVector = (n) => { return (n.type == "identifier" && (n.value == "i" || n.value == "j" || n.value == "k")); }
+
+            if (isUnitVector(m)) { return true; }
+            if (m.subtype == "multiplication" && m.operand1.type == "number" && isUnitVector(m.operand2)) { return true; }
+
+            return false;
+        }
+
+        if (isUnsignedComponent(node)) { return true; }
+        if (node.subtype == "sign" && isUnsignedComponent(node.operand)) { return true; }
+
+        return false;
+    }
+
+    replaceWithVectors(node) {
+        if ((node.subtype == "addition" || node.type == "summation") && node.subnodes.filter(n => (!this.isIJKVectorComponent(n) && n.type != "vector")).length == 0) {
+            var vector = new RPVectorNode();
+
+            node.subnodes.forEach(n => {
+                if (this.isIJKVectorComponent(n)) {
+                    vector.subnodes.push(n);
+                }
+                else if (n.type == "vector") {
+                    vector.subnodes = vector.subnodes.concat(n.subnodes);
+                }
+            });
+
+            return vector;
+        }
+
+        return node;
     }
 
     replaceWithSummation(node) {
@@ -1675,6 +1768,7 @@ var nodeColours = {
     "namedFunction": 200,
     "bracketedExpression": 300,
     "unaryOperation": 250,
+    "vector":180,
 }
 
 class App extends Application {

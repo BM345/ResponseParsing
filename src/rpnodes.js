@@ -293,6 +293,10 @@ export class RPSignNode extends RPUnaryOperationNode {
         this.subtype = "sign";
     }
 
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype && object.value === this.value);
+    }
+
     get title() {
         return (this.operator.value == "-") ? "Negation" : "Sign";
     }

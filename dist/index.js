@@ -386,6 +386,10 @@ class RPSignNode extends RPUnaryOperationNode {
         this.subtype = "sign";
     }
 
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype && object.value === this.value);
+    }
+
     get title() {
         return (this.operator.value == "-") ? "Negation" : "Sign";
     }
@@ -1781,30 +1785,22 @@ class Validator {
             // If the key that's pressed is one of the control keys, ignore the event.
             if (that.controlKeys.filter(ck => e.code == ck).length == 0) {
 
-                if (inputType == "surd") {
-                    if (!isAnyOf(that.keyRestrictions["surd"], e.key)) {
-                        e.preventDefault();
-                        validationMessageElement.innerText = "You should only use the characters 0-9, the minus sign, brackets, and 'sqrt' for the square root sign.";
-                    }
+                if (inputType == "surd" && !isAnyOf(that.keyRestrictions["surd"], e.key)) {
+                    e.preventDefault();
+                    validationMessageElement.innerText = "You should only use the characters 0-9, the minus sign, brackets, and 'sqrt' for the square root sign.";
                 }
 
-                if (inputType == "complexNumber") {
-                    if (!isAnyOf(that.keyRestrictions["complexNumber"], e.key)) {
-                        e.preventDefault();
-                        validationMessageElement.innerText = "";
-                    }
+                if (inputType == "complexNumber" && !isAnyOf(that.keyRestrictions["complexNumber"], e.key)) {
+                    e.preventDefault();
+                    validationMessageElement.innerText = "";
                 }
 
-                if (inputType == "vector") {
-                    if (!isAnyOf(that.keyRestrictions["vector"], e.key)) {
-                        e.preventDefault();
-                        validationMessageElement.innerText = "";
-                    }
+                if (inputType == "vector" && !isAnyOf(that.keyRestrictions["vector"], e.key)) {
+                    e.preventDefault();
+                    validationMessageElement.innerText = "";
                 }
 
-                // Get what the new value of the input will be.
                 var t = that.getNewInputValueOnKeyDown(input, e);
-                // Parse the value to see what it is.
                 var parseResult = that.rp.getParseResult(t);
 
                 console.log(t);
@@ -1859,7 +1855,7 @@ class Validator {
                 validationMessageElement.innerText = "Your answer must be a decimal number or a whole number.";
             }
 
-            if (inputType == "surd" && (parseResult === null || parseResult.type != "surd" || parseResult.type != "number")) {
+            if (inputType == "surd" && (parseResult === null || parseResult.type != "surd" || parseResult.type != "radical" || parseResult.type != "number")) {
                 validationMessageElement.innerText = "Your answer must be a surd.";
             }
 

@@ -2299,30 +2299,22 @@ class Validator {
             // If the key that's pressed is one of the control keys, ignore the event.
             if (that.controlKeys.filter(ck => e.code == ck).length == 0) {
 
-                if (inputType == "surd") {
-                    if (!isAnyOf(that.keyRestrictions["surd"], e.key)) {
-                        e.preventDefault();
-                        validationMessageElement.innerText = "You should only use the characters 0-9, the minus sign, brackets, and 'sqrt' for the square root sign.";
-                    }
+                if (inputType == "surd" && !isAnyOf(that.keyRestrictions["surd"], e.key)) {
+                    e.preventDefault();
+                    validationMessageElement.innerText = "You should only use the characters 0-9, the minus sign, brackets, and 'sqrt' for the square root sign.";
                 }
 
-                if (inputType == "complexNumber") {
-                    if (!isAnyOf(that.keyRestrictions["complexNumber"], e.key)) {
-                        e.preventDefault();
-                        validationMessageElement.innerText = "";
-                    }
+                if (inputType == "complexNumber" && !isAnyOf(that.keyRestrictions["complexNumber"], e.key)) {
+                    e.preventDefault();
+                    validationMessageElement.innerText = "";
                 }
 
-                if (inputType == "vector") {
-                    if (!isAnyOf(that.keyRestrictions["vector"], e.key)) {
-                        e.preventDefault();
-                        validationMessageElement.innerText = "";
-                    }
+                if (inputType == "vector" && !isAnyOf(that.keyRestrictions["vector"], e.key)) {
+                    e.preventDefault();
+                    validationMessageElement.innerText = "";
                 }
 
-                // Get what the new value of the input will be.
                 var t = that.getNewInputValueOnKeyDown(input, e);
-                // Parse the value to see what it is.
                 var parseResult = that.rp.getParseResult(t);
 
                 console.log(t);
@@ -2377,7 +2369,7 @@ class Validator {
                 validationMessageElement.innerText = "Your answer must be a decimal number or a whole number.";
             }
 
-            if (inputType == "surd" && (parseResult === null || parseResult.type != "surd" || parseResult.type != "number")) {
+            if (inputType == "surd" && (parseResult === null || parseResult.type != "surd" || parseResult.type != "radical" || parseResult.type != "number")) {
                 validationMessageElement.innerText = "Your answer must be a surd.";
             }
 
@@ -3629,61 +3621,59 @@ __webpack_require__.r(__webpack_exports__);
 
 var parser = new _src_responseparsing_js__WEBPACK_IMPORTED_MODULE_1__[/* ResponseParser */ "b"]();
 
- 
+describe("Additions and Summations", function () {
+    [
+        ["a+a", "binaryOperation", "addition"],
+        ["a+a+a", "summation", "", 3, ["a", "a", "a"]],
+        ["a+a+a+a", "summation", "", 4, ["a", "a", "a", "a"]],
+        ["a+a+a+a+a", "summation", "", 5, ["a", "a", "a", "a", "a"]],
+        ["a+a+a+a+a+a", "summation", "", 6, ["a", "a", "a", "a", "a", "a"]],
+        ["a+b+c", "summation", "", 3, ["a", "b", "c"]],
+        ["c+b+a", "summation", "", 3, ["c", "b", "a"]],
+        ["m+b+g+w+t", "summation", "", 5, ["m", "b", "g", "w", "t"]],
+    ].forEach(a => {
+        var n = parser.getParseResult(a[0]);
 
-    describe("Additions and Summations", function () {
-        [
-            ["a+a", "binaryOperation", "addition"],
-            ["a+a+a", "summation", "", 3, ["a", "a", "a"]],
-            ["a+a+a+a", "summation", "", 4, ["a", "a", "a", "a"]],
-            ["a+a+a+a+a", "summation", "", 5, ["a", "a", "a", "a", "a"]],
-            ["a+a+a+a+a+a", "summation", "", 6, ["a", "a", "a", "a", "a", "a"]],
-            ["a+b+c", "summation", "", 3, ["a", "b", "c"]],
-            ["c+b+a", "summation", "", 3, ["c", "b", "a"]],
-            ["m+b+g+w+t", "summation", "", 5, ["m", "b", "g", "w", "t"]],
-        ].forEach(a => {
-            var n = parser.getParseResult(a[0]);
+        it(`should see that '${a[0]}' has the type '${a[1]}' and the subtype '${a[2]}'`, function () {
+            assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, a[1]);
+            assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[2]);
+        });
 
-            it(`should see that '${a[0]}' has the type '${a[1]}' and the subtype '${a[2]}'`, function () {
-                assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, a[1]);
-                assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[2]);
+        if (a[1] == "summation") {
+            it(`should see that the operands of '${a[0]}' are ${a[4].map(b => "'" + b + "'").join(", ")}`, function () {
+                assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.operands.length, a[3]);
+                for (var i = 0; i < n.operands.length; i++) {
+                    assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.operands[i].value, a[4][i]);
+                }
             });
+        }
+    });
+});
 
-            if (a[1] == "summation") {
-                it(`should see that the operands of '${a[0]}' are ${a[4].map(b => "'" + b + "'").join(", ")}`, function () {
-                    assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.operands.length, a[3]);
-                    for (var i = 0; i < n.operands.length; i++) {
-                        assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.operands[i].value, a[4][i]);
-                    }
-                });
-            }
+describe("Expressions", function () {
+    [
+        ["a+b", "a+b", true],
+        ["a + b", "a+b", true],
+        [" a + b ", "a+b", true],
+        ["   a + b   ", "a+b", true],
+        ["b+a", "a+b", false],
+        ["a-b", "a+b", false],
+        ["a*b", "a+b", false],
+        ["a/b", "a+b", false],
+        ["a^b", "a+b", false],
+        ["a+2", "a+b", false],
+        ["2+a", "a+b", false],
+        ["ab", "a+b", false],
+        ["a+c", "a+b", false],
+        ["c+b", "a+b", false],
+        ["a+2/3", "a+2/3", true],
+        ["a + 2 / 3", "a+2/3", true],
+    ].forEach(a => {
+        it(`should see that '${a[0]}' and '${a[1]}' are${(a[2] == false) ? " not" : ""} equal`, function () {
+            assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);
         });
     });
-
-    describe("Expressions", function () {
-        [
-            ["a+b", "a+b", true],
-            ["a + b", "a+b", true],
-            [" a + b ", "a+b", true],
-            ["   a + b   ", "a+b", true],
-            ["b+a", "a+b", false],
-            ["a-b", "a+b", false],
-            ["a*b", "a+b", false],
-            ["a/b", "a+b", false],
-            ["a^b", "a+b", false],
-            ["a+2", "a+b", false],
-            ["2+a", "a+b", false],
-            ["ab", "a+b", false],
-            ["a+c", "a+b", false],
-            ["c+b", "a+b", false],
-            ["a+2/3", "a+2/3", true],
-            ["a + 2 / 3", "a+2/3", true],
-        ].forEach(a => {
-            it(`should see that '${a[0]}' and '${a[1]}' are${(a[2] == false) ? " not" : ""} equal`, function () {
-                assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);
-            });
-        });
-    });
+});
 
 /***/ }),
 /* 11 */

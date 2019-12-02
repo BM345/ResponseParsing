@@ -234,6 +234,20 @@ export class RPIdentifierNode extends RPNode {
     }
 }
 
+export class RPUnitVectorNode extends RPIdentifierNode {
+    constructor() {
+        super();
+
+        this.type = "unitVector";
+
+        this._title = "Unit Vector";
+    }
+
+    get latex() {
+        return "\\textbf{" + this.value + "}";
+    }
+}
+
 export class RPOperatorNode extends RPNode {
     constructor() {
         super("operator");
@@ -697,8 +711,8 @@ export class RPProductNode extends RPNode {
 
 export class SimplifierSettings {
     constructor() {
-        this.lookForVectors = false;
-        this.lookForComplexNumbers = true;
+        this.lookForVectors = true;
+        this.lookForComplexNumbers = false;
     }
 }
 
@@ -710,6 +724,10 @@ export class Simplifier {
     simplifyNode(node, d = 0) {
 
         node.subnodes = this.simplifyNodes(node.subnodes, d + 1);
+
+        if (this.settings.lookForVectors) {
+            node = this.replaceWithUnitVectors(node);
+        }
 
         node = this.replaceWithSurd(node);
         node = this.replaceSubtractions(node);
@@ -757,7 +775,7 @@ export class Simplifier {
 
     isIJKVectorComponent(node) {
         var isUnsignedComponent = (m) => {
-            var isUnitVector = (n) => { return (n.type == "identifier" && (n.value == "i" || n.value == "j" || n.value == "k")); }
+            var isUnitVector = (n) => { return ((n.type == "identifier" || n.type == "unitVector") && (n.value == "i" || n.value == "j" || n.value == "k")); }
 
             if (isUnitVector(m)) { return true; }
             if (m.subtype == "multiplication" && m.operand1.type == "number" && isUnitVector(m.operand2)) { return true; }
@@ -792,6 +810,18 @@ export class Simplifier {
             vector.subnodes.push(node);
 
             return vector;
+        }
+
+        return node;
+    }
+
+    replaceWithUnitVectors(node) {
+        if (node.type == "identifier" && (node.value == "i" || node.value == "j" || node.value == "k")) {
+            var unitVector = new RPUnitVectorNode();
+
+            unitVector.value = node.value;
+
+            return unitVector;
         }
 
         return node;

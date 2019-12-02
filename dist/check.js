@@ -327,6 +327,20 @@ class RPIdentifierNode extends RPNode {
     }
 }
 
+class RPUnitVectorNode extends RPIdentifierNode {
+    constructor() {
+        super();
+
+        this.type = "unitVector";
+
+        this._title = "Unit Vector";
+    }
+
+    get latex() {
+        return "\\textbf{" + this.value + "}";
+    }
+}
+
 class RPOperatorNode extends RPNode {
     constructor() {
         super("operator");
@@ -790,8 +804,8 @@ class RPProductNode extends RPNode {
 
 class SimplifierSettings {
     constructor() {
-        this.lookForVectors = false;
-        this.lookForComplexNumbers = true;
+        this.lookForVectors = true;
+        this.lookForComplexNumbers = false;
     }
 }
 
@@ -803,6 +817,10 @@ class Simplifier {
     simplifyNode(node, d = 0) {
 
         node.subnodes = this.simplifyNodes(node.subnodes, d + 1);
+
+        if (this.settings.lookForVectors) {
+            node = this.replaceWithUnitVectors(node);
+        }
 
         node = this.replaceWithSurd(node);
         node = this.replaceSubtractions(node);
@@ -850,7 +868,7 @@ class Simplifier {
 
     isIJKVectorComponent(node) {
         var isUnsignedComponent = (m) => {
-            var isUnitVector = (n) => { return (n.type == "identifier" && (n.value == "i" || n.value == "j" || n.value == "k")); }
+            var isUnitVector = (n) => { return ((n.type == "identifier" || n.type == "unitVector") && (n.value == "i" || n.value == "j" || n.value == "k")); }
 
             if (isUnitVector(m)) { return true; }
             if (m.subtype == "multiplication" && m.operand1.type == "number" && isUnitVector(m.operand2)) { return true; }
@@ -885,6 +903,18 @@ class Simplifier {
             vector.subnodes.push(node);
 
             return vector;
+        }
+
+        return node;
+    }
+
+    replaceWithUnitVectors(node) {
+        if (node.type == "identifier" && (node.value == "i" || node.value == "j" || node.value == "k")) {
+            var unitVector = new RPUnitVectorNode();
+
+            unitVector.value = node.value;
+
+            return unitVector;
         }
 
         return node;
@@ -1072,6 +1102,8 @@ class responseparsing_ResponseParser {
 
     // The top-level parse function (for now).
     getParseResult(inputText) {
+        console.log(inputText);
+
         var m1 = new Marker();
 
         var expression = this.parseExpression(inputText, m1);
@@ -1080,10 +1112,44 @@ class responseparsing_ResponseParser {
             expression = this.simplifier.simplifyNode(expression);
             expression.setDepth();
 
+            console.log(expression);
+
             return expression;
         }
 
         // If nothing is found, return nothing.
+        return null;
+    }
+
+    getInteger(inputText) {
+        console.log(inputText);
+
+        var m1 = new Marker();
+
+        var number = this.parseNumber(inputText, m1);
+
+        if (number !== null && number.subtype == "integer" && m1.position == inputText.length) {
+            console.log(number);
+
+            return number;
+        }
+
+        return null;
+    }
+
+    getNumber(inputText) {
+        console.log(inputText);
+
+        var m1 = new Marker();
+
+        var number = this.parseNumber(inputText, m1);
+
+        if (number !== null && m1.position == inputText.length) {
+            console.log(number);
+
+            return number;
+        }
+
         return null;
     }
 
@@ -1164,6 +1230,15 @@ class responseparsing_ResponseParser {
         }
 
         this._applyOperators(operandStack, operatorStack, null);
+
+        if (operandStack.length == 0 && operatorStack.length == 1 && (operatorStack[0].value == "+" || operatorStack[0].value == "-")) {
+            var operator = operatorStack.pop();
+            var number = new RPNumberNode();
+
+            number.value = operatorStack.value;
+
+            operandStack.push(number);
+        }
 
         if (operandStack.length == 1) {
             return operandStack[0];
@@ -1724,6 +1799,9 @@ class responseparsing_ResponseParser {
     }
 }
 
+const red = "hsl(350, 80%, 80%)";
+const green = "hsl(120, 80%, 60%)";
+
 // Handles the actual on-page events and the validation messages.
 class Validator {
     constructor() {
@@ -1753,6 +1831,9 @@ class Validator {
             "Escape"];
 
         this.keyRestrictions = {
+            "integer": "0123456789+-",
+            "decimalNumber": "0123456789+-.",
+            "fraction": "0123456789+-/.",
             "surd": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-() ",
             "complexNumber": "0123456789.+-i ",
             "vector": "0123456789.+-ijk ",
@@ -1771,100 +1852,275 @@ class Validator {
         }
     }
 
-    // Inputs that are to be checked by the validator can be added using this function.
+    isControlKey(code) {
+        return this.controlKeys.indexOf(code) >= 0;
+    }
+
+    isRestrictedKey(key, type) {
+        return !isAnyOf(this.keyRestrictions[type], key);
+    }
+
     addInput(input, inputType, katexOutput, validationMessageElement, submitButton) {
         this.inputs.push([input, inputType, katexOutput, validationMessageElement, submitButton]);
 
+        if (inputType == "integer") { this.setValidationEventsForInteger(input, katexOutput, validationMessageElement, submitButton); }
+        if (inputType == "decimalNumber") { this.setValidationEventsForDecimalNumber(input, katexOutput, validationMessageElement, submitButton); }
+        if (inputType == "fraction") { this.setValidationEventsForFraction(input, katexOutput, validationMessageElement, submitButton); }
+        if (inputType == "surd") { this.setValidationEventsForSurd(input, katexOutput, validationMessageElement, submitButton); }
+        if (inputType == "complexNumber") { this.setValidationEventsForComplexNumber(input, katexOutput, validationMessageElement, submitButton); }
+        if (inputType == "vector") { this.setValidationEventsForVector(input, katexOutput, validationMessageElement, submitButton); }
+
         var that = this;
-
-        // A check is performed whenever the user tries to type another character into the input.
-        input.onkeydown = function (e) {
-
-            validationMessageElement.innerText = "";
-
-            // If the key that's pressed is one of the control keys, ignore the event.
-            if (that.controlKeys.filter(ck => e.code == ck).length == 0) {
-
-                if (inputType == "surd" && !isAnyOf(that.keyRestrictions["surd"], e.key)) {
-                    e.preventDefault();
-                    validationMessageElement.innerText = "You should only use the characters 0-9, the minus sign, brackets, and 'sqrt' for the square root sign.";
-                }
-
-                if (inputType == "complexNumber" && !isAnyOf(that.keyRestrictions["complexNumber"], e.key)) {
-                    e.preventDefault();
-                    validationMessageElement.innerText = "";
-                }
-
-                if (inputType == "vector" && !isAnyOf(that.keyRestrictions["vector"], e.key)) {
-                    e.preventDefault();
-                    validationMessageElement.innerText = "";
-                }
-
-                var t = that.getNewInputValueOnKeyDown(input, e);
-                var parseResult = that.rp.getParseResult(t);
-
-                console.log(t);
-                console.log(parseResult);
-
-                if (inputType == "integer" && (parseResult === null || parseResult.type != "number" || parseResult.subtype != "integer")) {
-                    e.preventDefault();
-                }
-
-                if (inputType == "decimalNumber" && (parseResult === null || parseResult.type != "number")) {
-                    e.preventDefault();
-                }
-
-                if (inputType == "fraction" && (parseResult === null || parseResult.type != "fraction" && parseResult.type != "number")) {
-                    e.preventDefault();
-                }
-            }
-        }
 
         input.onkeyup = function (e) {
 
+            that.rp.simplifier.settings.lookForVectors = false;
+            that.rp.simplifier.settings.lookForComplexNumbers = false;
+
             var parseResult = that.rp.getParseResult(input.value);
 
-            if (parseResult !== null) {
+            if (parseResult !== null && parseResult.latex != undefined && parseResult.latex != "") {
                 katex.render(parseResult.latex, katexOutput);
             }
             else {
                 katex.render("", katexOutput);
             }
-
         }
+    }
 
-        // A second check has to be performed on submit.
-        submitButton.onmousedown = function (e) {
-            // Get the value of the input.
-            var t = input.value;
-            // Parse the value to see what it is.
-            var parseResult = that.rp.getParseResult(t);
+    setValidationEventsForInteger(input, katexOutput, validationMessageElement, submitButton) {
 
-            console.log(t);
-            console.log(parseResult);
+        var that = this;
+
+        input.onkeydown = function (e) {
 
             validationMessageElement.innerText = "";
 
-            // If the answer is supposed to be an integer, but it's not, then give a validation message.
-            if (inputType == "integer" && (parseResult === null || (parseResult.type != "number" && parseResult.subtype == "integer"))) {
+            if (!that.isControlKey(e.code)) {
+
+                var t = that.getNewInputValueOnKeyDown(input, e);
+                var parseResult = that.rp.getInteger(t);
+
+                if (that.isRestrictedKey(e.key, "integer") || parseResult === null || parseResult.type != "number" || parseResult.subtype != "integer") {
+                    e.preventDefault();
+                    validationMessageElement.innerText = "Your answer must be a single whole number. Only use the characters 0 to 9 and the + and - signs.";
+                    validationMessageElement.style.color = red;
+                }
+            }
+        }
+
+        submitButton.onmousedown = function (e) {
+
+            validationMessageElement.innerText = "";
+
+            var t = input.value;
+            var parseResult = that.rp.getInteger(t);
+
+            if (parseResult === null || parseResult.type != "number" || parseResult.subtype != "integer") {
                 validationMessageElement.innerText = "Your answer must be a whole number.";
+                validationMessageElement.style.color = red;
             }
+            else if (parseResult.type == "number" && parseResult.subtype == "integer") {
+                validationMessageElement.innerText = "Your answer has been submitted.";
+                validationMessageElement.style.color = green;
+            }
+        }
+    }
 
-            // If the answer is supposed to be a decimal, but it's not, then give a validation message.
-            if (inputType == "decimalNumber" && (parseResult === null || parseResult.type != "number")) {
+    setValidationEventsForDecimalNumber(input, katexOutput, validationMessageElement, submitButton) {
+
+        var that = this;
+
+        input.onkeydown = function (e) {
+
+            validationMessageElement.innerText = "";
+
+            if (!that.isControlKey(e.code)) {
+
+                var t = that.getNewInputValueOnKeyDown(input, e);
+                var parseResult = that.rp.getNumber(t);
+
+                if (that.isRestrictedKey(e.key, "decimalNumber") || parseResult === null || parseResult.type != "number") {
+                    e.preventDefault();
+                    validationMessageElement.innerText = "Your answer must be a single decimal number of whole number. Only use the characters 0 to 9, the decimal point, and the + and - signs."
+                    validationMessageElement.style.color = red;
+                }
+            }
+        }
+
+        submitButton.onmousedown = function (e) {
+
+            validationMessageElement.innerText = "";
+
+            var t = input.value;
+            var parseResult = that.rp.getNumber(t);
+
+            if (parseResult === null || parseResult.type != "number") {
                 validationMessageElement.innerText = "Your answer must be a decimal number or a whole number.";
+                validationMessageElement.style.color = red;
             }
+            else if (parseResult.type == "number") {
+                validationMessageElement.innerText = "Your answer has been submitted.";
+                validationMessageElement.style.color = green;
+            }
+        }
+    }
 
-            if (inputType == "surd" && (parseResult === null || parseResult.type != "surd" || parseResult.type != "radical" || parseResult.type != "number")) {
+    setValidationEventsForFraction(input, katexOutput, validationMessageElement, submitButton) {
+
+        var that = this;
+
+        input.onkeydown = function (e) {
+
+            validationMessageElement.innerText = "";
+
+            if (!that.isControlKey(e.code)) {
+
+                that.rp.simplifier.settings.lookForVectors = false;
+                that.rp.simplifier.settings.lookForComplexNumbers = false;
+
+                var t = that.getNewInputValueOnKeyDown(input, e);
+                var parseResult = that.rp.getParseResult(t);
+
+                if (that.isRestrictedKey(e.key, "fraction") || parseResult === null || (parseResult.type != "fraction" && parseResult.type != "number")) {
+                    e.preventDefault();
+                    validationMessageElement.innerText = "Only use the characters 0 to 9, the decimal point, the plus and minus signs, and the forward slash."
+                    validationMessageElement.style.color = red;
+                }
+            }
+        }
+
+        submitButton.onmousedown = function (e) {
+
+            validationMessageElement.innerText = "";
+
+            that.rp.simplifier.settings.lookForVectors = false;
+            that.rp.simplifier.settings.lookForComplexNumbers = false;
+
+            var t = input.value;
+            var parseResult = that.rp.getParseResult(t);
+
+            if (parseResult === null || (parseResult.type != "fraction" && parseResult.type != "number")) {
+                validationMessageElement.innerText = "Your answer must be a fraction or a whole number.";
+                validationMessageElement.style.color = red;
+            }
+            if (parseResult.type == "fraction" || parseResult.type == "number") {
+                validationMessageElement.innerText = "Your answer has been submitted.";
+                validationMessageElement.style.color = green;
+            }
+        }
+    }
+
+    setValidationEventsForSurd(input, katexOutput, validationMessageElement, submitButton) {
+
+        var that = this;
+
+        input.onkeydown = function (e) {
+
+            validationMessageElement.innerText = "";
+
+            if (!that.isControlKey(e.code)) {
+                if (that.isRestrictedKey(e.key, "surd")) {
+                    e.preventDefault();
+                    validationMessageElement.innerText = "You should only use the characters 0-9, the minus sign, brackets, and 'sqrt' for the square root sign.";
+                    validationMessageElement.style.color = red;
+                }
+            }
+        }
+
+        submitButton.onmousedown = function (e) {
+
+            validationMessageElement.innerText = "";
+
+            that.rp.simplifier.settings.lookForVectors = false;
+            that.rp.simplifier.settings.lookForComplexNumbers = false;
+
+            var t = input.value;
+            var parseResult = that.rp.getParseResult(t);
+
+            if (parseResult === null || (parseResult.type != "surd" && parseResult.type != "radical" && parseResult.type != "number")) {
                 validationMessageElement.innerText = "Your answer must be a surd.";
+                validationMessageElement.style.color = red;
             }
+            else if (parseResult.type != "surd" || parseResult.type != "radical" || parseResult.type != "number") {
+                validationMessageElement.innerText = "Your answer has been submitted.";
+                validationMessageElement.style.color = green;
+            }
+        }
+    }
 
-            if (inputType == "complexNumber" && (parseResult === null || parseResult.type != "complexNumber" || parseResult.type != "number")) {
+    setValidationEventsForComplexNumber(input, katexOutput, validationMessageElement, submitButton) {
+
+        var that = this;
+
+        input.onkeydown = function (e) {
+
+            validationMessageElement.innerText = "";
+
+            if (!that.isControlKey(e.code)) {
+                if (that.isRestrictedKey(e.key, "complexNumber")) {
+                    e.preventDefault();
+                    validationMessageElement.innerText = "Only use the characters 0 to 9, the decimal point, and the plus and minus sign. Use i as the imaginary constant.";
+                    validationMessageElement.style.color = red;
+                }
+            }
+        }
+
+        submitButton.onmousedown = function (e) {
+
+            validationMessageElement.innerText = "";
+
+            that.rp.simplifier.settings.lookForVectors = false;
+            that.rp.simplifier.settings.lookForComplexNumbers = true;
+
+            var t = input.value;
+            var parseResult = that.rp.getParseResult(t);
+
+            if (parseResult === null || parseResult.type != "complexNumber") {
                 validationMessageElement.innerText = "Your answer must be a real number, an imaginary number, or a complex number.";
+                validationMessageElement.style.color = red;
             }
+            else if (parseResult.type == "complexNumber") {
+                validationMessageElement.innerText = "Your answer has been submitted.";
+                validationMessageElement.style.color = green;
+            }
+        }
+    }
 
-            if (inputType == "vector" && (parseResult === null || parseResult.type != "vector")) {
+    setValidationEventsForVector(input, katexOutput, validationMessageElement, submitButton) {
+
+        var that = this;
+
+        input.onkeydown = function (e) {
+
+            validationMessageElement.innerText = "";
+
+            if (!that.isControlKey(e.code)) {
+                if (that.isRestrictedKey(e.key, "vector")) {
+                    e.preventDefault();
+                    validationMessageElement.innerText = "Your answer must be a vector. Use i, j, and k to denote unit vectors in the x, y, and z directions.";
+                    validationMessageElement.style.color = red;
+                }
+            }
+        }
+
+        submitButton.onmousedown = function (e) {
+
+            that.rp.simplifier.settings.lookForVectors = true;
+            that.rp.simplifier.settings.lookForComplexNumbers = false;
+
+            validationMessageElement.innerText = "";
+
+            var t = input.value;
+            var parseResult = that.rp.getParseResult(t);
+
+            if (parseResult === null || parseResult.type != "vector") {
                 validationMessageElement.innerText = "Your answer must be a vector";
+                validationMessageElement.style.color = red;
+            }
+            else if (parseResult.type == "vector") {
+                validationMessageElement.innerText = "Your answer has been submitted.";
+                validationMessageElement.style.color = green;
             }
         }
     }
@@ -1887,6 +2143,7 @@ var nodeColours = {
     "summation": 350,
     "product": 350,
     "identifier": 90,
+    "unitVector": 90,
     "radical": 280,
     "surd": 290,
     "fraction": 15,

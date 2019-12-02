@@ -6,6 +6,7 @@ var nodeColours = {
     "summation": 350,
     "product": 350,
     "identifier": 90,
+    "unitVector": 90,
     "radical": 280,
     "surd": 290,
     "fraction": 15,

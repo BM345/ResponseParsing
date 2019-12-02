@@ -41,6 +41,7 @@ p {
 
 .validationMessage {
     font-size: 17px;
+    font-weight: normal;
     color: hsla(350, 80%, 60%);
 }
 

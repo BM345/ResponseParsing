@@ -234,6 +234,89 @@ export class RPIdentifierNode extends RPNode {
     }
 }
 
+export class RPGreekLetter {
+    constructor(name, asciiMath, latex) {
+        this.name = name;
+        this.asciiMath = asciiMath;
+        this.latex = latex;
+    }
+}
+
+export const greekLetters = [
+    new RPGreekLetter("alpha", "alpha", "\\alpha"),
+    new RPGreekLetter("beta", "beta", "\\beta"),
+    new RPGreekLetter("gamma", "gamma", "\\gamma"),
+    new RPGreekLetter("delta", "delta", "\\delta"),
+    new RPGreekLetter("epsilon", "epsilon", "\\epsilon"),
+    new RPGreekLetter("zeta", "zeta", "\\zeta"),
+    new RPGreekLetter("eta", "eta", "\\eta"),
+    new RPGreekLetter("theta", "theta", "\\theta"),
+    new RPGreekLetter("iota", "iota", "\\iota"),
+    new RPGreekLetter("kappa", "kappa", "\\kappa"),
+    new RPGreekLetter("lambda", "lambda", "\\lambda"),
+    new RPGreekLetter("mu", "mu", "\\mu"),
+    new RPGreekLetter("nu", "nu", "\\nu"),
+    new RPGreekLetter("xi", "xi", "\\xi"),
+    new RPGreekLetter("omicron", "omicron", "\\omicron"),
+    new RPGreekLetter("pi", "pi", "\\pi"),
+    new RPGreekLetter("rho", "rho", "\\rho"),
+    new RPGreekLetter("sigma", "sigma", "\\sigma"),
+    new RPGreekLetter("tau", "tau", "\\tau"),
+    new RPGreekLetter("upsilon", "upsilon", "\\upsilon"),
+    new RPGreekLetter("phi", "phi", "\\phi"),
+    new RPGreekLetter("chi", "chi", "\\chi"),
+    new RPGreekLetter("psi", "psi", "\\psi"),
+    new RPGreekLetter("omega", "omega", "\\omega"),
+    new RPGreekLetter("capitalAlpha", "", "A"),
+    new RPGreekLetter("capitalBeta", "", "B"),
+    new RPGreekLetter("capitalGamma", "Gamma", "\\Gamma"),
+    new RPGreekLetter("capitalDelta", "Delta", "\\Delta"),
+    new RPGreekLetter("capitalEpsilon", "", "E"),
+    new RPGreekLetter("capitalZeta", "", "Z"),
+    new RPGreekLetter("capitalEta", "", "H"),
+    new RPGreekLetter("capitalTheta", "Theta", "\\Theta"),
+    new RPGreekLetter("capitalIota", "", "I"),
+    new RPGreekLetter("capitalKappa", "", "K"),
+    new RPGreekLetter("capitalLambda", "Lambda", "\\Lambda"),
+    new RPGreekLetter("capitalMu", "", "M"),
+    new RPGreekLetter("capitalNu", "", "N"),
+    new RPGreekLetter("capitalXi", "Xi", "\\Xi"),
+    new RPGreekLetter("capitalOmicron", "", "O"),
+    new RPGreekLetter("capitalPi", "Pi", "\\Pi"),
+    new RPGreekLetter("capitalRho", "", "P"),
+    new RPGreekLetter("capitalSigma", "Sigma", "\\Sigma"),
+    new RPGreekLetter("capitalTau", "", "T"),
+    new RPGreekLetter("capitalUpsilon", "", "Y"),
+    new RPGreekLetter("capitalPhi", "Phi", "\\Phi"),
+    new RPGreekLetter("capitalChi", "", "X"),
+    new RPGreekLetter("capitalPsi", "Psi", "\\Psi"),
+    new RPGreekLetter("capitalOmega", "Omega", "\\Omega")
+];
+
+export class RPGreekLetterNode extends RPIdentifierNode {
+    constructor() {
+        super();
+
+        this.subtype = "greek";
+    }
+
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype && object.value.name === this.value.name);
+    }
+
+    get latex() {
+        return this.value.latex;
+    }
+
+    get asciiMath() {
+        return this.value.asciiMath;
+    }
+
+    get mathML() {
+        return "<mi></mi>";
+    }
+}
+
 export class RPUnitVectorNode extends RPIdentifierNode {
     constructor() {
         super();

@@ -146,6 +146,7 @@ export class ResponseParser {
             if (node === null) { node = this.parseNamedFunction(inputText, marker.copy()); }
             if (node === null) { node = this.parseSquareRoot(inputText, marker.copy()); }
             if (node === null) { node = this.parseNumber(inputText, marker.copy()); }
+            if (node === null) { node = this.parseGreekIdentifier(inputText, marker.copy()); }
             if (node === null) { node = this.parseIdentifier(inputText, marker.copy()); }
             if (node === null) { node = this.parseWhiteSpace(inputText, marker.copy()); }
             if (node === null) { break; }
@@ -381,6 +382,35 @@ export class ResponseParser {
         node.end = end;
         node._text = c;
         node.value = c;
+
+        return node;
+    }
+
+    parseGreekIdentifier(inputText, marker) {
+        var start = marker.position;
+
+        var match = null;
+
+        for (var i = 0; i < nodes.greekLetters.length; i++) {
+            var g = nodes.greekLetters[i];
+            if (g.asciiMath.length > 0 && inputText.substr(marker.position, g.asciiMath.length) == g.asciiMath) {
+                match = g;
+                break;
+            }
+        }
+
+        if (match === null) { return null; }
+
+        marker.position += g.asciiMath.length;
+
+        var end = marker.position;
+
+        var node = new nodes.RPGreekLetterNode();
+
+        node.start = start;
+        node.end = end;
+        node._text = inputText.slice(node.start, node.end);
+        node.value = match;
 
         return node;
     }

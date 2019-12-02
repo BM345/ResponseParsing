@@ -92,6 +92,30 @@ export class ResponseParser {
         return null;
     }
 
+    getFraction(inputText) {
+        console.log(inputText);
+
+        var m1 = new Marker();
+        var m2 = new Marker();
+
+        var number = this.parseNumber(inputText, m1);
+        var fraction = this.parseFraction(inputText, m2);
+
+        if (number !== null && m1.position == inputText.length) {
+            console.log(number);
+
+            return number;
+        }
+
+        if (fraction !== null && m2.position == inputText.length) {
+            console.log(fraction);
+
+            return fraction;
+        }
+
+        return null;
+    }
+
     // A useful function for checking if any of a set of words appears at the given position in a string.
     anyAt(words, inputText, marker) {
         for (var i = 0; i < words.length; i++) {
@@ -168,7 +192,7 @@ export class ResponseParser {
             }
         }
 
-        if (lastNode.type == "operator") {
+        if (lastNode != undefined && lastNode.type == "operator") {
             operatorStack.pop();
         }
 
@@ -923,7 +947,7 @@ export class Validator {
                 that.rp.simplifier.settings.lookForComplexNumbers = false;
 
                 var t = that.getNewInputValueOnKeyDown(input, e);
-                var parseResult = that.rp.getParseResult(t);
+                var parseResult = that.rp.getFraction(t);
 
                 if (that.isRestrictedKey(e.key, "fraction") || parseResult === null || (parseResult.type != "fraction" && parseResult.type != "number")) {
                     e.preventDefault();
@@ -941,7 +965,7 @@ export class Validator {
             that.rp.simplifier.settings.lookForComplexNumbers = false;
 
             var t = input.value;
-            var parseResult = that.rp.getParseResult(t);
+            var parseResult = that.rp.getFraction(t);
 
             if (parseResult === null || (parseResult.type != "fraction" && parseResult.type != "number")) {
                 validationMessageElement.innerText = "Your answer must be a fraction or a whole number.";

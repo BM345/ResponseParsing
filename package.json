@@ -1,0 +1,27 @@
+{
+  "name": "responseparsing",
+  "version": "0.4.0",
+  "description": "A JavaScript library for parsing mathematical expressions and outputting them in a variety of formats",
+  "private": true,
+  "dependencies": {
+    "uniq": "^1.0.1"
+  },
+  "devDependencies": {
+    "mocha": "^6.2.2",
+    "mocha-loader": "^3.0.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
+  },
+  "scripts": {
+    "test": "TESTBUILD=true webpack && mocha test-dist/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BM345/ResponseParsing.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/BM345/ResponseParsing/issues"
+  },
+  "homepage": "https://github.com/BM345/ResponseParsing#readme"
+}

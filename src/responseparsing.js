@@ -168,6 +168,10 @@ export class ResponseParser {
             }
         }
 
+        if (lastNode.type == "operator") {
+            operatorStack.pop();
+        }
+
         this._applyOperators(operandStack, operatorStack, null);
 
         if (operandStack.length == 0 && operatorStack.length == 1 && (operatorStack[0].value == "+" || operatorStack[0].value == "-")) {

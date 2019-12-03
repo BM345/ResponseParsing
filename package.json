@@ -4,6 +4,7 @@
   "description": "A JavaScript library for parsing mathematical expressions and outputting them in a variety of formats",
   "private": true,
   "dependencies": {
+    "mocha-simple-html-reporter": "^1.1.0",
     "uniq": "^1.0.1"
   },
   "devDependencies": {
@@ -13,7 +14,7 @@
     "webpack-cli": "^3.3.10"
   },
   "scripts": {
-    "test": "TESTBUILD=true webpack && mocha test-dist/main.js"
+    "test": "TESTBUILD=true webpack && mocha test-dist/main.js && mocha test-dist/main.js --reporter mocha-simple-html-reporter --reporter-options output=\"test-dist/report.html\""
   },
   "repository": {
     "type": "git",

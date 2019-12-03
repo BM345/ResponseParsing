@@ -1,0 +1,891 @@
+
+<html>
+    <head>
+        <title>Mocha</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <style type="text/css">
+        @charset "utf-8";
+
+body {
+  margin:0;
+}
+
+#mocha {
+  font: 20px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: 60px 50px;
+}
+
+#mocha ul,
+#mocha li {
+  margin: 0;
+  padding: 0;
+}
+
+#mocha ul {
+  list-style: none;
+}
+
+#mocha h1,
+#mocha h2 {
+  margin: 0;
+}
+
+#mocha h1 {
+  margin-top: 15px;
+  font-size: 1em;
+  font-weight: 200;
+}
+
+#mocha h1 a {
+  text-decoration: none;
+  color: inherit;
+}
+
+#mocha h1 a:hover {
+  text-decoration: underline;
+}
+
+#mocha .suite .suite h1 {
+  margin-top: 0;
+  font-size: .8em;
+}
+
+#mocha .hidden {
+  display: none;
+}
+
+#mocha h2 {
+  font-size: 12px;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+#mocha .suite {
+  margin-left: 15px;
+}
+
+#mocha .test {
+  margin-left: 15px;
+  overflow: hidden;
+}
+
+#mocha .test.pending:hover h2::after {
+  content: '(pending)';
+  font-family: arial, sans-serif;
+}
+
+#mocha .test.pass.medium .duration {
+  background: #c09853;
+}
+
+#mocha .test.pass.slow .duration {
+  background: #b94a48;
+}
+
+#mocha .test.pass::before {
+  content: '✓';
+  font-size: 12px;
+  display: block;
+  float: left;
+  margin-right: 5px;
+  color: #00d6b2;
+}
+
+#mocha .test.pass .duration {
+  font-size: 9px;
+  margin-left: 5px;
+  padding: 2px 5px;
+  color: #fff;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.2);
+  -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,.2);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.2);
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+}
+
+#mocha .test.pass.fast .duration {
+  display: none;
+}
+
+#mocha .test.pending {
+  color: #0b97c4;
+}
+
+#mocha .test.pending::before {
+  content: '◦';
+  color: #0b97c4;
+}
+
+#mocha .test.fail {
+  color: #c00;
+}
+
+#mocha .test.fail pre {
+  color: black;
+}
+
+#mocha .test.fail::before {
+  content: '✖';
+  font-size: 12px;
+  display: block;
+  float: left;
+  margin-right: 5px;
+  color: #c00;
+}
+
+#mocha .test pre.error {
+  color: #c00;
+  max-height: 300px;
+  overflow: auto;
+}
+
+#mocha .test .html-error {
+  overflow: auto;
+  color: black;
+  display: block;
+  float: left;
+  clear: left;
+  font: 12px/1.5 monaco, monospace;
+  margin: 5px;
+  padding: 15px;
+  border: 1px solid #eee;
+  max-width: 85%; /*(1)*/
+  max-width: -webkit-calc(100% - 42px);
+  max-width: -moz-calc(100% - 42px);
+  max-width: calc(100% - 42px); /*(2)*/
+  max-height: 300px;
+  word-wrap: break-word;
+  border-bottom-color: #ddd;
+  -webkit-box-shadow: 0 1px 3px #eee;
+  -moz-box-shadow: 0 1px 3px #eee;
+  box-shadow: 0 1px 3px #eee;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+
+#mocha .test .html-error pre.error {
+  border: none;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-box-shadow: 0;
+  -moz-box-shadow: 0;
+  box-shadow: 0;
+  padding: 0;
+  margin: 0;
+  margin-top: 18px;
+  max-height: none;
+}
+
+/**
+ * (1): approximate for browsers not supporting calc
+ * (2): 42 = 2*15 + 2*10 + 2*1 (padding + margin + border)
+ *      ^^ seriously
+ */
+#mocha .test pre {
+  display: block;
+  float: left;
+  clear: left;
+  font: 12px/1.5 monaco, monospace;
+  margin: 5px;
+  padding: 15px;
+  border: 1px solid #eee;
+  max-width: 85%; /*(1)*/
+  max-width: -webkit-calc(100% - 42px);
+  max-width: -moz-calc(100% - 42px);
+  max-width: calc(100% - 42px); /*(2)*/
+  word-wrap: break-word;
+  border-bottom-color: #ddd;
+  -webkit-box-shadow: 0 1px 3px #eee;
+  -moz-box-shadow: 0 1px 3px #eee;
+  box-shadow: 0 1px 3px #eee;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+
+#mocha .test h2 {
+  position: relative;
+}
+
+#mocha .test a.replay {
+  position: absolute;
+  top: 3px;
+  right: 0;
+  text-decoration: none;
+  vertical-align: middle;
+  display: block;
+  width: 15px;
+  height: 15px;
+  line-height: 15px;
+  text-align: center;
+  background: #eee;
+  font-size: 15px;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  border-radius: 15px;
+  -webkit-transition:opacity 200ms;
+  -moz-transition:opacity 200ms;
+  -o-transition:opacity 200ms;
+  transition: opacity 200ms;
+  opacity: 0.3;
+  color: #888;
+}
+
+#mocha .test:hover a.replay {
+  opacity: 1;
+}
+
+#mocha-report.pass .test.fail {
+  display: none;
+}
+
+#mocha-report.fail .test.pass {
+  display: none;
+}
+
+#mocha-report.pending .test.pass,
+#mocha-report.pending .test.fail {
+  display: none;
+}
+#mocha-report.pending .test.pass.pending {
+  display: block;
+}
+
+#mocha-error {
+  color: #c00;
+  font-size: 1.5em;
+  font-weight: 100;
+  letter-spacing: 1px;
+}
+
+#mocha-stats {
+  position: fixed;
+  top: 15px;
+  right: 10px;
+  font-size: 12px;
+  margin: 0;
+  color: #888;
+  z-index: 1;
+}
+
+#mocha-stats .progress {
+  float: right;
+  padding-top: 0;
+
+  /**
+   * Set safe initial values, so mochas .progress does not inherit these
+   * properties from Bootstrap .progress (which causes .progress height to
+   * equal line height set in Bootstrap).
+   */
+  height: auto;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  background-color: initial;
+}
+
+#mocha-stats em {
+  color: black;
+}
+
+#mocha-stats a {
+  text-decoration: none;
+  color: inherit;
+}
+
+#mocha-stats a:hover {
+  border-bottom: 1px solid #eee;
+}
+
+#mocha-stats li {
+  display: inline-block;
+  margin: 0 5px;
+  list-style: none;
+  padding-top: 11px;
+}
+
+#mocha-stats canvas {
+  width: 40px;
+  height: 40px;
+}
+
+#mocha code .comment { color: #ddd; }
+#mocha code .init { color: #2f6fad; }
+#mocha code .string { color: #5890ad; }
+#mocha code .keyword { color: #8a6343; }
+#mocha code .number { color: #2f6fad; }
+
+@media screen and (max-device-width: 480px) {
+  #mocha {
+    margin: 60px 0px;
+  }
+
+  #mocha #stats {
+    position: absolute;
+  }
+}
+#mocha .test.pass pre {
+    display: none;
+}
+
+#mocha .test.fail pre {
+    display: none;
+}
+
+#mocha .test pre.error {
+    display: block;
+}
+
+#mocha .test .html-error pre.error {
+    box-shadow: none;
+}
+
+#mocha .test:hover h2:after {
+    color: #888888;
+    content: "(view source)";
+    font-family: arial;
+    font-size: 12px;
+    position: relative;
+    right: -10px;
+    top: 0;
+}
+
+#mocha .test.pass.pending h2 {
+    cursor: auto;
+}
+
+#mocha .mocha-header {
+    right: 30px;
+    position: fixed;
+    top: 15px;
+    font-size: 14px;
+    margin: 0;
+    color: #888;
+    z-index: 1;
+}
+
+#mocha .mocha-header em {
+    font-style: normal;
+    color: black;
+}
+
+#mocha .mocha-header ul {
+    display: inline-block;
+}
+
+#mocha .mocha-stats li {
+    display: inline-block;
+    margin: 0 5px;
+    list-style: none;
+    padding-top: 11px;
+}
+
+#mocha .mocha-menu {
+    margin-right: 10px;
+}
+
+#mocha .mocha-menu li {
+    display: inline-block;
+    margin-left: 10px;
+    list-style: none;
+}
+
+#mocha .mocha-menu li span {
+    display: inline-block;
+    cursor: pointer;
+    color: #fff;
+    font-size: 14px;
+    padding: 3px 7px 2px;
+    box-shadow: 1px 1px 3px rgba(0,0,0,.2);
+    border-radius: 5px;
+    user-select: none;
+}
+
+#mocha .mocha-menu li span.checked {
+    box-shadow: inset 1px 1px 3px rgba(0,0,0,.2);
+}
+
+#mocha .toggle-passes {
+    background: #b94a48;
+}
+
+        </style>
+    </head>
+    <body>
+        <div id="mocha">
+            <div class="mocha-header">
+                <ul class="mocha-menu">
+                    <li><span id="toggle-passes" class="toggle-passes">show failures only</span></li>
+                </ul>
+                <ul class="mocha-stats">
+                    <li class="passes">passes: <em>607</em></li>
+                    <li class="pending">pending: <em>0</em></li>
+                    <li class="failures">failures: <em>0</em></li>
+                    <li class="duration">duration: <em>79ms</em></li>
+                </ul>
+            </div>
+            <ul id="report"><li class="suite"><h1>Parsing Complex Numbers</h1><ul><li class="suite"><h1>Whether or not it can correctly identify complex numbers</h1><ul><li class="test pass fast"><h2>should see that &#x27;1&#x27; IS a complex number<span class="duration">1ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   1   &#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+1&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   +   1   &#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-1&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   -   1   &#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;123&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   123   &#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;1+1&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+1+1&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;1-1&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-1-1&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;1+1+1+1+1&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;1-1-1-1-1&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;i&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   i   &#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+i&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   +   i   &#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-i&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   -   i   &#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3i&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   3   i   &#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3.3i&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+3i&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-3i&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;i+i&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;i-i&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+i+i&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-i-i&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2i+2i&#x27; IS a complex number<span class="duration">1ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2.2i+2.2i&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;i+1&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;i+3&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;1i+1&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3i+1&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3i+3&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2i+2+3i+3&#x27; IS a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;ii&#x27; IS NOT a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3ii&#x27; IS NOT a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;iii&#x27; IS NOT a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3iii&#x27; IS NOT a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+ii&#x27; IS NOT a complex number<span class="duration">1ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-ii&#x27; IS NOT a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;a&#x27; IS NOT a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3a&#x27; IS NOT a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3.3a&#x27; IS NOT a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3+3a&#x27; IS NOT a complex number<span class="duration">1ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3+3b&#x27; IS NOT a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;complexNumber&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3+3i+3a&#x27; IS NOT a complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;complexNumber&#x22;);</code></pre></li></ul></li><li class="suite"><h1>Whether or not it can see if two complex numbers are the same</h1><ul><li class="test pass fast"><h2>should see that &#x27;1&#x27; and &#x27;1&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+1&#x27; and &#x27;+1&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-1&#x27; and &#x27;-1&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   1   &#x27; and &#x27;1&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   +   1   &#x27; and &#x27;+1&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   -   1   &#x27; and &#x27;-1&#x27; ARE the same complex number<span class="duration">1ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;1+1&#x27; and &#x27;1+1&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;1-1&#x27; and &#x27;1-1&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+1+1&#x27; and &#x27;+1+1&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-1-1&#x27; and &#x27;-1-1&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;i&#x27; and &#x27;i&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   i   &#x27; and &#x27;i&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+i&#x27; and &#x27;+i&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-i&#x27; and &#x27;-i&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   +   i   &#x27; and &#x27;+i&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   -   i   &#x27; and &#x27;-i&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3i&#x27; and &#x27;3i&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   3   i   &#x27; and &#x27;3i&#x27; ARE the same complex number<span class="duration">1ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3.3i&#x27; and &#x27;3.3i&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   3.3   i&#x27; and &#x27;3.3i&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;i+i&#x27; and &#x27;i+i&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;i-i&#x27; and &#x27;i-i&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+i+i&#x27; and &#x27;+i+i&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-i-i&#x27; and &#x27;-i-i&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2i+2&#x27; and &#x27;2i+2&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2i+2+3&#x27; and &#x27;2i+2+3&#x27; ARE the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;i+1&#x27; and &#x27;1+i&#x27; ARE NOT the same complex number<span class="duration">1ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), false);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;i+2&#x27; and &#x27;2+i&#x27; ARE NOT the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), false);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2i+1&#x27; and &#x27;1+2i&#x27; ARE NOT the same complex number<span class="duration">1ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), false);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2i+i&#x27; and &#x27;3i&#x27; ARE NOT the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), false);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2i+2+3&#x27; and &#x27;2i+5&#x27; ARE NOT the same complex number<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), false);</code></pre></li></ul></li></ul></li><li class="suite"><h1>Additions and Summations</h1><ul><li class="test pass fast"><h2>should see that &#x27;a+a&#x27; has the type &#x27;binaryOperation&#x27; and the subtype &#x27;addition&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;a+a+a&#x27; has the type &#x27;summation&#x27; and the subtype &#x27;&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the operands of &#x27;a+a+a&#x27; are &#x27;a&#x27;, &#x27;a&#x27;, &#x27;a&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.operands.length, a[3]);
+for (var i = 0; i &#x3C; n.operands.length; i++) {
+    assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.operands[i].value, a[4][i]);
+}</code></pre></li><li class="test pass fast"><h2>should see that &#x27;a+a+a+a&#x27; has the type &#x27;summation&#x27; and the subtype &#x27;&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the operands of &#x27;a+a+a+a&#x27; are &#x27;a&#x27;, &#x27;a&#x27;, &#x27;a&#x27;, &#x27;a&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.operands.length, a[3]);
+for (var i = 0; i &#x3C; n.operands.length; i++) {
+    assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.operands[i].value, a[4][i]);
+}</code></pre></li><li class="test pass fast"><h2>should see that &#x27;a+a+a+a+a&#x27; has the type &#x27;summation&#x27; and the subtype &#x27;&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the operands of &#x27;a+a+a+a+a&#x27; are &#x27;a&#x27;, &#x27;a&#x27;, &#x27;a&#x27;, &#x27;a&#x27;, &#x27;a&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.operands.length, a[3]);
+for (var i = 0; i &#x3C; n.operands.length; i++) {
+    assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.operands[i].value, a[4][i]);
+}</code></pre></li><li class="test pass fast"><h2>should see that &#x27;a+a+a+a+a+a&#x27; has the type &#x27;summation&#x27; and the subtype &#x27;&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the operands of &#x27;a+a+a+a+a+a&#x27; are &#x27;a&#x27;, &#x27;a&#x27;, &#x27;a&#x27;, &#x27;a&#x27;, &#x27;a&#x27;, &#x27;a&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.operands.length, a[3]);
+for (var i = 0; i &#x3C; n.operands.length; i++) {
+    assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.operands[i].value, a[4][i]);
+}</code></pre></li><li class="test pass fast"><h2>should see that &#x27;a+b+c&#x27; has the type &#x27;summation&#x27; and the subtype &#x27;&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the operands of &#x27;a+b+c&#x27; are &#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.operands.length, a[3]);
+for (var i = 0; i &#x3C; n.operands.length; i++) {
+    assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.operands[i].value, a[4][i]);
+}</code></pre></li><li class="test pass fast"><h2>should see that &#x27;c+b+a&#x27; has the type &#x27;summation&#x27; and the subtype &#x27;&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the operands of &#x27;c+b+a&#x27; are &#x27;c&#x27;, &#x27;b&#x27;, &#x27;a&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.operands.length, a[3]);
+for (var i = 0; i &#x3C; n.operands.length; i++) {
+    assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.operands[i].value, a[4][i]);
+}</code></pre></li><li class="test pass fast"><h2>should see that &#x27;m+b+g+w+t&#x27; has the type &#x27;summation&#x27; and the subtype &#x27;&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the operands of &#x27;m+b+g+w+t&#x27; are &#x27;m&#x27;, &#x27;b&#x27;, &#x27;g&#x27;, &#x27;w&#x27;, &#x27;t&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.operands.length, a[3]);
+for (var i = 0; i &#x3C; n.operands.length; i++) {
+    assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.operands[i].value, a[4][i]);
+}</code></pre></li></ul></li><li class="suite"><h1>Expressions</h1><ul><li class="test pass fast"><h2>should see that &#x27;a+b&#x27; and &#x27;a+b&#x27; are equal<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;a + b&#x27; and &#x27;a+b&#x27; are equal<span class="duration">1ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27; a + b &#x27; and &#x27;a+b&#x27; are equal<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   a + b   &#x27; and &#x27;a+b&#x27; are equal<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;b+a&#x27; and &#x27;a+b&#x27; are not equal<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;a-b&#x27; and &#x27;a+b&#x27; are not equal<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;a*b&#x27; and &#x27;a+b&#x27; are not equal<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;a/b&#x27; and &#x27;a+b&#x27; are not equal<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;a^b&#x27; and &#x27;a+b&#x27; are not equal<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;a+2&#x27; and &#x27;a+b&#x27; are not equal<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2+a&#x27; and &#x27;a+b&#x27; are not equal<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;ab&#x27; and &#x27;a+b&#x27; are not equal<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;a+c&#x27; and &#x27;a+b&#x27; are not equal<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;c+b&#x27; and &#x27;a+b&#x27; are not equal<span class="duration">1ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;a+2/3&#x27; and &#x27;a+2/3&#x27; are equal<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;a + 2 / 3&#x27; and &#x27;a+2/3&#x27; are equal<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(parser.getParseResult(a[0]).isEqualTo(parser.getParseResult(a[1])), a[2]);</code></pre></li></ul></li><li class="suite"><h1>Parsing Fractions</h1><ul><li class="test pass fast"><h2>should see that &#x27;1/2&#x27; and &#x27;1/2&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27; 1/2&#x27; and &#x27;1/2&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   1/2&#x27; and &#x27;1/2&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;1 /2&#x27; and &#x27;1/2&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   1   /2&#x27; and &#x27;1/2&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   1   /   2&#x27; and &#x27;1/2&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   1   /   2   &#x27; and &#x27;1/2&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27; 1 / 2 &#x27; and &#x27;1/2&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;123/456&#x27; and &#x27;123/456&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27; 123 / 456 &#x27; and &#x27;123/456&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   123   /   456   &#x27; and &#x27;123/456&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;1/2&#x27; and &#x27;1/3&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;1/3&#x27; and &#x27;2/3&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2/4&#x27; and &#x27;3/5&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;1./2&#x27; and &#x27;1/2&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;1/2.&#x27; and &#x27;1/2&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;1./2.&#x27; and &#x27;1/2&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;01/2&#x27; and &#x27;1/2&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;001/2&#x27; and &#x27;1/2&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;1.0/2&#x27; and &#x27;1/2&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;1/2.0&#x27; and &#x27;1/2&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;1.0/2.0&#x27; and &#x27;1/2&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li></ul></li><li class="suite"><h1>Parsing Identifiers</h1><ul><li class="test pass fast"><h2>should see that &#x27;x&#x27; and &#x27;x&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27; x&#x27; and &#x27;x&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   x&#x27; and &#x27;x&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;x &#x27; and &#x27;x&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;x   &#x27; and &#x27;x&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27; x &#x27; and &#x27;x&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   x   &#x27; and &#x27;x&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;x&#x27; and &#x27;y&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   x   &#x27; and &#x27;y&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;xy&#x27; and &#x27;y&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;xy&#x27; and &#x27;yx&#x27; ARE NOT equal<span class="duration">1ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li></ul></li><li class="suite"><h1>Mixed Fractions</h1><ul><li class="test pass fast"><h2>should see that &#x27;1 2/3&#x27; and &#x27;1 2/3&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27; 1 2/3 &#x27; and &#x27;1 2/3&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   1   2/3   &#x27; and &#x27;1 2/3&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   1   2   /   3   &#x27; and &#x27;1 2/3&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;12/3&#x27; and &#x27;1 2/3&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;1 1/3&#x27; and &#x27;1 2/3&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2 2/3&#x27; and &#x27;1 2/3&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;1 2/4&#x27; and &#x27;1 2/3&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;1 2./3&#x27; and &#x27;1 2/3&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;1 2.0/3&#x27; and &#x27;1 2/3&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;1 2/3.&#x27; and &#x27;1 2/3&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;1 2/3.0&#x27; and &#x27;1 2/3&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li></ul></li><li class="suite"><h1>Parsing Numbers</h1><ul><li class="suite"><h1>123</h1><ul><li class="test pass fast"><h2>should see that &#x27;123&#x27; has the type &#x27;number&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, &#x22;number&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;123&#x27; has the subtype &#x27;integer&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the integral part of &#x27;123&#x27; is &#x27;123&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the decimal part of &#x27;123&#x27; is &#x27;&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that the sign of &#x27;123&#x27; is &#x27;positive&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;123&#x27; has an implicit sign<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;123&#x27; has 0 leading zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;123&#x27; has 0 trailing zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);</code></pre></li><li class="test pass fast"><h2>should see that there are a minimum of 3 s.f. in &#x27;123&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);</code></pre></li><li class="test pass fast"><h2>should see that there are a maximum of 3 s.f. in &#x27;123&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;123&#x27; has 0 decimal places<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);</code></pre></li></ul></li><li class="suite"><h1>+123</h1><ul><li class="test pass fast"><h2>should see that &#x27;+123&#x27; has the type &#x27;number&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, &#x22;number&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+123&#x27; has the subtype &#x27;integer&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the integral part of &#x27;+123&#x27; is &#x27;123&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the decimal part of &#x27;+123&#x27; is &#x27;&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that the sign of &#x27;+123&#x27; is &#x27;positive&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+123&#x27; has an explicit sign<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+123&#x27; has 0 leading zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+123&#x27; has 0 trailing zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);</code></pre></li><li class="test pass fast"><h2>should see that there are a minimum of 3 s.f. in &#x27;+123&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);</code></pre></li><li class="test pass fast"><h2>should see that there are a maximum of 3 s.f. in &#x27;+123&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+123&#x27; has 0 decimal places<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);</code></pre></li></ul></li><li class="suite"><h1>-123</h1><ul><li class="test pass fast"><h2>should see that &#x27;-123&#x27; has the type &#x27;number&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, &#x22;number&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-123&#x27; has the subtype &#x27;integer&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the integral part of &#x27;-123&#x27; is &#x27;123&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the decimal part of &#x27;-123&#x27; is &#x27;&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that the sign of &#x27;-123&#x27; is &#x27;negative&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-123&#x27; has an explicit sign<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-123&#x27; has 0 leading zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-123&#x27; has 0 trailing zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);</code></pre></li><li class="test pass fast"><h2>should see that there are a minimum of 3 s.f. in &#x27;-123&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);</code></pre></li><li class="test pass fast"><h2>should see that there are a maximum of 3 s.f. in &#x27;-123&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-123&#x27; has 0 decimal places<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);</code></pre></li></ul></li><li class="suite"><h1>-00123</h1><ul><li class="test pass fast"><h2>should see that &#x27;-00123&#x27; has the type &#x27;number&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, &#x22;number&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-00123&#x27; has the subtype &#x27;integer&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the integral part of &#x27;-00123&#x27; is &#x27;00123&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the decimal part of &#x27;-00123&#x27; is &#x27;&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that the sign of &#x27;-00123&#x27; is &#x27;negative&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-00123&#x27; has an explicit sign<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-00123&#x27; has 2 leading zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-00123&#x27; has 0 trailing zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);</code></pre></li><li class="test pass fast"><h2>should see that there are a minimum of 3 s.f. in &#x27;-00123&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);</code></pre></li><li class="test pass fast"><h2>should see that there are a maximum of 3 s.f. in &#x27;-00123&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-00123&#x27; has 0 decimal places<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);</code></pre></li></ul></li><li class="suite"><h1>-0012300</h1><ul><li class="test pass fast"><h2>should see that &#x27;-0012300&#x27; has the type &#x27;number&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, &#x22;number&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-0012300&#x27; has the subtype &#x27;integer&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the integral part of &#x27;-0012300&#x27; is &#x27;0012300&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the decimal part of &#x27;-0012300&#x27; is &#x27;&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that the sign of &#x27;-0012300&#x27; is &#x27;negative&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-0012300&#x27; has an explicit sign<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-0012300&#x27; has 2 leading zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-0012300&#x27; has 0 trailing zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);</code></pre></li><li class="test pass fast"><h2>should see that there are a minimum of 3 s.f. in &#x27;-0012300&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);</code></pre></li><li class="test pass fast"><h2>should see that there are a maximum of 5 s.f. in &#x27;-0012300&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-0012300&#x27; has 0 decimal places<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);</code></pre></li></ul></li><li class="suite"><h1>-0012300456</h1><ul><li class="test pass fast"><h2>should see that &#x27;-0012300456&#x27; has the type &#x27;number&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, &#x22;number&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-0012300456&#x27; has the subtype &#x27;integer&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the integral part of &#x27;-0012300456&#x27; is &#x27;0012300456&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the decimal part of &#x27;-0012300456&#x27; is &#x27;&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that the sign of &#x27;-0012300456&#x27; is &#x27;negative&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-0012300456&#x27; has an explicit sign<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-0012300456&#x27; has 2 leading zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-0012300456&#x27; has 0 trailing zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);</code></pre></li><li class="test pass fast"><h2>should see that there are a minimum of 8 s.f. in &#x27;-0012300456&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);</code></pre></li><li class="test pass fast"><h2>should see that there are a maximum of 8 s.f. in &#x27;-0012300456&#x27;<span class="duration">1ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-0012300456&#x27; has 0 decimal places<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);</code></pre></li></ul></li><li class="suite"><h1>12.345</h1><ul><li class="test pass fast"><h2>should see that &#x27;12.345&#x27; has the type &#x27;number&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, &#x22;number&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;12.345&#x27; has the subtype &#x27;decimalNumber&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the integral part of &#x27;12.345&#x27; is &#x27;12&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the decimal part of &#x27;12.345&#x27; is &#x27;.345&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that the sign of &#x27;12.345&#x27; is &#x27;positive&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;12.345&#x27; has an implicit sign<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;12.345&#x27; has 0 leading zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;12.345&#x27; has 0 trailing zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);</code></pre></li><li class="test pass fast"><h2>should see that there are a minimum of 5 s.f. in &#x27;12.345&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);</code></pre></li><li class="test pass fast"><h2>should see that there are a maximum of 5 s.f. in &#x27;12.345&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;12.345&#x27; has 3 decimal places<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);</code></pre></li></ul></li><li class="suite"><h1>+12.345</h1><ul><li class="test pass fast"><h2>should see that &#x27;+12.345&#x27; has the type &#x27;number&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, &#x22;number&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+12.345&#x27; has the subtype &#x27;decimalNumber&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the integral part of &#x27;+12.345&#x27; is &#x27;12&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the decimal part of &#x27;+12.345&#x27; is &#x27;.345&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that the sign of &#x27;+12.345&#x27; is &#x27;positive&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+12.345&#x27; has an explicit sign<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+12.345&#x27; has 0 leading zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+12.345&#x27; has 0 trailing zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);</code></pre></li><li class="test pass fast"><h2>should see that there are a minimum of 5 s.f. in &#x27;+12.345&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);</code></pre></li><li class="test pass fast"><h2>should see that there are a maximum of 5 s.f. in &#x27;+12.345&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+12.345&#x27; has 3 decimal places<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);</code></pre></li></ul></li><li class="suite"><h1>-12.345</h1><ul><li class="test pass fast"><h2>should see that &#x27;-12.345&#x27; has the type &#x27;number&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, &#x22;number&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-12.345&#x27; has the subtype &#x27;decimalNumber&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the integral part of &#x27;-12.345&#x27; is &#x27;12&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the decimal part of &#x27;-12.345&#x27; is &#x27;.345&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that the sign of &#x27;-12.345&#x27; is &#x27;negative&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-12.345&#x27; has an explicit sign<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-12.345&#x27; has 0 leading zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-12.345&#x27; has 0 trailing zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);</code></pre></li><li class="test pass fast"><h2>should see that there are a minimum of 5 s.f. in &#x27;-12.345&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);</code></pre></li><li class="test pass fast"><h2>should see that there are a maximum of 5 s.f. in &#x27;-12.345&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-12.345&#x27; has 3 decimal places<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);</code></pre></li></ul></li><li class="suite"><h1>0.123</h1><ul><li class="test pass fast"><h2>should see that &#x27;0.123&#x27; has the type &#x27;number&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, &#x22;number&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;0.123&#x27; has the subtype &#x27;decimalNumber&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the integral part of &#x27;0.123&#x27; is &#x27;0&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the decimal part of &#x27;0.123&#x27; is &#x27;.123&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that the sign of &#x27;0.123&#x27; is &#x27;positive&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;0.123&#x27; has an implicit sign<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;0.123&#x27; has 1 leading zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;0.123&#x27; has 0 trailing zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);</code></pre></li><li class="test pass fast"><h2>should see that there are a minimum of 3 s.f. in &#x27;0.123&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);</code></pre></li><li class="test pass fast"><h2>should see that there are a maximum of 3 s.f. in &#x27;0.123&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;0.123&#x27; has 3 decimal places<span class="duration">1ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);</code></pre></li></ul></li><li class="suite"><h1>.123</h1><ul><li class="test pass fast"><h2>should see that &#x27;.123&#x27; has the type &#x27;number&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, &#x22;number&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;.123&#x27; has the subtype &#x27;decimalNumber&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the integral part of &#x27;.123&#x27; is &#x27;&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the decimal part of &#x27;.123&#x27; is &#x27;.123&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that the sign of &#x27;.123&#x27; is &#x27;positive&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;.123&#x27; has an implicit sign<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;.123&#x27; has 0 leading zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;.123&#x27; has 0 trailing zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);</code></pre></li><li class="test pass fast"><h2>should see that there are a minimum of 3 s.f. in &#x27;.123&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);</code></pre></li><li class="test pass fast"><h2>should see that there are a maximum of 3 s.f. in &#x27;.123&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;.123&#x27; has 3 decimal places<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);</code></pre></li></ul></li><li class="suite"><h1>-.12300</h1><ul><li class="test pass fast"><h2>should see that &#x27;-.12300&#x27; has the type &#x27;number&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, &#x22;number&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-.12300&#x27; has the subtype &#x27;decimalNumber&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the integral part of &#x27;-.12300&#x27; is &#x27;&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the decimal part of &#x27;-.12300&#x27; is &#x27;.12300&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that the sign of &#x27;-.12300&#x27; is &#x27;negative&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-.12300&#x27; has an explicit sign<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-.12300&#x27; has 0 leading zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-.12300&#x27; has 2 trailing zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);</code></pre></li><li class="test pass fast"><h2>should see that there are a minimum of 5 s.f. in &#x27;-.12300&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);</code></pre></li><li class="test pass fast"><h2>should see that there are a maximum of 5 s.f. in &#x27;-.12300&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-.12300&#x27; has 5 decimal places<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);</code></pre></li></ul></li><li class="suite"><h1>-.0012300456</h1><ul><li class="test pass fast"><h2>should see that &#x27;-.0012300456&#x27; has the type &#x27;number&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, &#x22;number&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-.0012300456&#x27; has the subtype &#x27;decimalNumber&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the integral part of &#x27;-.0012300456&#x27; is &#x27;&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the decimal part of &#x27;-.0012300456&#x27; is &#x27;.0012300456&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that the sign of &#x27;-.0012300456&#x27; is &#x27;negative&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-.0012300456&#x27; has an explicit sign<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-.0012300456&#x27; has 0 leading zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-.0012300456&#x27; has 0 trailing zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);</code></pre></li><li class="test pass fast"><h2>should see that there are a minimum of 8 s.f. in &#x27;-.0012300456&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);</code></pre></li><li class="test pass fast"><h2>should see that there are a maximum of 8 s.f. in &#x27;-.0012300456&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-.0012300456&#x27; has 10 decimal places<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);</code></pre></li></ul></li><li class="suite"><h1>123.</h1><ul><li class="test pass fast"><h2>should see that &#x27;123.&#x27; has the type &#x27;number&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, &#x22;number&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;123.&#x27; has the subtype &#x27;decimalNumber&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the integral part of &#x27;123.&#x27; is &#x27;123&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the decimal part of &#x27;123.&#x27; is &#x27;.&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that the sign of &#x27;123.&#x27; is &#x27;positive&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;123.&#x27; has an implicit sign<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;123.&#x27; has 0 leading zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;123.&#x27; has 0 trailing zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);</code></pre></li><li class="test pass fast"><h2>should see that there are a minimum of 3 s.f. in &#x27;123.&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);</code></pre></li><li class="test pass fast"><h2>should see that there are a maximum of 3 s.f. in &#x27;123.&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;123.&#x27; has 0 decimal places<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);</code></pre></li></ul></li><li class="suite"><h1>000.123</h1><ul><li class="test pass fast"><h2>should see that &#x27;000.123&#x27; has the type &#x27;number&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, &#x22;number&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;000.123&#x27; has the subtype &#x27;decimalNumber&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the integral part of &#x27;000.123&#x27; is &#x27;000&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the decimal part of &#x27;000.123&#x27; is &#x27;.123&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that the sign of &#x27;000.123&#x27; is &#x27;positive&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;000.123&#x27; has an implicit sign<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;000.123&#x27; has 3 leading zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;000.123&#x27; has 0 trailing zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);</code></pre></li><li class="test pass fast"><h2>should see that there are a minimum of 3 s.f. in &#x27;000.123&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);</code></pre></li><li class="test pass fast"><h2>should see that there are a maximum of 3 s.f. in &#x27;000.123&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;000.123&#x27; has 3 decimal places<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);</code></pre></li></ul></li><li class="suite"><h1>0</h1><ul><li class="test pass fast"><h2>should see that &#x27;0&#x27; has the type &#x27;number&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, &#x22;number&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;0&#x27; has the subtype &#x27;integer&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the integral part of &#x27;0&#x27; is &#x27;0&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the decimal part of &#x27;0&#x27; is &#x27;&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that the sign of &#x27;0&#x27; is &#x27;zero&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;0&#x27; has an implicit sign<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;0&#x27; has 1 leading zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;0&#x27; has 0 trailing zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);</code></pre></li><li class="test pass fast"><h2>should see that there are a minimum of 1 s.f. in &#x27;0&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);</code></pre></li><li class="test pass fast"><h2>should see that there are a maximum of 1 s.f. in &#x27;0&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;0&#x27; has 0 decimal places<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);</code></pre></li></ul></li><li class="suite"><h1>000</h1><ul><li class="test pass fast"><h2>should see that &#x27;000&#x27; has the type &#x27;number&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, &#x22;number&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;000&#x27; has the subtype &#x27;integer&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the integral part of &#x27;000&#x27; is &#x27;000&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the decimal part of &#x27;000&#x27; is &#x27;&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that the sign of &#x27;000&#x27; is &#x27;zero&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;000&#x27; has an implicit sign<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;000&#x27; has 3 leading zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;000&#x27; has 0 trailing zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);</code></pre></li><li class="test pass fast"><h2>should see that there are a minimum of 1 s.f. in &#x27;000&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);</code></pre></li><li class="test pass fast"><h2>should see that there are a maximum of 1 s.f. in &#x27;000&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;000&#x27; has 0 decimal places<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);</code></pre></li></ul></li><li class="suite"><h1>0.0</h1><ul><li class="test pass fast"><h2>should see that &#x27;0.0&#x27; has the type &#x27;number&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, &#x22;number&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;0.0&#x27; has the subtype &#x27;decimalNumber&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the integral part of &#x27;0.0&#x27; is &#x27;0&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the decimal part of &#x27;0.0&#x27; is &#x27;.0&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that the sign of &#x27;0.0&#x27; is &#x27;zero&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;0.0&#x27; has an implicit sign<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;0.0&#x27; has 1 leading zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;0.0&#x27; has 1 trailing zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);</code></pre></li><li class="test pass fast"><h2>should see that there are a minimum of 1 s.f. in &#x27;0.0&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);</code></pre></li><li class="test pass fast"><h2>should see that there are a maximum of 1 s.f. in &#x27;0.0&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;0.0&#x27; has 1 decimal places<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);</code></pre></li></ul></li><li class="suite"><h1>0.0000</h1><ul><li class="test pass fast"><h2>should see that &#x27;0.0000&#x27; has the type &#x27;number&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, &#x22;number&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;0.0000&#x27; has the subtype &#x27;decimalNumber&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the integral part of &#x27;0.0000&#x27; is &#x27;0&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the decimal part of &#x27;0.0000&#x27; is &#x27;.0000&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that the sign of &#x27;0.0000&#x27; is &#x27;zero&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;0.0000&#x27; has an implicit sign<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;0.0000&#x27; has 1 leading zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;0.0000&#x27; has 4 trailing zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);</code></pre></li><li class="test pass fast"><h2>should see that there are a minimum of 1 s.f. in &#x27;0.0000&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);</code></pre></li><li class="test pass fast"><h2>should see that there are a maximum of 1 s.f. in &#x27;0.0000&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;0.0000&#x27; has 4 decimal places<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);</code></pre></li></ul></li><li class="suite"><h1>000.0</h1><ul><li class="test pass fast"><h2>should see that &#x27;000.0&#x27; has the type &#x27;number&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, &#x22;number&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;000.0&#x27; has the subtype &#x27;decimalNumber&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the integral part of &#x27;000.0&#x27; is &#x27;000&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the decimal part of &#x27;000.0&#x27; is &#x27;.0&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that the sign of &#x27;000.0&#x27; is &#x27;zero&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;000.0&#x27; has an implicit sign<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;000.0&#x27; has 3 leading zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;000.0&#x27; has 1 trailing zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);</code></pre></li><li class="test pass fast"><h2>should see that there are a minimum of 1 s.f. in &#x27;000.0&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);</code></pre></li><li class="test pass fast"><h2>should see that there are a maximum of 1 s.f. in &#x27;000.0&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;000.0&#x27; has 1 decimal places<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);</code></pre></li></ul></li><li class="suite"><h1>000.0000</h1><ul><li class="test pass fast"><h2>should see that &#x27;000.0000&#x27; has the type &#x27;number&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, &#x22;number&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;000.0000&#x27; has the subtype &#x27;decimalNumber&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the integral part of &#x27;000.0000&#x27; is &#x27;000&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the decimal part of &#x27;000.0000&#x27; is &#x27;.0000&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that the sign of &#x27;000.0000&#x27; is &#x27;zero&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;000.0000&#x27; has an implicit sign<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;000.0000&#x27; has 3 leading zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;000.0000&#x27; has 4 trailing zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);</code></pre></li><li class="test pass fast"><h2>should see that there are a minimum of 1 s.f. in &#x27;000.0000&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);</code></pre></li><li class="test pass fast"><h2>should see that there are a maximum of 1 s.f. in &#x27;000.0000&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;000.0000&#x27; has 4 decimal places<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);</code></pre></li></ul></li><li class="suite"><h1>+0</h1><ul><li class="test pass fast"><h2>should see that &#x27;+0&#x27; has the type &#x27;number&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, &#x22;number&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+0&#x27; has the subtype &#x27;integer&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the integral part of &#x27;+0&#x27; is &#x27;0&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the decimal part of &#x27;+0&#x27; is &#x27;&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that the sign of &#x27;+0&#x27; is &#x27;zero&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+0&#x27; has an explicit sign<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+0&#x27; has 1 leading zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+0&#x27; has 0 trailing zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);</code></pre></li><li class="test pass fast"><h2>should see that there are a minimum of 1 s.f. in &#x27;+0&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);</code></pre></li><li class="test pass fast"><h2>should see that there are a maximum of 1 s.f. in &#x27;+0&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+0&#x27; has 0 decimal places<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);</code></pre></li></ul></li><li class="suite"><h1>-0</h1><ul><li class="test pass fast"><h2>should see that &#x27;-0&#x27; has the type &#x27;number&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.type, &#x22;number&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-0&#x27; has the subtype &#x27;integer&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.subtype, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the integral part of &#x27;-0&#x27; is &#x27;0&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.integralPart, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the decimal part of &#x27;-0&#x27; is &#x27;&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.decimalPart, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that the sign of &#x27;-0&#x27; is &#x27;zero&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.sign, a[4]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-0&#x27; has an explicit sign<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.signIsExplicit, a[5]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-0&#x27; has 1 leading zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfLeadingZeros, a[6]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-0&#x27; has 0 trailing zeros<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfTrailingZeros, a[7]);</code></pre></li><li class="test pass fast"><h2>should see that there are a minimum of 1 s.f. in &#x27;-0&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.minimumNumberOfSignificantFigures, a[8]);</code></pre></li><li class="test pass fast"><h2>should see that there are a maximum of 1 s.f. in &#x27;-0&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.maximumNumberOfSignificantFigures, a[9]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-0&#x27; has 0 decimal places<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(n.numberOfDecimalPlaces, a[10]);</code></pre></li></ul></li><li class="suite"><h1>As nodes</h1><ul><li class="test pass fast"><h2>should see that &#x27;123&#x27; and &#x27;123&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   123   &#x27; and &#x27;123&#x27; ARE equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;456&#x27; and &#x27;123&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   456   &#x27; and &#x27;123&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;123.0&#x27; and &#x27;123&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;123.&#x27; and &#x27;123&#x27; ARE NOT equal<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;0123&#x27; and &#x27;123&#x27; ARE NOT equal<span class="duration">1ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), a[2]);</code></pre></li></ul></li></ul></li><li class="suite"><h1>Parsing Surds</h1><ul><li class="test pass fast"><h2>should see that &#x27;2 sqrt 2&#x27; IS a surd<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;surd&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that the coefficient of &#x27;2 sqrt 2&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.coefficient.text, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the radicand of &#x27;2 sqrt 2&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.radical.radicand.text, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2sqrt2&#x27; IS a surd<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;surd&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that the coefficient of &#x27;2sqrt2&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.coefficient.text, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the radicand of &#x27;2sqrt2&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.radical.radicand.text, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2 sqrt2&#x27; IS a surd<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;surd&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that the coefficient of &#x27;2 sqrt2&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.coefficient.text, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the radicand of &#x27;2 sqrt2&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.radical.radicand.text, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2sqrt 2&#x27; IS a surd<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;surd&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that the coefficient of &#x27;2sqrt 2&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.coefficient.text, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the radicand of &#x27;2sqrt 2&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.radical.radicand.text, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2 sqrt(2)&#x27; IS a surd<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;surd&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that the coefficient of &#x27;2 sqrt(2)&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.coefficient.text, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the radicand of &#x27;2 sqrt(2)&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.radical.radicand.text, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2 sqrt (2)&#x27; IS a surd<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;surd&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that the coefficient of &#x27;2 sqrt (2)&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.coefficient.text, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the radicand of &#x27;2 sqrt (2)&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.radical.radicand.text, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2 sqrt ( 2 )&#x27; IS a surd<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;surd&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that the coefficient of &#x27;2 sqrt ( 2 )&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.coefficient.text, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the radicand of &#x27;2 sqrt ( 2 )&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.radical.radicand.text, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2 sqrt ((2))&#x27; IS a surd<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;surd&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that the coefficient of &#x27;2 sqrt ((2))&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.coefficient.text, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the radicand of &#x27;2 sqrt ((2))&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.radical.radicand.text, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2 sqrt (((2)))&#x27; IS a surd<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;surd&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that the coefficient of &#x27;2 sqrt (((2)))&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.coefficient.text, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the radicand of &#x27;2 sqrt (((2)))&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.radical.radicand.text, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2 sqrt ((((2))))&#x27; IS a surd<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;surd&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that the coefficient of &#x27;2 sqrt ((((2))))&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.coefficient.text, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the radicand of &#x27;2 sqrt ((((2))))&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.radical.radicand.text, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2 sqrt ( ( ( ( 2 ) ) ) )&#x27; IS a surd<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;surd&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that the coefficient of &#x27;2 sqrt ( ( ( ( 2 ) ) ) )&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.coefficient.text, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the radicand of &#x27;2 sqrt ( ( ( ( 2 ) ) ) )&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.radical.radicand.text, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3 sqrt 2&#x27; IS a surd<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;surd&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that the coefficient of &#x27;3 sqrt 2&#x27; is &#x27;3&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.coefficient.text, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the radicand of &#x27;3 sqrt 2&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.radical.radicand.text, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;4 sqrt 2&#x27; IS a surd<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;surd&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that the coefficient of &#x27;4 sqrt 2&#x27; is &#x27;4&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.coefficient.text, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the radicand of &#x27;4 sqrt 2&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.radical.radicand.text, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;12 sqrt 34&#x27; IS a surd<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;surd&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that the coefficient of &#x27;12 sqrt 34&#x27; is &#x27;12&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.coefficient.text, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the radicand of &#x27;12 sqrt 34&#x27; is &#x27;34&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.radical.radicand.text, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;12.34 sqrt 56.78&#x27; IS a surd<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;surd&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that the coefficient of &#x27;12.34 sqrt 56.78&#x27; is &#x27;12.34&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.coefficient.text, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the radicand of &#x27;12.34 sqrt 56.78&#x27; is &#x27;56.78&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.radical.radicand.text, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-2 sqrt -2&#x27; IS a surd<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;surd&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that the coefficient of &#x27;-2 sqrt -2&#x27; is &#x27;-2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.coefficient.text, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the radicand of &#x27;-2 sqrt -2&#x27; is &#x27;-2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.radical.radicand.text, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+2 sqrt +2&#x27; IS a surd<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;surd&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that the coefficient of &#x27;+2 sqrt +2&#x27; is &#x27;+2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.coefficient.text, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the radicand of &#x27;+2 sqrt +2&#x27; is &#x27;+2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.radical.radicand.text, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2 root 2&#x27; IS a surd<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;surd&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that the coefficient of &#x27;2 root 2&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.coefficient.text, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the radicand of &#x27;2 root 2&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.radical.radicand.text, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2 squareroot 2&#x27; IS a surd<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;surd&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that the coefficient of &#x27;2 squareroot 2&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.coefficient.text, a[2]);</code></pre></li><li class="test pass fast"><h2>should see that the radicand of &#x27;2 squareroot 2&#x27; is &#x27;2&#x27;<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.radical.radicand.text, a[3]);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2 sqr 3&#x27; IS NOT a surd<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;surd&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2 sqrt * 3&#x27; IS NOT a surd<span class="duration">0ms</span></h2><pre><code>assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;surd&#x22;);</code></pre></li></ul></li><li class="suite"><h1>Parsing Vectors</h1><ul><li class="suite"><h1>Whether or not it can correctly identify vectors</h1><ul><li class="test pass fast"><h2>should see that &#x27;3i&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+3i&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-3i&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3.3i&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+3.3i&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-3.3i&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+   3.3   i&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-   3.3   i&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3j&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3k&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;i&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;j&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;k&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+i&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-i&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+j&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-j&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+k&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-k&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3i+3j&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3i   +   3j&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   3   i   +   3   j   &#x27; IS a vector<span class="duration">1ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3i-3j&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   3   i   -   3   j   &#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3i+4j+5k&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3i-4j-5k&#x27; IS a vector<span class="duration">1ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-3i+4j+5k&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-3i-4j-5k&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   3   i   +   4   j   +   5   k   &#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3i+j+k&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;i+4j+k&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;i+j+5k&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;i+i&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;i+i+i&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;j+j&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;j+j+j&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;k+k&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;k+k+k&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;i+2i+3i&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;i+2i+3i+j+2j+3j+k+2k+3k&#x27; IS a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;ii&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+ii&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-ii&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3ii&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3.3ii&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;i i&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3 i i&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3.3 i i&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;ij&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;ijk&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;jj&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;ji&#x27; IS NOT a vector<span class="duration">1ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;jk&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;jki&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;kk&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;ki&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;kj&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;kij&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;a&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;b&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;c&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3a&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3b&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3c&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;+a&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-a&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3i+3ij&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3i+4j+5kk&#x27; IS NOT a vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.notEqual(r1.type, &#x22;vector&#x22;);</code></pre></li></ul></li><li class="suite"><h1>Whether or not it can see if two vectors are the same</h1><ul><li class="test pass fast"><h2>should see that &#x27;i&#x27; and &#x27;i&#x27; ARE the same vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   i   &#x27; and &#x27;i&#x27; ARE the same vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;j&#x27; and &#x27;j&#x27; ARE the same vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;k&#x27; and &#x27;k&#x27; ARE the same vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3i&#x27; and &#x27;3i&#x27; ARE the same vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   3   i   &#x27; and &#x27;3i&#x27; ARE the same vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3.3i&#x27; and &#x27;3.3i&#x27; ARE the same vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;i+j&#x27; and &#x27;i+j&#x27; ARE the same vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;   i   +   j   &#x27; and &#x27;i+j&#x27; ARE the same vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3i+j&#x27; and &#x27;3i+j&#x27; ARE the same vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3i+4j&#x27; and &#x27;3i+4j&#x27; ARE the same vector<span class="duration">2ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;i+j+k&#x27; and &#x27;i+j+k&#x27; ARE the same vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;3i+4j+5k&#x27; and &#x27;3i+4j+5k&#x27; ARE the same vector<span class="duration">1ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;i+3i+j+4j+k+5k&#x27; and &#x27;i+3i+j+4j+k+5k&#x27; ARE the same vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), true);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;i+j&#x27; and &#x27;j+i&#x27; ARE NOT the same vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), false);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2i+i&#x27; and &#x27;i+2i&#x27; ARE NOT the same vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), false);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;2i+i&#x27; and &#x27;3i&#x27; ARE NOT the same vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), false);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;1i&#x27; and &#x27;i&#x27; ARE NOT the same vector<span class="duration">1ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), false);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-2i&#x27; and &#x27;2i&#x27; ARE NOT the same vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), false);</code></pre></li><li class="test pass fast"><h2>should see that &#x27;-i&#x27; and &#x27;i&#x27; ARE NOT the same vector<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+var r2 = parser.getParseResult(a[1]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.isEqualTo(r2), false);</code></pre></li></ul></li><li class="suite"><h1>Whether the ASCIIMath output is correct</h1><ul><li class="test pass fast"><h2>should see that the ASCIIMath output for &#x27;i&#x27; is &#x27;i&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.asciiMath, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the ASCIIMath output for &#x27;   i   &#x27; is &#x27;i&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.asciiMath, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the ASCIIMath output for &#x27;+i&#x27; is &#x27;+i&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.asciiMath, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the ASCIIMath output for &#x27;-i&#x27; is &#x27;-i&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.asciiMath, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the ASCIIMath output for &#x27;3i&#x27; is &#x27;3*i&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.asciiMath, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the ASCIIMath output for &#x27;3.3i&#x27; is &#x27;3.3*i&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.asciiMath, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the ASCIIMath output for &#x27;   3   i   &#x27; is &#x27;3*i&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.asciiMath, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the ASCIIMath output for &#x27;   3.3   i   &#x27; is &#x27;3.3*i&#x27;<span class="duration">1ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.asciiMath, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the ASCIIMath output for &#x27;i+j&#x27; is &#x27;i+j&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.asciiMath, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the ASCIIMath output for &#x27;i-j&#x27; is &#x27;i-j&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.asciiMath, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the ASCIIMath output for &#x27;+i+j&#x27; is &#x27;+i+j&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.asciiMath, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the ASCIIMath output for &#x27;-i-j&#x27; is &#x27;-i-j&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.asciiMath, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the ASCIIMath output for &#x27;3i+3j&#x27; is &#x27;3*i+3*j&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.asciiMath, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the ASCIIMath output for &#x27;3i+j&#x27; is &#x27;3*i+j&#x27;<span class="duration">1ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.asciiMath, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the ASCIIMath output for &#x27;i+3j&#x27; is &#x27;i+3*j&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.asciiMath, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the ASCIIMath output for &#x27;3i-3j&#x27; is &#x27;3*i-3*j&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.asciiMath, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the ASCIIMath output for &#x27;-3i-3j&#x27; is &#x27;-3*i-3*j&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.asciiMath, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the ASCIIMath output for &#x27;i+j+k&#x27; is &#x27;i+j+k&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.asciiMath, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the ASCIIMath output for &#x27;   i   +   j   +   k   &#x27; is &#x27;i+j+k&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.asciiMath, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the ASCIIMath output for &#x27;3i+4j+5k&#x27; is &#x27;3*i+4*j+5*k&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.asciiMath, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the ASCIIMath output for &#x27;   3   i   +   4   j   +   5   k   &#x27; is &#x27;3*i+4*j+5*k&#x27;<span class="duration">1ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.asciiMath, a[1]);</code></pre></li></ul></li><li class="suite"><h1>Whether the LaTeX output is correct</h1><ul><li class="test pass fast"><h2>should see that the LaTeX output for &#x27;i&#x27; is &#x27;i&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.latex, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the LaTeX output for &#x27;   i   &#x27; is &#x27;i&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.latex, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the LaTeX output for &#x27;+i&#x27; is &#x27;+i&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.latex, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the LaTeX output for &#x27;-i&#x27; is &#x27;-i&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.latex, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the LaTeX output for &#x27;3i&#x27; is &#x27;3i&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.latex, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the LaTeX output for &#x27;3.3i&#x27; is &#x27;3.3i&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.latex, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the LaTeX output for &#x27;   3   i   &#x27; is &#x27;3i&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.latex, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the LaTeX output for &#x27;   3.3   i   &#x27; is &#x27;3.3i&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.latex, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the LaTeX output for &#x27;i+j&#x27; is &#x27;i+j&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.latex, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the LaTeX output for &#x27;i-j&#x27; is &#x27;i-j&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.latex, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the LaTeX output for &#x27;+i+j&#x27; is &#x27;+i+j&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.latex, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the LaTeX output for &#x27;-i-j&#x27; is &#x27;-i-j&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.latex, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the LaTeX output for &#x27;3i+3j&#x27; is &#x27;3i+3j&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.latex, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the LaTeX output for &#x27;3i+j&#x27; is &#x27;3i+j&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.latex, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the LaTeX output for &#x27;i+3j&#x27; is &#x27;i+3j&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.latex, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the LaTeX output for &#x27;3i-3j&#x27; is &#x27;3i-3j&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.latex, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the LaTeX output for &#x27;-3i-3j&#x27; is &#x27;-3i-3j&#x27;<span class="duration">1ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.latex, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the LaTeX output for &#x27;i+j+k&#x27; is &#x27;i+j+k&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.latex, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the LaTeX output for &#x27;   i   +   j   +   k   &#x27; is &#x27;i+j+k&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.latex, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the LaTeX output for &#x27;3i+4j+5k&#x27; is &#x27;3i+4j+5k&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.latex, a[1]);</code></pre></li><li class="test pass fast"><h2>should see that the LaTeX output for &#x27;   3   i   +   4   j   +   5   k   &#x27; is &#x27;3i+4j+5k&#x27;<span class="duration">0ms</span></h2><pre><code>var r1 = parser.getParseResult(a[0]);
+assert__WEBPACK_IMPORTED_MODULE_0___default.a.equal(r1.latex, a[1]);</code></pre></li></ul></li></ul></li></ul>
+        </div>
+        <script>
+        function hideSuitesWithout(className) {
+    var suites = document.querySelectorAll('#report > .suite');
+
+    for (var i = 0; i < suites.length; i++) {
+        let suite = suites[i];
+
+        var els = suite.getElementsByClassName(className);
+        if (!els.length) {
+            suite.classList.add('hidden');
+        }
+    }
+}
+
+function unhide() {
+    var suites = document.getElementsByClassName('suite hidden');
+
+    while (suites.length) {
+        suites[0].classList.remove('hidden');
+    }
+}
+
+function togglePasses() {
+    var report = document.getElementById('report');
+
+    report.classList.toggle('hide-passes');
+
+    if (report.classList.contains('hide-passes')) {
+        hideSuitesWithout('test fail');
+    } else {
+        unhide();
+    }
+}
+
+document.getElementById('toggle-passes').addEventListener('click', function(e) {
+    e.preventDefault();
+    
+    this.classList.toggle('checked');
+
+    togglePasses();
+});
+
+var tests = document.getElementsByClassName('test');
+
+for (var i = 0; i < tests.length; i++) {
+    var elem = tests[i];
+    var head = elem.children[0];
+
+    head.onclick = function () {
+        var code = this.parentElement.children[1];
+        var display = code.style.display;
+
+        if (display && display === 'block') {
+            code.style.display = 'none';
+        } else {
+            code.style.display = 'block';
+        }
+    };
+}
+        </script>
+    </body>
+</html>

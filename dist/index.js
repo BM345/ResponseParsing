@@ -910,6 +910,7 @@ class RPProductNode extends RPNode {
 class SimplifierSettings {
     constructor() {
         this.lookForVectors = true;
+        this.changeIJKToUnitVectors = true;
         this.lookForComplexNumbers = false;
     }
 }
@@ -923,7 +924,7 @@ class Simplifier {
 
         node.subnodes = this.simplifyNodes(node.subnodes, d + 1);
 
-        if (this.settings.lookForVectors) {
+        if (this.settings.lookForVectors && this.settings.changeIJKToUnitVectors) {
             node = this.replaceWithUnitVectors(node);
         }
 
@@ -1207,7 +1208,7 @@ class responseparsing_ResponseParser {
 
     // The top-level parse function (for now).
     getParseResult(inputText) {
-        console.log(inputText);
+     //   console.log(inputText);
 
         var m1 = new Marker();
 
@@ -1217,7 +1218,7 @@ class responseparsing_ResponseParser {
             expression = this.simplifier.simplifyNode(expression);
             expression.setDepth();
 
-            console.log(expression);
+        //    console.log(expression);
 
             return expression;
         }
@@ -1227,14 +1228,14 @@ class responseparsing_ResponseParser {
     }
 
     getInteger(inputText) {
-        console.log(inputText);
+     //   console.log(inputText);
 
         var m1 = new Marker();
 
         var number = this.parseNumber(inputText, m1);
 
         if (number !== null && number.subtype == "integer" && m1.position == inputText.length) {
-            console.log(number);
+        //    console.log(number);
 
             return number;
         }
@@ -1243,14 +1244,14 @@ class responseparsing_ResponseParser {
     }
 
     getNumber(inputText) {
-        console.log(inputText);
+      //  console.log(inputText);
 
         var m1 = new Marker();
 
         var number = this.parseNumber(inputText, m1);
 
         if (number !== null && m1.position == inputText.length) {
-            console.log(number);
+       //     console.log(number);
 
             return number;
         }
@@ -1259,7 +1260,7 @@ class responseparsing_ResponseParser {
     }
 
     getFraction(inputText) {
-        console.log(inputText);
+      //  console.log(inputText);
 
         var m1 = new Marker();
         var m2 = new Marker();
@@ -1268,13 +1269,13 @@ class responseparsing_ResponseParser {
         var fraction = this.parseFraction(inputText, m2);
 
         if (number !== null && m1.position == inputText.length) {
-            console.log(number);
+       //     console.log(number);
 
             return number;
         }
 
         if (fraction !== null && m2.position == inputText.length) {
-            console.log(fraction);
+        //    console.log(fraction);
 
             return fraction;
         }

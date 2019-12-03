@@ -338,14 +338,12 @@ export class ResponseParser {
         var matchString = ""
         var match = null;
 
-        nodes.namedFunctions.forEach(nf => {
-            nf.allowedWritings.map(a => a).sort((a, b) => { return b.length - a.length }).forEach(w => {
-                if (inputText.substr(marker.position, w.length) == w) {
-                    match = nf;
-                    matchString = w;
-                    marker.position += w.length;
-                }
-            });
+        nodes.namedFunctionsOrdered.forEach(nf => {
+            if (inputText.substr(marker.position, nf[0].length) == nf[0]) {
+                match = nf[1];
+                matchString = nf[0];
+                marker.position += nf[0].length;
+            }
         });
 
         if (match === null) { return null; }

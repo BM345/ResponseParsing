@@ -341,22 +341,29 @@ const greekLetters = [
     new RPGreekLetter("gamma", "gamma", "\\gamma"),
     new RPGreekLetter("delta", "delta", "\\delta"),
     new RPGreekLetter("epsilon", "epsilon", "\\epsilon"),
+    new RPGreekLetter("epsilonVariant", "", "\\varepsilon"),
     new RPGreekLetter("zeta", "zeta", "\\zeta"),
     new RPGreekLetter("eta", "eta", "\\eta"),
     new RPGreekLetter("theta", "theta", "\\theta"),
+    new RPGreekLetter("thetaVariant", "", "\\vartheta"),
     new RPGreekLetter("iota", "iota", "\\iota"),
     new RPGreekLetter("kappa", "kappa", "\\kappa"),
+    new RPGreekLetter("kappaVariant", "", "\\varkappa"),
     new RPGreekLetter("lambda", "lambda", "\\lambda"),
     new RPGreekLetter("mu", "mu", "\\mu"),
     new RPGreekLetter("nu", "nu", "\\nu"),
     new RPGreekLetter("xi", "xi", "\\xi"),
     new RPGreekLetter("omicron", "omicron", "\\omicron"),
     new RPGreekLetter("pi", "pi", "\\pi"),
+    new RPGreekLetter("piVariant", "", "\\varpi"),
     new RPGreekLetter("rho", "rho", "\\rho"),
+    new RPGreekLetter("rhoVariant", "", "\\varrho"),
     new RPGreekLetter("sigma", "sigma", "\\sigma"),
+    new RPGreekLetter("sigmaVariant", "", "\\varsigma"),
     new RPGreekLetter("tau", "tau", "\\tau"),
     new RPGreekLetter("upsilon", "upsilon", "\\upsilon"),
     new RPGreekLetter("phi", "phi", "\\phi"),
+    new RPGreekLetter("phiVariant", "", "\\varphi"),
     new RPGreekLetter("chi", "chi", "\\chi"),
     new RPGreekLetter("psi", "psi", "\\psi"),
     new RPGreekLetter("omega", "omega", "\\omega"),
@@ -672,14 +679,29 @@ class RPNamedFunction {
     }
 }
 
-var namedFunctions = [
+const namedFunctions = [
     new RPNamedFunction("Sine", ["sin", "sine"], "\\sin", "sin"),
     new RPNamedFunction("Cosine", ["cos", "cosine"], "\\cos", "cos"),
     new RPNamedFunction("Tangent", ["tan", "tangent"], "\\tan", "tan"),
     new RPNamedFunction("Arcsine", ["asin", "arcsin", "arcsine"], "\\arcsin", "arcsin"),
     new RPNamedFunction("Arccosine", ["acos", "arccos", "arccosine"], "\\arccos", "arccos"),
     new RPNamedFunction("Arctangent", ["atan", "arctan", "arctangent"], "\\arctan", "arctan"),
+    new RPNamedFunction("Secant", ["sec", "secant"], "\\sec", "sec"),
+    new RPNamedFunction("Cosecant", ["csc", "cosec", "cosecant"], "\\csc", "csc"),
+    new RPNamedFunction("Cotangent", ["cot", "cotan", "cotangent"], "\\cot", "cot"),
+    new RPNamedFunction("Arcsecant", ["asec", "arcsec", "arcsecant"], "\\arcsec", "arcsec"),
+    new RPNamedFunction("Arccosecant", ["acsc", "arccsc", "acosec", "arccosec", "arccosecant"], "\\arccsc", "arccsc"),
+    new RPNamedFunction("Arccotangent", ["acot", "arccot", "acotan", "arccotan", "arccotangent"], "\\arccot", "arccot"),
+    new RPNamedFunction("Hyperbolic Sine", ["sinh"], "\\sinh", "sinh"),
+    new RPNamedFunction("Hyperbolic Cosine", ["cosh"], "\\cosh", "cosh"),
+    new RPNamedFunction("Hyperbolic Tangent", ["tanh"], "\\tanh", "tanh"),
+    new RPNamedFunction("Hyperbolic Secant", ["sech"], "\\sech", "sech"),
+    new RPNamedFunction("Hyperbolic Cosecant", ["csch"], "\\csch", "csch"),
+    new RPNamedFunction("Hyperbolic Cotangent", ["coth"], "\\coth", "coth"),
+    new RPNamedFunction("Sinc", ["sinc"], "\\text{sinc}\\,", "sinc"),
 ];
+
+var namedFunctionsOrdered = [].concat.apply([], namedFunctions.map(nf => nf.allowedWritings.map(aw => [aw, nf]))).sort((a, b) => { return b[0].length - a[0].length; });
 
 class RPNamedFunctionNode extends RPNode {
     constructor() {
@@ -1482,14 +1504,12 @@ class responseparsing_ResponseParser {
         var matchString = ""
         var match = null;
 
-        namedFunctions.forEach(nf => {
-            nf.allowedWritings.map(a => a).sort((a, b) => { return b.length - a.length }).forEach(w => {
-                if (inputText.substr(marker.position, w.length) == w) {
-                    match = nf;
-                    matchString = w;
-                    marker.position += w.length;
-                }
-            });
+        namedFunctionsOrdered.forEach(nf => {
+            if (inputText.substr(marker.position, nf[0].length) == nf[0]) {
+                match = nf[1];
+                matchString = nf[0];
+                marker.position += nf[0].length;
+            }
         });
 
         if (match === null) { return null; }

@@ -586,7 +586,7 @@ export class RPNamedFunction {
     }
 }
 
-export var namedFunctions = [
+export const namedFunctions = [
     new RPNamedFunction("Sine", ["sin", "sine"], "\\sin", "sin"),
     new RPNamedFunction("Cosine", ["cos", "cosine"], "\\cos", "cos"),
     new RPNamedFunction("Tangent", ["tan", "tangent"], "\\tan", "tan"),
@@ -604,8 +604,11 @@ export var namedFunctions = [
     new RPNamedFunction("Hyperbolic Tangent", ["tanh"], "\\tanh", "tanh"),
     new RPNamedFunction("Hyperbolic Secant", ["sech"], "\\sech", "sech"),
     new RPNamedFunction("Hyperbolic Cosecant", ["csch"], "\\csch", "csch"),
-    new RPNamedFunction("Hyperbolic Cotangent", ["coth"], "\\coth", "coth")
+    new RPNamedFunction("Hyperbolic Cotangent", ["coth"], "\\coth", "coth"),
+    new RPNamedFunction("Sinc", ["sinc"], "\\text{sinc}\\,", "sinc"),
 ];
+
+export var namedFunctionsOrdered = [].concat.apply([], namedFunctions.map(nf => nf.allowedWritings.map(aw => [aw, nf]))).sort((a, b) => { return b[0].length - a[0].length; });
 
 export class RPNamedFunctionNode extends RPNode {
     constructor() {

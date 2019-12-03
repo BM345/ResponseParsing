@@ -4,6 +4,7 @@ import * as rp from "../src/responseparsing.js";
 var parser = new rp.ResponseParser();
 
 parser.simplifier.settings.lookForVectors = true;
+parser.simplifier.settings.changeIJKToUnitVectors = false;
 parser.simplifier.settings.lookForComplexNumbers = false;
 
 describe("Parsing Vectors", function () {

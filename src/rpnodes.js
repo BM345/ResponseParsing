@@ -354,7 +354,7 @@ export class RPOperatorNode extends RPNode {
     }
 
     get precedence() {
-        return "+-*/^!=".indexOf(this.value);
+        return "+-*/^!".indexOf(this.value);
     }
 
     get latex() {
@@ -817,6 +817,7 @@ export class RPProductNode extends RPNode {
 export class SimplifierSettings {
     constructor() {
         this.lookForVectors = true;
+        this.changeIJKToUnitVectors = true;
         this.lookForComplexNumbers = false;
     }
 }
@@ -830,7 +831,7 @@ export class Simplifier {
 
         node.subnodes = this.simplifyNodes(node.subnodes, d + 1);
 
-        if (this.settings.lookForVectors) {
+        if (this.settings.lookForVectors && this.settings.changeIJKToUnitVectors) {
             node = this.replaceWithUnitVectors(node);
         }
 

@@ -447,7 +447,7 @@ class RPOperatorNode extends RPNode {
     }
 
     get precedence() {
-        return "+-*/^!=".indexOf(this.value);
+        return "+-*/^!".indexOf(this.value);
     }
 
     get latex() {
@@ -1318,6 +1318,15 @@ class responseparsing_ResponseParser {
             if (node === null) { break; }
 
             if (node.type == "operator" || node.type == "namedFunction") {
+                if (lastNode !== undefined && lastNode.type != "operator" && node.type == "namedFunction") {
+                    var implicitTimes = new RPOperatorNode();
+
+                    implicitTimes.value = "*";
+                    implicitTimes.isImplicit = true;
+
+                    operatorStack.push(implicitTimes);
+                }
+
                 this._applyOperators(operandStack, operatorStack, node);
 
                 operatorStack.push(node);
@@ -1359,7 +1368,7 @@ class responseparsing_ResponseParser {
             }
         }
 
-        if (lastNode != undefined && lastNode.type == "operator") {
+        if (lastNode != undefined && (lastNode.type == "operator" || lastNode.type == "namedFunction")) {
             operatorStack.pop();
         }
 

@@ -41,7 +41,7 @@ export class ResponseParser {
 
     // The top-level parse function (for now).
     getParseResult(inputText) {
-        console.log(inputText);
+     //   console.log(inputText);
 
         var m1 = new Marker();
 
@@ -51,7 +51,7 @@ export class ResponseParser {
             expression = this.simplifier.simplifyNode(expression);
             expression.setDepth();
 
-            console.log(expression);
+        //    console.log(expression);
 
             return expression;
         }
@@ -61,14 +61,14 @@ export class ResponseParser {
     }
 
     getInteger(inputText) {
-        console.log(inputText);
+     //   console.log(inputText);
 
         var m1 = new Marker();
 
         var number = this.parseNumber(inputText, m1);
 
         if (number !== null && number.subtype == "integer" && m1.position == inputText.length) {
-            console.log(number);
+        //    console.log(number);
 
             return number;
         }
@@ -77,14 +77,14 @@ export class ResponseParser {
     }
 
     getNumber(inputText) {
-        console.log(inputText);
+      //  console.log(inputText);
 
         var m1 = new Marker();
 
         var number = this.parseNumber(inputText, m1);
 
         if (number !== null && m1.position == inputText.length) {
-            console.log(number);
+       //     console.log(number);
 
             return number;
         }
@@ -93,7 +93,7 @@ export class ResponseParser {
     }
 
     getFraction(inputText) {
-        console.log(inputText);
+      //  console.log(inputText);
 
         var m1 = new Marker();
         var m2 = new Marker();
@@ -102,13 +102,13 @@ export class ResponseParser {
         var fraction = this.parseFraction(inputText, m2);
 
         if (number !== null && m1.position == inputText.length) {
-            console.log(number);
+       //     console.log(number);
 
             return number;
         }
 
         if (fraction !== null && m2.position == inputText.length) {
-            console.log(fraction);
+        //    console.log(fraction);
 
             return fraction;
         }
@@ -152,6 +152,15 @@ export class ResponseParser {
             if (node === null) { break; }
 
             if (node.type == "operator" || node.type == "namedFunction") {
+                if (lastNode !== undefined && lastNode.type != "operator" && node.type == "namedFunction") {
+                    var implicitTimes = new nodes.RPOperatorNode();
+
+                    implicitTimes.value = "*";
+                    implicitTimes.isImplicit = true;
+
+                    operatorStack.push(implicitTimes);
+                }
+
                 this._applyOperators(operandStack, operatorStack, node);
 
                 operatorStack.push(node);
@@ -193,7 +202,7 @@ export class ResponseParser {
             }
         }
 
-        if (lastNode != undefined && lastNode.type == "operator") {
+        if (lastNode != undefined && (lastNode.type == "operator" || lastNode.type == "namedFunction")) {
             operatorStack.pop();
         }
 

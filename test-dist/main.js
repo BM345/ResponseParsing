@@ -841,6 +841,96 @@ class RPIdentifierNode extends RPNode {
     }
 }
 
+class RPGreekLetter {
+    constructor(name, asciiMath, latex) {
+        this.name = name;
+        this.asciiMath = asciiMath;
+        this.latex = latex;
+    }
+}
+
+const greekLetters = [
+    new RPGreekLetter("alpha", "alpha", "\\alpha"),
+    new RPGreekLetter("beta", "beta", "\\beta"),
+    new RPGreekLetter("gamma", "gamma", "\\gamma"),
+    new RPGreekLetter("delta", "delta", "\\delta"),
+    new RPGreekLetter("epsilon", "epsilon", "\\epsilon"),
+    new RPGreekLetter("epsilonVariant", "", "\\varepsilon"),
+    new RPGreekLetter("zeta", "zeta", "\\zeta"),
+    new RPGreekLetter("eta", "eta", "\\eta"),
+    new RPGreekLetter("theta", "theta", "\\theta"),
+    new RPGreekLetter("thetaVariant", "", "\\vartheta"),
+    new RPGreekLetter("iota", "iota", "\\iota"),
+    new RPGreekLetter("kappa", "kappa", "\\kappa"),
+    new RPGreekLetter("kappaVariant", "", "\\varkappa"),
+    new RPGreekLetter("lambda", "lambda", "\\lambda"),
+    new RPGreekLetter("mu", "mu", "\\mu"),
+    new RPGreekLetter("nu", "nu", "\\nu"),
+    new RPGreekLetter("xi", "xi", "\\xi"),
+    new RPGreekLetter("omicron", "omicron", "\\omicron"),
+    new RPGreekLetter("pi", "pi", "\\pi"),
+    new RPGreekLetter("piVariant", "", "\\varpi"),
+    new RPGreekLetter("rho", "rho", "\\rho"),
+    new RPGreekLetter("rhoVariant", "", "\\varrho"),
+    new RPGreekLetter("sigma", "sigma", "\\sigma"),
+    new RPGreekLetter("sigmaVariant", "", "\\varsigma"),
+    new RPGreekLetter("tau", "tau", "\\tau"),
+    new RPGreekLetter("upsilon", "upsilon", "\\upsilon"),
+    new RPGreekLetter("phi", "phi", "\\phi"),
+    new RPGreekLetter("phiVariant", "", "\\varphi"),
+    new RPGreekLetter("chi", "chi", "\\chi"),
+    new RPGreekLetter("psi", "psi", "\\psi"),
+    new RPGreekLetter("omega", "omega", "\\omega"),
+    new RPGreekLetter("capitalAlpha", "", "A"),
+    new RPGreekLetter("capitalBeta", "", "B"),
+    new RPGreekLetter("capitalGamma", "Gamma", "\\Gamma"),
+    new RPGreekLetter("capitalDelta", "Delta", "\\Delta"),
+    new RPGreekLetter("capitalEpsilon", "", "E"),
+    new RPGreekLetter("capitalZeta", "", "Z"),
+    new RPGreekLetter("capitalEta", "", "H"),
+    new RPGreekLetter("capitalTheta", "Theta", "\\Theta"),
+    new RPGreekLetter("capitalIota", "", "I"),
+    new RPGreekLetter("capitalKappa", "", "K"),
+    new RPGreekLetter("capitalLambda", "Lambda", "\\Lambda"),
+    new RPGreekLetter("capitalMu", "", "M"),
+    new RPGreekLetter("capitalNu", "", "N"),
+    new RPGreekLetter("capitalXi", "Xi", "\\Xi"),
+    new RPGreekLetter("capitalOmicron", "", "O"),
+    new RPGreekLetter("capitalPi", "Pi", "\\Pi"),
+    new RPGreekLetter("capitalRho", "", "P"),
+    new RPGreekLetter("capitalSigma", "Sigma", "\\Sigma"),
+    new RPGreekLetter("capitalTau", "", "T"),
+    new RPGreekLetter("capitalUpsilon", "", "Y"),
+    new RPGreekLetter("capitalPhi", "Phi", "\\Phi"),
+    new RPGreekLetter("capitalChi", "", "X"),
+    new RPGreekLetter("capitalPsi", "Psi", "\\Psi"),
+    new RPGreekLetter("capitalOmega", "Omega", "\\Omega")
+];
+
+class RPGreekLetterNode extends RPIdentifierNode {
+    constructor() {
+        super();
+
+        this.subtype = "greek";
+    }
+
+    isEqualTo(object) {
+        return (object.type === this.type && object.subtype === this.subtype && object.value.name === this.value.name);
+    }
+
+    get latex() {
+        return this.value.latex;
+    }
+
+    get asciiMath() {
+        return this.value.asciiMath;
+    }
+
+    get mathML() {
+        return "<mi></mi>";
+    }
+}
+
 class RPUnitVectorNode extends RPIdentifierNode {
     constructor() {
         super();
@@ -871,7 +961,7 @@ class RPOperatorNode extends RPNode {
     }
 
     get precedence() {
-        return "+-*/^!=".indexOf(this.value);
+        return "+-*/^!".indexOf(this.value);
     }
 
     get latex() {
@@ -1103,14 +1193,29 @@ class RPNamedFunction {
     }
 }
 
-var namedFunctions = [
+const namedFunctions = [
     new RPNamedFunction("Sine", ["sin", "sine"], "\\sin", "sin"),
     new RPNamedFunction("Cosine", ["cos", "cosine"], "\\cos", "cos"),
     new RPNamedFunction("Tangent", ["tan", "tangent"], "\\tan", "tan"),
     new RPNamedFunction("Arcsine", ["asin", "arcsin", "arcsine"], "\\arcsin", "arcsin"),
     new RPNamedFunction("Arccosine", ["acos", "arccos", "arccosine"], "\\arccos", "arccos"),
     new RPNamedFunction("Arctangent", ["atan", "arctan", "arctangent"], "\\arctan", "arctan"),
+    new RPNamedFunction("Secant", ["sec", "secant"], "\\sec", "sec"),
+    new RPNamedFunction("Cosecant", ["csc", "cosec", "cosecant"], "\\csc", "csc"),
+    new RPNamedFunction("Cotangent", ["cot", "cotan", "cotangent"], "\\cot", "cot"),
+    new RPNamedFunction("Arcsecant", ["asec", "arcsec", "arcsecant"], "\\arcsec", "arcsec"),
+    new RPNamedFunction("Arccosecant", ["acsc", "arccsc", "acosec", "arccosec", "arccosecant"], "\\arccsc", "arccsc"),
+    new RPNamedFunction("Arccotangent", ["acot", "arccot", "acotan", "arccotan", "arccotangent"], "\\arccot", "arccot"),
+    new RPNamedFunction("Hyperbolic Sine", ["sinh"], "\\sinh", "sinh"),
+    new RPNamedFunction("Hyperbolic Cosine", ["cosh"], "\\cosh", "cosh"),
+    new RPNamedFunction("Hyperbolic Tangent", ["tanh"], "\\tanh", "tanh"),
+    new RPNamedFunction("Hyperbolic Secant", ["sech"], "\\sech", "sech"),
+    new RPNamedFunction("Hyperbolic Cosecant", ["csch"], "\\csch", "csch"),
+    new RPNamedFunction("Hyperbolic Cotangent", ["coth"], "\\coth", "coth"),
+    new RPNamedFunction("Sinc", ["sinc"], "\\text{sinc}\\,", "sinc"),
 ];
+
+var namedFunctionsOrdered = [].concat.apply([], namedFunctions.map(nf => nf.allowedWritings.map(aw => [aw, nf]))).sort((a, b) => { return b[0].length - a[0].length; });
 
 class RPNamedFunctionNode extends RPNode {
     constructor() {
@@ -1319,6 +1424,7 @@ class RPProductNode extends RPNode {
 class SimplifierSettings {
     constructor() {
         this.lookForVectors = true;
+        this.changeIJKToUnitVectors = true;
         this.lookForComplexNumbers = false;
     }
 }
@@ -1332,7 +1438,7 @@ class Simplifier {
 
         node.subnodes = this.simplifyNodes(node.subnodes, d + 1);
 
-        if (this.settings.lookForVectors) {
+        if (this.settings.lookForVectors && this.settings.changeIJKToUnitVectors) {
             node = this.replaceWithUnitVectors(node);
         }
 
@@ -1616,7 +1722,7 @@ class responseparsing_ResponseParser {
 
     // The top-level parse function (for now).
     getParseResult(inputText) {
-        console.log(inputText);
+     //   console.log(inputText);
 
         var m1 = new Marker();
 
@@ -1626,7 +1732,7 @@ class responseparsing_ResponseParser {
             expression = this.simplifier.simplifyNode(expression);
             expression.setDepth();
 
-            console.log(expression);
+        //    console.log(expression);
 
             return expression;
         }
@@ -1636,14 +1742,14 @@ class responseparsing_ResponseParser {
     }
 
     getInteger(inputText) {
-        console.log(inputText);
+     //   console.log(inputText);
 
         var m1 = new Marker();
 
         var number = this.parseNumber(inputText, m1);
 
         if (number !== null && number.subtype == "integer" && m1.position == inputText.length) {
-            console.log(number);
+        //    console.log(number);
 
             return number;
         }
@@ -1652,14 +1758,14 @@ class responseparsing_ResponseParser {
     }
 
     getNumber(inputText) {
-        console.log(inputText);
+      //  console.log(inputText);
 
         var m1 = new Marker();
 
         var number = this.parseNumber(inputText, m1);
 
         if (number !== null && m1.position == inputText.length) {
-            console.log(number);
+       //     console.log(number);
 
             return number;
         }
@@ -1668,7 +1774,7 @@ class responseparsing_ResponseParser {
     }
 
     getFraction(inputText) {
-        console.log(inputText);
+      //  console.log(inputText);
 
         var m1 = new Marker();
         var m2 = new Marker();
@@ -1677,13 +1783,13 @@ class responseparsing_ResponseParser {
         var fraction = this.parseFraction(inputText, m2);
 
         if (number !== null && m1.position == inputText.length) {
-            console.log(number);
+       //     console.log(number);
 
             return number;
         }
 
         if (fraction !== null && m2.position == inputText.length) {
-            console.log(fraction);
+        //    console.log(fraction);
 
             return fraction;
         }
@@ -1721,11 +1827,21 @@ class responseparsing_ResponseParser {
             if (node === null) { node = this.parseNamedFunction(inputText, marker.copy()); }
             if (node === null) { node = this.parseSquareRoot(inputText, marker.copy()); }
             if (node === null) { node = this.parseNumber(inputText, marker.copy()); }
+            if (node === null) { node = this.parseGreekIdentifier(inputText, marker.copy()); }
             if (node === null) { node = this.parseIdentifier(inputText, marker.copy()); }
             if (node === null) { node = this.parseWhiteSpace(inputText, marker.copy()); }
             if (node === null) { break; }
 
             if (node.type == "operator" || node.type == "namedFunction") {
+                if (lastNode !== undefined && lastNode.type != "operator" && node.type == "namedFunction") {
+                    var implicitTimes = new RPOperatorNode();
+
+                    implicitTimes.value = "*";
+                    implicitTimes.isImplicit = true;
+
+                    operatorStack.push(implicitTimes);
+                }
+
                 this._applyOperators(operandStack, operatorStack, node);
 
                 operatorStack.push(node);
@@ -1767,7 +1883,7 @@ class responseparsing_ResponseParser {
             }
         }
 
-        if (lastNode != undefined && lastNode.type == "operator") {
+        if (lastNode != undefined && (lastNode.type == "operator" || lastNode.type == "namedFunction")) {
             operatorStack.pop();
         }
 
@@ -1912,14 +2028,12 @@ class responseparsing_ResponseParser {
         var matchString = ""
         var match = null;
 
-        namedFunctions.forEach(nf => {
-            nf.allowedWritings.map(a => a).sort((a, b) => { return b.length - a.length }).forEach(w => {
-                if (inputText.substr(marker.position, w.length) == w) {
-                    match = nf;
-                    matchString = w;
-                    marker.position += w.length;
-                }
-            });
+        namedFunctionsOrdered.forEach(nf => {
+            if (inputText.substr(marker.position, nf[0].length) == nf[0]) {
+                match = nf[1];
+                matchString = nf[0];
+                marker.position += nf[0].length;
+            }
         });
 
         if (match === null) { return null; }
@@ -1956,6 +2070,35 @@ class responseparsing_ResponseParser {
         node.end = end;
         node._text = c;
         node.value = c;
+
+        return node;
+    }
+
+    parseGreekIdentifier(inputText, marker) {
+        var start = marker.position;
+
+        var match = null;
+
+        for (var i = 0; i < greekLetters.length; i++) {
+            var g = greekLetters[i];
+            if (g.asciiMath.length > 0 && inputText.substr(marker.position, g.asciiMath.length) == g.asciiMath) {
+                match = g;
+                break;
+            }
+        }
+
+        if (match === null) { return null; }
+
+        marker.position += g.asciiMath.length;
+
+        var end = marker.position;
+
+        var node = new RPGreekLetterNode();
+
+        node.start = start;
+        node.end = end;
+        node._text = inputText.slice(node.start, node.end);
+        node.value = match;
 
         return node;
     }
@@ -4300,6 +4443,7 @@ __webpack_require__.r(__webpack_exports__);
 var parser = new _src_responseparsing_js__WEBPACK_IMPORTED_MODULE_1__[/* ResponseParser */ "b"]();
 
 parser.simplifier.settings.lookForVectors = true;
+parser.simplifier.settings.changeIJKToUnitVectors = false;
 parser.simplifier.settings.lookForComplexNumbers = false;
 
 describe("Parsing Vectors", function () {
